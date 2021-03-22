@@ -17,34 +17,34 @@ drawspace::drawspace() {
     crosshairs->setVisible(false);
 }
 
-void PollingGraphicsView::setCrosshairsVisible(bool visible) {
+void drawspace::setCrosshairsVisible(bool visible) {
     crosshairs->setVisible(visible);
 }
 
-void PollingGraphicsView::setCrosshairsPos(const QPointF &pos) {
+void drawspace::setCrosshairsPos(const QPointF &pos) {
     crosshairs->setPos(pos);
 }
 
-void PollingGraphicsView::mousePressEvent(QMouseEvent *evt) {
+void drawspace::mousePressEvent(QMouseEvent *evt) {
     QPointF pos = mapToScene(evt->pos());
     emit mouseEvent(MousePressed, QDateTime::currentMSecsSinceEpoch(), pos);
     lastPos = pos;
 }
 
-void PollingGraphicsView::maybeAddSegment(const QPointF &pos) {
+void drawspace::maybeAddSegment(const QPointF &pos) {
     if (lastPos!=pos) {
         mScene.addLine(QLineF(lastPos, pos), QPen(Qt::black, 2.0));
         lastPos = pos;
     }
 }
 
-void PollingGraphicsView::mouseReleaseEvent(QMouseEvent *evt) {
+void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
     QPointF pos = mapToScene(evt->pos());
     emit mouseEvent(MouseReleased, QDateTime::currentMSecsSinceEpoch(), pos);
     maybeAddSegment(pos);
 }
 
-void PollingGraphicsView::mouseMoveEvent(QMouseEvent *evt) {
+void drawspace::mouseMoveEvent(QMouseEvent *evt) {
     QPointF pos = mapToScene(evt->pos());
     emit mouseEvent(MouseMoved, QDateTime::currentMSecsSinceEpoch(), pos);
     maybeAddSegment(pos);

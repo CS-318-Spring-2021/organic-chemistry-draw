@@ -4,41 +4,25 @@
 #include <QMainWindow>
 #include <drawspace.h>
 
-QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
-QT_END_NAMESPACE
+class PollingGraphicsView;
+class QTableWidget;
+class QPushButton;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    drawspace *view;
+    QTableWidget *table;
+    QPushButton *saveButton;
+
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private:
-    Ui::MainWindow *ui;
-
-    void maybeSave();
-    void newPage();
-
-    QAction *newPageAction();
-    QAction *checkChangesAction();
-    QAction *SaveAction();
-    QAction *saveFileAction();
-
-    drawspace *drawspace();
-
-    QMenu *saveMenu;
-    QMenu *openMenu;
-    QMenu *optionsMenu;
-    QMenu *filesMenu;
-
-
-private slots:
-    void deletePage();
-    void exportPage(QString fileType);
-    void penColor();
-    void penWidth();
+public slots:
+    void onMouseEvent(int type, int when, QPointF scenePos);
+    void bSave();
+    void updateCrosshairs(int curRow, int curCol, int prevRow, int prevCol);
 };
 #endif // MAINWINDOW_H
