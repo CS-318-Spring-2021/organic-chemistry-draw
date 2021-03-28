@@ -4,6 +4,7 @@
 #include <QGraphicsView>
 #include <QObject>
 #include <QWidget>
+#include <cmath>
 
 class QGraphicsPathItem;
 
@@ -18,7 +19,8 @@ class drawspace : public QGraphicsView
     void maybeAddSegment(const QPointF &pos);
 
 public:
-    enum { MousePressed, MouseReleased, MouseMoved };
+    enum {MousePressed, MouseReleased, MouseMoved};
+    enum MoleculeType {Cyclic, Linear};
 
     drawspace();
 
