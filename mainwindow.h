@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <drawspace.h>
+#include <QWidget>
+#include "DrawnObject.h"
 
 class PollingGraphicsView;
 class QTableWidget;
@@ -19,6 +21,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    DrawnObject *currentDrawnObject;
+    bool recording;
 
 public slots:
     void onMouseEvent(int type, int when, QPointF scenePos);

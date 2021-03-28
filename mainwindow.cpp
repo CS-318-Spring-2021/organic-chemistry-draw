@@ -2,8 +2,11 @@
 
 #include <QtWidgets>
 #include <QDebug>
+#include <stdio.h>
 
 #include "drawspace.h"
+
+using namespace std;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -33,6 +36,9 @@ MainWindow::MainWindow(QWidget *parent)
     table->verticalHeader()->setVisible(false);
 
     table->setHorizontalHeaderLabels(QStringList() << "Evt" << "t" << "x" << "y" << "Notes");
+
+    currentDrawnObject = new DrawnObject(view);
+
     connect(view, &drawspace::mouseEvent, this, &MainWindow::onMouseEvent);
 
     connect(table, &QTableWidget::currentCellChanged, this, &MainWindow::updateCrosshairs);
@@ -74,7 +80,20 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
     static QString types = "PRM";
     static int when0 = -1;
 
+//    if(!recording){
+//        return;
+//    }
+
     if (when0==-1) when0 = when;
+
+//    if (type == 0){
+//        currentDrawnObject->dealloc();
+//    }
+    currentDrawnObject->addData(pos.x(), pos.y(), when-when0);
+    if (type == 1){
+        currentDrawnObject->analyze();
+        currentDrawnObject->dealloc();
+    }
 
     int row;
     table->setRowCount((row = table->rowCount())+1);
@@ -89,3 +108,8 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
     table->setItem(row, 4, note);
 
 }
+
+//        for(int i = 0; i < currentDrawnObject->vector.size(); i++){
+//            printf("%i, %i, %i\n", *(currentDrawnObject->vector[i]),
+//                   *(currentDrawnObject->vector[i]+1), *(currentDrawnObject->vector[i]+2));
+//        }

@@ -15,7 +15,7 @@ class drawspace : public QGraphicsView
     QPointF lastPos;
     QGraphicsPathItem *crosshairs;
 
-    void maybeAddSegment(const QPointF &pos);
+
 
 public:
     enum { MousePressed, MouseReleased, MouseMoved };
@@ -24,6 +24,8 @@ public:
 
     void setCrosshairsVisible(bool visible);
     void setCrosshairsPos(const QPointF &pos);
+    void maybeAddSegment(const QPointF &pos);
+    void replaceSegment(const QPointF &firstPos, const QPointF &lastPos);
 
 protected:
     virtual void mousePressEvent(QMouseEvent *evt) override;

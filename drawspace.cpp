@@ -33,7 +33,7 @@ void drawspace::mousePressEvent(QMouseEvent *evt) {
 
 void drawspace::maybeAddSegment(const QPointF &pos) {
     if (lastPos!=pos) {
-        mScene.addLine(QLineF(lastPos, pos), QPen(Qt::black, 2.0));
+        //mScene.addLine(QLineF(lastPos, pos), QPen(Qt::black, 2.0));
         lastPos = pos;
     }
 }
@@ -48,4 +48,8 @@ void drawspace::mouseMoveEvent(QMouseEvent *evt) {
     QPointF pos = mapToScene(evt->pos());
     emit mouseEvent(MouseMoved, QDateTime::currentMSecsSinceEpoch(), pos);
     maybeAddSegment(pos);
+}
+
+void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos) {
+    mScene.addLine(QLineF(firstPos, lastPos), QPen(Qt::black, 2.0));
 }
