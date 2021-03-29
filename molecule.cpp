@@ -11,11 +11,14 @@ molecule::molecule(QPointF drawnVertices[], int numVerts)
     atom *p_previousAtom = firstAtom;
 
     for (int i=1; i < numVerts-1; i++) {
-        new bond(drawnVertices[i], drawnVertices[i+1]);
-        atom *p_currentAtom = new atom(drawnVertices[i], drawnVertices[i+1]);
+        bond *p_currentBond = new bond();
+        p_previousAtom->setSecondBond(p_currentBond);
+        p_currentBond->setFirstAtom(p_previousAtom);
+        atom *p_currentAtom = new atom(drawnVertices[i]);
+        p_currentAtom->setFirstBond(p_currentBond);
+        p_currentBond->setSecondAtom(p_currentAtom);
         p_previousAtom= p_currentAtom;
     }
-
 }
 
 
