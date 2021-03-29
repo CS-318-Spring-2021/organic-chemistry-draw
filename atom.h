@@ -6,23 +6,44 @@
 
 class bond;
 
-class atom : public molecule{
+class atom{
 public:
-    atom(QPoint lastAtom);
-    atom(QPoint currentAtom, QPointF nextAtom);
+    atom(QPointF currentPos);
 
-    QPointF atomPos;
-    enum element {Carbon, Hygrogen, Nitrogen, Oxygen, Flourine, Sodium, Magnesium, Chlorine, Phosphorus, Sulfur, Potasium, Calcium, Bromine};
-    enum order {First, Middle, Last};
-    double const atomRadius = 10; //need to decide this later
+    enum Element {
+        Carbon,
+        Hygrogen,
+        Nitrogen,
+        Oxygen,
+        Flourine,
+        Sodium,
+        Magnesium,
+        Chlorine,
+        Phosphorus,
+        Sulfur,
+        Potasium,
+        Calcium,
+        Bromine
+    };
+
+    void setFirstBond(bond *p_firstBond);
+    void setSecondBond(bond *p_secondBond);
+    void setThirdBond(bond *p_thirdBond);
+    void setFourthBond(bond *p_fourthBond);
+    void setElement(Element changeElement);
+
+private:
     int numBonds = 0;
     bond *bondFirst;
     bond *bondSecond;
     bond *bondThird;
     bond *bondFourth;
+    QPointF atomPos;
+    double const atomRadius = 10; //need to decide this later
+    Element element;
 
-    void setAtomPos(QPointF &pos);
-    void addBond(QPointF vertex1, QPointF vertex2);
+
+
 };
 
 #endif // ATOM_H

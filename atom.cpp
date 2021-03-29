@@ -1,17 +1,30 @@
 #include "atom.h"
 
-atom::atom(QPoint lastAtom){
-    // set pendown (type) coordinates to atomPos
+atom::atom(QPointF currentPos) {
+    atomPos = currentPos;
+    element = Carbon;
 }
 
-atom::atom(QPoint currentAtom, QPointF nextAtom) {
-    setAtomPos(currentAtom);
-    // set pendown (type) coordinates to atomPos
+void atom::setFirstBond(bond *p_firstBond){
+    bondFirst = p_firstBond;
+    numBonds += 1;
 }
 
-void setAtomPos(QPointF &pos) {
-    atomPos = pos;
+void atom::setSecondBond(bond *p_secondBond){
+    bondSecond = p_secondBond;
+    numBonds += 1;
 }
-void addBond(QPointF vertex1, QPointF vertex2) {
-    numBonds++;
+
+void atom::setThirdBond(bond *p_thirdBond){
+    bondThird = p_thirdBond;
+    numBonds += 1;
+}
+
+void atom::setFourthBond(bond *p_fourthBond){
+    bondFourth = p_fourthBond;
+    numBonds += 1;
+}
+
+void atom::setElement(enum Element changeElement){
+    element = changeElement;
 }

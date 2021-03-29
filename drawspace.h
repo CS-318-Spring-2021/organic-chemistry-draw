@@ -20,7 +20,6 @@ class drawspace : public QGraphicsView
 
 public:
     enum {MousePressed, MouseReleased, MouseMoved};
-    enum MoleculeType {Cyclic, Linear};
 
     drawspace();
 

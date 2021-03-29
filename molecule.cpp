@@ -31,7 +31,7 @@ void molecule::setFirstAtom(atom *p_firstAtom) {
     firstAtom = p_firstAtom;
 }
 
-double calculateDistance(QPointF first, QPointF second) {
+static double calculateDistance(QPointF first, QPointF second) {
     double xSquare = pow(second.x()- first.x(), 2);
     double ySquare = pow(second.y()- first.y(), 2);
     double distance = sqrt(xSquare+ySquare);
