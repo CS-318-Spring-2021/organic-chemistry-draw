@@ -3,10 +3,10 @@
 
 Molecule::Molecule(QPointF drawnVertices[], int numVerts)
 {
-    // need them to give us the size of array
-    setOrigin(drawnVertices[0]);
-    setBondLength(drawnVertices[0], drawnVertices[1]);
-    Atom *p_firstAtom = new Atom(drawnVertices[0]);
+    QPointF origin = drawnVertices[0];
+    setOrigin(origin);
+    setBondLength(origin, drawnVertices[1]);
+    Atom *p_firstAtom = new Atom(origin);
     setFirstAtom(p_firstAtom);
     Atom *p_previousAtom = firstAtom;
 

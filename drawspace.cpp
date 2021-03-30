@@ -30,8 +30,9 @@ void drawspace::mousePressEvent(QMouseEvent *evt) {
     QPointF pos = mapToScene(evt->pos());
     emit mouseEvent(MousePressed, QDateTime::currentMSecsSinceEpoch(), pos);
     lastPos = pos;
+    QPointF testPos = QPointF(14, 45);
     QPointF posArr [1] = {pos};
-    Molecule *test = new Molecule(posArr, 1);
+    Molecule *test = new Molecule(posArr, 2);
 }
 
 void drawspace::maybeAddSegment(const QPointF &pos) {
