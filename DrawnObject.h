@@ -17,6 +17,8 @@ public:
     void dealloc();
     void analyze();
     float speedCalc(int index);
+    void analyzeWithSlopes();
+    int* binarySearch(int start, int end);
 };
 
 #endif // DRAWNOBJECT_H

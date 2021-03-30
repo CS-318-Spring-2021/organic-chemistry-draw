@@ -49,6 +49,39 @@ void DrawnObject::analyze(){
     }
 }
 
+void DrawnObject::analyzeWithSlopes() {
+    int maxLen = vertices.length();
+    float prevSlope = NULL;
+    float slope = 0;
+    for (int i = 0; i < maxLen;) {
+        if (i + 15 < maxLen) {
+            slope = (*(vertices[i]+1)-*(vertices[i+15]+1)) / (*(vertices[i])-*(vertices[i+15]));
+            if (prevSlope == NULL || abs(prevSlope - slope) < 1.5) {
+                i = i + 15;
+            } else {
+                // do binary search
+
+            }
+        } else {
+            int addBy = maxLen - i;
+            slope = (*(vertices[i]+1)-*(vertices[i+addBy]+1)) / (*(vertices[i])-*(vertices[i+addBy]));
+            if (prevSlope == NULL || abs(prevSlope - slope) < 1.5) {
+                i = i + addBy;
+            } else {
+                // do binary search
+
+            }
+        }
+        prevSlope = slope;
+    }
+}
+
+
+int* DrawnObject::binarySearch(int start, int end) {
+    bool running = true;
+}
+
+
 float DrawnObject::speedCalc(int i){
     float returnSpeed = 0;
     for(int j = 1; j<6; j++){
