@@ -1,14 +1,14 @@
-#include "bond.h"
+#include "Bond.h"
 
-bond::bond(){
+Bond::Bond(){
     quality = NormalBond;
     quantity = SingleBond;
 }
 
-void bond::setFirstAtom(atom *p_firstAtom){
+void Bond::setFirstAtom(Atom *p_firstAtom){
     atomFirst = p_firstAtom;
 }
 
-void bond::setSecondAtom(atom *p_secondAtom){
+void Bond::setSecondAtom(Atom *p_secondAtom){
     atomSecond = p_secondAtom;
 }

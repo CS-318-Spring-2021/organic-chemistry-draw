@@ -4,11 +4,11 @@
 #include <molecule.h>
 #include <drawspace.h>
 
-class bond;
+class Bond;
 
-class atom{
+class Atom{
 public:
-    atom(QPointF currentPos);
+    Atom(QPointF currentPos);
 
     enum Element {
         Carbon,
@@ -26,18 +26,18 @@ public:
         Bromine
     };
 
-    void setFirstBond(bond *p_firstBond);
-    void setSecondBond(bond *p_secondBond);
-    void setThirdBond(bond *p_thirdBond);
-    void setFourthBond(bond *p_fourthBond);
+    void setFirstBond(Bond *p_firstBond);
+    void setSecondBond(Bond *p_secondBond);
+    void setThirdBond(Bond *p_thirdBond);
+    void setFourthBond(Bond *p_fourthBond);
     void setElement(Element changeElement);
 
 private:
     int numBonds = 0;
-    bond *bondFirst;
-    bond *bondSecond;
-    bond *bondThird;
-    bond *bondFourth;
+    Bond *bondFirst;
+    Bond *bondSecond;
+    Bond *bondThird;
+    Bond *bondFourth;
     QPointF atomPos;
     double const atomRadius = 10; //need to decide this later
     Element element;

@@ -2,6 +2,7 @@
 #include <QSurface>
 
 #include <QtWidgets>
+#include "molecule.h"
 
 drawspace::drawspace() {
     setScene(&mScene);
@@ -29,6 +30,8 @@ void drawspace::mousePressEvent(QMouseEvent *evt) {
     QPointF pos = mapToScene(evt->pos());
     emit mouseEvent(MousePressed, QDateTime::currentMSecsSinceEpoch(), pos);
     lastPos = pos;
+    QPointF posArr [1] = {pos};
+    Molecule *test = new Molecule(posArr, 1);
 }
 
 void drawspace::maybeAddSegment(const QPointF &pos) {

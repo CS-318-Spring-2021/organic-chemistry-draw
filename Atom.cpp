@@ -1,30 +1,30 @@
-#include "atom.h"
+#include "Atom.h"
 
-atom::atom(QPointF currentPos) {
+Atom::Atom(QPointF currentPos) {
     atomPos = currentPos;
     element = Carbon;
 }
 
-void atom::setFirstBond(bond *p_firstBond){
+void Atom::setFirstBond(Bond *p_firstBond){
     bondFirst = p_firstBond;
     numBonds += 1;
 }
 
-void atom::setSecondBond(bond *p_secondBond){
+void Atom::setSecondBond(Bond *p_secondBond){
     bondSecond = p_secondBond;
     numBonds += 1;
 }
 
-void atom::setThirdBond(bond *p_thirdBond){
+void Atom::setThirdBond(Bond *p_thirdBond){
     bondThird = p_thirdBond;
     numBonds += 1;
 }
 
-void atom::setFourthBond(bond *p_fourthBond){
+void Atom::setFourthBond(Bond *p_fourthBond){
     bondFourth = p_fourthBond;
     numBonds += 1;
 }
 
-void atom::setElement(enum Element changeElement){
+void Atom::setElement(enum Element changeElement){
     element = changeElement;
 }

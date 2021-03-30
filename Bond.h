@@ -1,27 +1,26 @@
 #ifndef BOND_H
 #define BOND_H
 
-#include <molecule.h>
+#include "molecule.h"
 
+class Atom;
 
-class atom;
-
-class bond{
+class Bond{
 public:
-    bond();
+    Bond();
 
     enum BondQuality {NormalBond, ThickBond, DashBond};
     enum BondQuantity {SingleBond, DoubleBond, TripleBond};
 
 
     void setSlope(QPointF firstAtom, QPointF secondAtom);
-    void setFirstAtom(atom *p_firstAtom);
-    void setSecondAtom(atom *p_secondAtom);
+    void setFirstAtom(Atom *p_firstAtom);
+    void setSecondAtom(Atom *p_secondAtom);
     void changeQuantity(BondQuantity quantity);
 
 private:
-    atom *atomFirst;
-    atom *atomSecond;
+    Atom *atomFirst;
+    Atom *atomSecond;
     double slope;
     BondQuality quality;
     BondQuantity quantity;
