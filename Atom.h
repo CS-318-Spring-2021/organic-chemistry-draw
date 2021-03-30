@@ -1,7 +1,7 @@
 #ifndef ATOM_H
 #define ATOM_H
 
-#include <molecule.h>
+#include "Molecule.h"
 #include <drawspace.h>
 
 class Bond;

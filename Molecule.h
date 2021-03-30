@@ -2,8 +2,8 @@
 #define MOLECULE_H
 
 #include <drawspace.h>
-#include <Atom.h>
-#include <Bond.h>
+#include "Atom.h"
+#include "Bond.h"
 
 class Molecule: public drawspace{
 
@@ -15,7 +15,7 @@ class Molecule: public drawspace{
     Atom *firstAtom;
 
 public:
-    Molecule(QPointF drawnVertices[], int numVerts);
+    Molecule(QPointF *drawnVertices, int numVerts);
 
     void setOrigin(QPointF &firstPoint);
     void setBondLength(QPointF first, QPointF second);

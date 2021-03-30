@@ -1,8 +1,9 @@
 #include "drawspace.h"
 #include <QSurface>
+#include "stdio.h"
 
 #include <QtWidgets>
-#include "molecule.h"
+#include "Molecule.h"
 
 drawspace::drawspace() {
     setScene(&mScene);
@@ -31,7 +32,10 @@ void drawspace::mousePressEvent(QMouseEvent *evt) {
     emit mouseEvent(MousePressed, QDateTime::currentMSecsSinceEpoch(), pos);
     lastPos = pos;
     QPointF testPos = QPointF(14, 45);
-    QPointF posArr [1] = {pos};
+    QPointF *posArr = new QPointF[2];
+    posArr[0] = pos;
+    posArr[1] = testPos;
+    printf("possArr[0] is %lf",posArr[0].x());
     Molecule *test = new Molecule(posArr, 2);
 }
 

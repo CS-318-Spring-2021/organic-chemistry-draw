@@ -1,9 +1,10 @@
-#include "molecule.h"
+#include "Molecule.h"
 #include <array>
 
-Molecule::Molecule(QPointF drawnVertices[], int numVerts)
+Molecule::Molecule(QPointF *drawnVertices, int numVerts)
 {
-    QPointF origin = drawnVertices[0];
+    printf("drawVertices[0] is %lf",drawnVertices[0].x());
+    origin = drawnVertices[0];
     setOrigin(origin);
     setBondLength(origin, drawnVertices[1]);
     Atom *p_firstAtom = new Atom(origin);
