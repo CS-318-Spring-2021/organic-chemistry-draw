@@ -10,11 +10,13 @@ class DrawnObject{
 public:
     QVector<int*> vector;
     QVector<int*> vertices;
+    QVector<float> speeds;
     DrawnObject(drawspace* view);
     void addData(int x, int y, int time);
     ~DrawnObject();
     void dealloc();
     void analyze();
+    float speedCalc(int index);
 };
 
 #endif // DRAWNOBJECT_H
