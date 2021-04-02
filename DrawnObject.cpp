@@ -37,9 +37,6 @@ void DrawnObject::analyze(){
         }
     }
 
-
-
-
     vertices.append(vector[vector.size()-1]);
     //view->clear
     for (int i = 0;i<vertices.length()-1;i++){
@@ -50,35 +47,55 @@ void DrawnObject::analyze(){
 }
 
 void DrawnObject::analyzeWithSlopes() {
-    int maxLen = vertices.length();
-    float prevSlope = NULL;
+    int maxLen = vector.length();
+    bool havePrevSlope = false;
     float slope = 0;
-    for (int i = 0; i < maxLen;) {
-        if (i + 15 < maxLen) {
-            slope = (*(vertices[i]+1)-*(vertices[i+15]+1)) / (*(vertices[i])-*(vertices[i+15]));
-            if (prevSlope == NULL || abs(prevSlope - slope) < 1.5) {
-                i = i + 15;
-            } else {
-                // do binary search
+    int i = 0;
+    int gap = 15;
 
-            }
+    while (i < maxLen - 1) {
+        int x0 = *(vector[i]);
+        int y0 = *(vector[i]+1);
+        if ((i + gap) < maxLen) {
+            int x1 = *(vector[i+gap]);
+            int y1 = *(vector[i+gap]+1);
+            float nextSlope = (y0 - y1) / (x0 - x1);
+            // what to do now?
         } else {
-            int addBy = maxLen - i;
-            slope = (*(vertices[i]+1)-*(vertices[i+addBy]+1)) / (*(vertices[i])-*(vertices[i+addBy]));
-            if (prevSlope == NULL || abs(prevSlope - slope) < 1.5) {
-                i = i + addBy;
-            } else {
-                // do binary search
+            // what to do now?
 
-            }
         }
-        prevSlope = slope;
+    }
+
+    for (int j = 0; j < vertices.length(); j++) {
+        printf("x: %i ", *(vertices[j]));
+        printf("y: %i\n", *(vertices[j]+1));
     }
 }
 
+int DrawnObject::binarySearch(int start, int end, float slope) {
+    int difference = end - start;
 
-int* DrawnObject::binarySearch(int start, int end) {
-    bool running = true;
+    // base case, if only two or less left, we are pretty much done
+    if (difference < 3) {
+        int* point = new int[2];
+        point[0] = *(vector[start]);
+        point[1] = *(vector[start] + 1);
+        vertices.append(point);
+        return end;
+    }
+
+    int halfway = end - int(difference/2);
+    int x0 = *(vector[start]);
+    int y0 = *(vector[start]+1);
+    int x1 = *(vector[halfway]);
+    int y1 = *(vector[halfway]+1);
+    float currentSlope = (y0 - y1) / (x0 - x1);
+    if (abs(slope - currentSlope) < 1.5) {
+        return binarySearch(halfway, end, slope);
+    } else {
+        return binarySearch(start, halfway, slope);
+    }
 }
 
 
