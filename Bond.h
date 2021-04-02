@@ -1,7 +1,7 @@
 #ifndef BOND_H
 #define BOND_H
 
-#include "molecule.h"
+#include "Molecule.h"
 
 class Atom;
 

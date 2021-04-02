@@ -2,7 +2,7 @@
 #define ATOM_H
 
 #include "Molecule.h"
-#include <drawspace.h>
+#include "drawspace.h"
 
 class Bond;
 
