@@ -93,7 +93,7 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
     if (type == 1){
         currentDrawnObject->analyze();
         //currentDrawnObject->analyzeWithSlopes();
-        currentDrawnObject->dealloc();
+        currentDrawnObject->clean();
     }
 
     int row;

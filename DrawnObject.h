@@ -10,15 +10,16 @@ class DrawnObject{
 public:
     QVector<int*> vector;
     QVector<int*> vertices;
+    QVector<int*> vertices2;
     QVector<float> speeds;
     QVector<int*> cleanedVertices;
     DrawnObject(drawspace* view);
     void addData(int x, int y, int time);
     ~DrawnObject();
-    void dealloc();
+    void clean();
     void analyze();
     float speedCalc(int index);
-    void analyzeWithSlopes();
+    void analyzeWithSlopes(int gap);
     int binarySearch(int start, int end, float slope, float tolerence);
     void drawVertices(QVector<int*> vertices, QPen pen);
 };
