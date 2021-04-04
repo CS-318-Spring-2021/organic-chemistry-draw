@@ -22,6 +22,7 @@ public:
     void analyzeWithSlopes(int gap);
     int binarySearch(int start, int end, float slope, float tolerence);
     void drawVertices(QVector<int*> vertices, QPen pen);
+    QVector<int*> cleanupVertices(QVector<int*> vertices);
 };
 
 #endif // DRAWNOBJECT_H

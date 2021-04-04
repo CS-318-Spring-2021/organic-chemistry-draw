@@ -48,24 +48,7 @@ void DrawnObject::analyze(){
     vertices.append(vector[vector.size()-1]);
     //view->clear
     drawVertices(vertices, QPen(Qt::blue, 10.0));
-    cleanedVertices.append(vertices[0]);
-    printf("vertices length: %i\n", vertices.length());
-    QPointF firstPos = QPointF(*(vertices[0]), *(vertices[0]+1));
-    QPointF lastPos = QPointF(*(vertices[1]), *(vertices[1]+1));
-    line = QLineF(firstPos, lastPos);
-    currentAngle = line.angle();
-    for (int i = 1;i<vertices.length()-2;i++){
-        firstPos = QPointF(*(vertices[i]), *(vertices[i]+1));
-        lastPos = QPointF(*(vertices[i+1]), *(vertices[i+1]+1));
-        lastAngle = currentAngle;
-        line = QLineF(firstPos, lastPos);
-        currentAngle = line.angle();
-        //printf("%f\n",abs(lastAngle-currentAngle));
-        if(abs(lastAngle-currentAngle) > tolerance){
-            cleanedVertices.append(vertices[i]);
-        }
-    }
-    cleanedVertices.append(vertices[vertices.length()-1]);
+    QVector<int*> cleanedVertices = cleanupVertices(vertices);
     drawVertices(cleanedVertices, QPen(Qt::red, 5.0));
 
     for (int i = 0;i<cleanedVertices.length()-1;i++){
@@ -120,10 +103,9 @@ void DrawnObject::analyzeWithSlopes(int gap) {
         degrees = currDegrees;
     }
     vertices2.append(vector[maxLen-1]);
-    for (int j = 0; j < vertices2.length(); j++) {
-        printf("x: %i ", *(vertices2[j]));
-        printf("y: %i\n", *(vertices2[j]+1));
-    }
+    QVector<int*> cleanedVertices2 = cleanupVertices(vertices2);
+    drawVertices(vertices2, QPen(Qt::yellow, 10.0));
+    drawVertices(cleanedVertices2, QPen(Qt::green, 5.0));
 }
 
 int DrawnObject::binarySearch(int start, int end, float degrees, float tolerence) {
@@ -185,6 +167,9 @@ void DrawnObject::clean(){
 DrawnObject::~DrawnObject(){
     clean();
     vector.~QVector();
+    vertices.~QVector();
+    vertices2.~QVector();
+    cleanedVertices.~QVector();
 }
 
 void DrawnObject::drawVertices(QVector<int*> vertices, QPen pen){
@@ -193,4 +178,31 @@ void DrawnObject::drawVertices(QVector<int*> vertices, QPen pen){
         QPointF lastPos = QPointF(firstPos.x()+1, firstPos.y()+1);
         view->replaceSegment(firstPos, lastPos, pen);
     }
+}
+
+QVector<int*> DrawnObject::cleanupVertices(QVector<int*> vertices){
+    float currentAngle;
+    float lastAngle;
+    float tolerance = 2.0;
+    QLineF line;
+    QVector<int*> returnVertices;
+    returnVertices.append(vertices[0]);
+    printf("vertices length: %i\n", vertices.length());
+    QPointF firstPos = QPointF(*(vertices[0]), *(vertices[0]+1));
+    QPointF lastPos = QPointF(*(vertices[1]), *(vertices[1]+1));
+    line = QLineF(firstPos, lastPos);
+    currentAngle = line.angle();
+    for (int i = 1;i<vertices.length()-2;i++){
+        firstPos = QPointF(*(vertices[i]), *(vertices[i]+1));
+        lastPos = QPointF(*(vertices[i+1]), *(vertices[i+1]+1));
+        lastAngle = currentAngle;
+        line = QLineF(firstPos, lastPos);
+        currentAngle = line.angle();
+        //printf("%f\n",abs(lastAngle-currentAngle));
+        if(abs(lastAngle-currentAngle) > tolerance){
+            returnVertices.append(vertices[i]);
+        }
+    }
+    returnVertices.append(vertices[vertices.length()-1]);
+    return returnVertices;
 }
