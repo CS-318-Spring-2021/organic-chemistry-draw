@@ -18,7 +18,7 @@ public:
     void analyze();
     float speedCalc(int index);
     void analyzeWithSlopes();
-    int binarySearch(int start, int end, float slope);
+    int binarySearch(int start, int end, float slope, float tolerence);
 };
 
 #endif // DRAWNOBJECT_H
