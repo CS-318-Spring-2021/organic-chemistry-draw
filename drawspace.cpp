@@ -33,7 +33,7 @@ void drawspace::mousePressEvent(QMouseEvent *evt) {
 
 void drawspace::maybeAddSegment(const QPointF &pos) {
     if (lastPos!=pos) {
-        //mScene.addLine(QLineF(lastPos, pos), QPen(Qt::black, 2.0));
+        mScene.addLine(QLineF(lastPos, pos), QPen(Qt::gray, 2.0));
         lastPos = pos;
     }
 }

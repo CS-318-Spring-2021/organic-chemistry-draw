@@ -20,11 +20,6 @@ void DrawnObject::addData(int x, int y, int time){
 }
 
 void DrawnObject::analyze(){
-    float currentAngle;
-    float lastAngle;
-    float tolerance = 2.0;
-    QLineF line;
-    analyzeWithSlopes(15);
     vertices.append(vector[0]);
     if (!(vector.size()>8)){
         return;
@@ -47,16 +42,18 @@ void DrawnObject::analyze(){
 
     vertices.append(vector[vector.size()-1]);
     //view->clear
-    drawVertices(vertices, QPen(Qt::blue, 10.0));
+    //drawVerticesx(vertices, QPen(Qt::blue, 10.0));
     QVector<int*> cleanedVertices = cleanupVertices(vertices);
-    drawVertices(cleanedVertices, QPen(Qt::red, 5.0));
+    drawVerticesx(cleanedVertices, QPen(Qt::red, 2.0));
 
-    for (int i = 0;i<cleanedVertices.length()-1;i++){
+    analyzeWithSlopes(15);
 
-        QPointF firstPos = QPointF(*(cleanedVertices[i]), *(cleanedVertices[i]+1));
-        QPointF lastPos = QPointF(*(cleanedVertices[i+1]), *(cleanedVertices[i+1]+1));
-        view->replaceSegment(firstPos, lastPos);
-    }
+//    for (int i = 0;i<cleanedVertices.length()-1;i++){
+
+//        QPointF firstPos = QPointF(*(cleanedVertices[i]), *(cleanedVertices[i]+1));
+//        QPointF lastPos = QPointF(*(cleanedVertices[i+1]), *(cleanedVertices[i+1]+1));
+//        view->replaceSegment(firstPos, lastPos);
+//    }
 }
 
 void DrawnObject::analyzeWithSlopes(int gap) {
@@ -71,10 +68,10 @@ void DrawnObject::analyzeWithSlopes(int gap) {
 
     vertices2.append(vector[0]);
 
-    while (i < maxLen - 1) {
+    while (i < maxLen) {
         int x0 = *(vector[i]);
         int y0 = *(vector[i]+1);
-        if ((i + gap) > maxLen - 1) {
+        if ((i + gap) > maxLen-1) {
             gap = maxLen - 1 - i;
             if (gap < 6) { break; }
         }
@@ -103,9 +100,14 @@ void DrawnObject::analyzeWithSlopes(int gap) {
         degrees = currDegrees;
     }
     vertices2.append(vector[maxLen-1]);
+
+
+
+    printf("vertices length: %i\n", vertices.length());
     QVector<int*> cleanedVertices2 = cleanupVertices(vertices2);
-    drawVertices(vertices2, QPen(Qt::yellow, 10.0));
-    drawVertices(cleanedVertices2, QPen(Qt::green, 5.0));
+    //drawVerticesy(vertices2, QPen(Qt::red, 10.0));
+    printf("vertices2 length: %i\n", vertices.length());
+    drawVerticesy(cleanedVertices2, QPen(Qt::blue, 2.0));
 }
 
 int DrawnObject::binarySearch(int start, int end, float degrees, float tolerence) {
@@ -172,10 +174,18 @@ DrawnObject::~DrawnObject(){
     cleanedVertices.~QVector();
 }
 
-void DrawnObject::drawVertices(QVector<int*> vertices, QPen pen){
+void DrawnObject::drawVerticesx(QVector<int*> vertices, QPen pen){
     for(int i = 0; i< vertices.length(); i++){
-        QPointF firstPos = QPointF(*(vertices[i]), *(vertices[i]+1));
-        QPointF lastPos = QPointF(firstPos.x()+1, firstPos.y()+1);
+        QPointF firstPos = QPointF(*(vertices[i])-5, *(vertices[i]+1));
+        QPointF lastPos = QPointF(firstPos.x()+10, firstPos.y());
+        view->replaceSegment(firstPos, lastPos, pen);
+    }
+}
+
+void DrawnObject::drawVerticesy(QVector<int*> vertices, QPen pen){
+    for(int i = 0; i< vertices.length(); i++){
+        QPointF firstPos = QPointF(*(vertices[i]), *(vertices[i]+1)-5);
+        QPointF lastPos = QPointF(firstPos.x(), firstPos.y()+10);
         view->replaceSegment(firstPos, lastPos, pen);
     }
 }
@@ -183,16 +193,16 @@ void DrawnObject::drawVertices(QVector<int*> vertices, QPen pen){
 QVector<int*> DrawnObject::cleanupVertices(QVector<int*> vertices){
     float currentAngle;
     float lastAngle;
-    float tolerance = 2.0;
+    float tolerance = 15.0;
     QLineF line;
     QVector<int*> returnVertices;
     returnVertices.append(vertices[0]);
-    printf("vertices length: %i\n", vertices.length());
+    printf("cleaned length: %i\n", vertices.length());
     QPointF firstPos = QPointF(*(vertices[0]), *(vertices[0]+1));
     QPointF lastPos = QPointF(*(vertices[1]), *(vertices[1]+1));
     line = QLineF(firstPos, lastPos);
     currentAngle = line.angle();
-    for (int i = 1;i<vertices.length()-2;i++){
+    for (int i = 1;i<vertices.length()-1;i++){
         firstPos = QPointF(*(vertices[i]), *(vertices[i]+1));
         lastPos = QPointF(*(vertices[i+1]), *(vertices[i+1]+1));
         lastAngle = currentAngle;
