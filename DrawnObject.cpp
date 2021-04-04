@@ -8,7 +8,7 @@
 
 DrawnObject::DrawnObject(drawspace* view){
     this->view = view;
-    dealloc();
+    clean();
 }
 
 void DrawnObject::addData(int x, int y, int time){
@@ -20,6 +20,8 @@ void DrawnObject::addData(int x, int y, int time){
 }
 
 void DrawnObject::analyze(){
+    analyzeWithSlopes(15);
+
     vertices.append(vector[0]);
     if (!(vector.size()>8)){
         return;
@@ -49,7 +51,7 @@ void DrawnObject::analyze(){
     }
 }
 
-void DrawnObject::analyzeWithSlopes() {
+void DrawnObject::analyzeWithSlopes(int gap) {
 
     bool haveAngle = false;
 
@@ -58,7 +60,8 @@ void DrawnObject::analyzeWithSlopes() {
 
     int maxLen = vector.length();
     int i = 0;
-    int gap = 15;
+
+    vertices2.append(vector[0]);
 
     while (i < maxLen - 1) {
         int x0 = *(vector[i]);
@@ -74,7 +77,11 @@ void DrawnObject::analyzeWithSlopes() {
 
         float currDegrees;
         if (x == 0) {
-            currDegrees = atan(MAXFLOAT);
+            if (y < 0) {
+                currDegrees = -3.1415;
+            } else {
+                currDegrees = 0;
+            }
         } else {
             currDegrees = atan(y/x);
         }
@@ -87,10 +94,10 @@ void DrawnObject::analyzeWithSlopes() {
         }
         degrees = currDegrees;
     }
-
-    for (int j = 0; j < vertices.length(); j++) {
-        printf("x: %i ", *(vertices[j]));
-        printf("y: %i\n", *(vertices[j]+1));
+    vertices2.append(vector[maxLen-1]);
+    for (int j = 0; j < vertices2.length(); j++) {
+        printf("x: %i ", *(vertices2[j]));
+        printf("y: %i\n", *(vertices2[j]+1));
     }
 }
 
@@ -99,10 +106,7 @@ int DrawnObject::binarySearch(int start, int end, float degrees, float tolerence
 
     // base case, if only two or less left, we are pretty much done
     if (difference < 3) {
-        int* point = new int[2];
-        point[0] = *(vector[end]);
-        point[1] = *(vector[end] + 1);
-        vertices.append(point);
+        vertices2.append(vector[end]);
         return end;
     }
 
@@ -116,7 +120,11 @@ int DrawnObject::binarySearch(int start, int end, float degrees, float tolerence
 
     float currDegrees;
     if (x == 0) {
-        currDegrees = atan(MAXFLOAT);
+        if (y < 0) {
+            currDegrees = -3.1415;
+        } else {
+            currDegrees = 0;
+        }
     } else {
         currDegrees = atan(y/x);
     }
@@ -139,15 +147,16 @@ float DrawnObject::speedCalc(int i){
     return returnSpeed/5;
 }
 
-void DrawnObject::dealloc(){
+void DrawnObject::clean(){
     for(int i = 0; i < vector.size(); i++){
         free(vector[i]);
     }
     vertices.clear();
+    vertices2.clear();
     vector.clear();
 }
 
 DrawnObject::~DrawnObject(){
-    dealloc();
+    clean();
     vector.~QVector();
 }
