@@ -26,6 +26,7 @@ public:
     void setCrosshairsPos(const QPointF &pos);
     void maybeAddSegment(const QPointF &pos);
     void replaceSegment(const QPointF &firstPos, const QPointF &lastPos);
+    void replaceSegment(const QPointF &firstPos, const QPointF &lastPos, QPen pen);
 
 protected:
     virtual void mousePressEvent(QMouseEvent *evt) override;

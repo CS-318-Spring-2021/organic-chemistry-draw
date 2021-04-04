@@ -53,3 +53,7 @@ void drawspace::mouseMoveEvent(QMouseEvent *evt) {
 void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos) {
     mScene.addLine(QLineF(firstPos, lastPos), QPen(Qt::black, 2.0));
 }
+
+void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos, QPen pen) {
+    mScene.addLine(QLineF(firstPos, lastPos), pen);
+}

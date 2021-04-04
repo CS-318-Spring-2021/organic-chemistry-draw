@@ -2,7 +2,7 @@
 #include <QWidget>
 #include <stdio.h>
 #include <QtMath>
-#include <math.h>
+#include <cfloat>
 
 #include "drawspace.h"
 
@@ -20,6 +20,10 @@ void DrawnObject::addData(int x, int y, int time){
 }
 
 void DrawnObject::analyze(){
+    float currentAngle;
+    float lastAngle;
+    float tolerance = 2.0;
+    QLineF line;
     vertices.append(vector[0]);
     if (!(vector.size()>8)){
         return;
@@ -42,9 +46,31 @@ void DrawnObject::analyze(){
 
     vertices.append(vector[vector.size()-1]);
     //view->clear
-    for (int i = 0;i<vertices.length()-1;i++){
-        QPointF firstPos = QPointF(*(vertices[i]), *(vertices[i]+1));
-        QPointF lastPos = QPointF(*(vertices[i+1]), *(vertices[i+1]+1));
+    drawVertices(vertices, QPen(Qt::blue, 10.0));
+    cleanedVertices.append(vertices[0]);
+    printf("vertices length: %i\n", vertices.length());
+    QPointF firstPos = QPointF(*(vertices[0]), *(vertices[0]+1));
+    QPointF lastPos = QPointF(*(vertices[1]), *(vertices[1]+1));
+    line = QLineF(firstPos, lastPos);
+    currentAngle = line.angle();
+    for (int i = 1;i<vertices.length()-2;i++){
+        firstPos = QPointF(*(vertices[i]), *(vertices[i]+1));
+        lastPos = QPointF(*(vertices[i+1]), *(vertices[i+1]+1));
+        lastAngle = currentAngle;
+        line = QLineF(firstPos, lastPos);
+        currentAngle = line.angle();
+        //printf("%f\n",abs(lastAngle-currentAngle));
+        if(abs(lastAngle-currentAngle) > tolerance){
+            cleanedVertices.append(vertices[i]);
+        }
+    }
+    cleanedVertices.append(vertices[vertices.length()-1]);
+    drawVertices(cleanedVertices, QPen(Qt::red, 5.0));
+
+    for (int i = 0;i<cleanedVertices.length()-1;i++){
+
+        QPointF firstPos = QPointF(*(cleanedVertices[i]), *(cleanedVertices[i]+1));
+        QPointF lastPos = QPointF(*(cleanedVertices[i+1]), *(cleanedVertices[i+1]+1));
         view->replaceSegment(firstPos, lastPos);
     }
 }
@@ -74,7 +100,7 @@ void DrawnObject::analyzeWithSlopes() {
 
         float currDegrees;
         if (x == 0) {
-            currDegrees = atan(MAXFLOAT);
+            currDegrees = atan(FLT_MAX);
         } else {
             currDegrees = atan(y/x);
         }
@@ -116,7 +142,7 @@ int DrawnObject::binarySearch(int start, int end, float degrees, float tolerence
 
     float currDegrees;
     if (x == 0) {
-        currDegrees = atan(MAXFLOAT);
+        currDegrees = atan(FLT_MAX);
     } else {
         currDegrees = atan(y/x);
     }
@@ -143,6 +169,7 @@ void DrawnObject::dealloc(){
     for(int i = 0; i < vector.size(); i++){
         free(vector[i]);
     }
+    cleanedVertices.clear();
     vertices.clear();
     vector.clear();
 }
@@ -150,4 +177,12 @@ void DrawnObject::dealloc(){
 DrawnObject::~DrawnObject(){
     dealloc();
     vector.~QVector();
+}
+
+void DrawnObject::drawVertices(QVector<int*> vertices, QPen pen){
+    for(int i = 0; i< vertices.length(); i++){
+        QPointF firstPos = QPointF(*(vertices[i]), *(vertices[i]+1));
+        QPointF lastPos = QPointF(firstPos.x()+1, firstPos.y()+1);
+        view->replaceSegment(firstPos, lastPos, pen);
+    }
 }

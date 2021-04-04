@@ -11,6 +11,7 @@ public:
     QVector<int*> vector;
     QVector<int*> vertices;
     QVector<float> speeds;
+    QVector<int*> cleanedVertices;
     DrawnObject(drawspace* view);
     void addData(int x, int y, int time);
     ~DrawnObject();
@@ -19,6 +20,7 @@ public:
     float speedCalc(int index);
     void analyzeWithSlopes();
     int binarySearch(int start, int end, float slope, float tolerence);
+    void drawVertices(QVector<int*> vertices, QPen pen);
 };
 
 #endif // DRAWNOBJECT_H
