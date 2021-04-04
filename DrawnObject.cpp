@@ -2,6 +2,7 @@
 #include <QWidget>
 #include <stdio.h>
 #include <QtMath>
+#include <math.h>
 
 #include "drawspace.h"
 
@@ -39,9 +40,6 @@ void DrawnObject::analyze(){
         }
     }
 
-
-
-
     vertices.append(vector[vector.size()-1]);
     //view->clear
     for (int i = 0;i<vertices.length()-1;i++){
@@ -50,6 +48,85 @@ void DrawnObject::analyze(){
         view->replaceSegment(firstPos, lastPos);
     }
 }
+
+void DrawnObject::analyzeWithSlopes() {
+
+    bool haveAngle = false;
+
+    float degrees = 0;
+    float tolerence = 0.449;
+
+    int maxLen = vector.length();
+    int i = 0;
+    int gap = 15;
+
+    while (i < maxLen - 1) {
+        int x0 = *(vector[i]);
+        int y0 = *(vector[i]+1);
+        if ((i + gap) > maxLen - 1) {
+            gap = maxLen - 1 - i;
+            if (gap < 6) { break; }
+        }
+        int x1 = *(vector[i+gap]);
+        int y1 = *(vector[i+gap]+1);
+        int x = (x0 - x1);
+        int y = (y0 - y1);
+
+        float currDegrees;
+        if (x == 0) {
+            currDegrees = atan(MAXFLOAT);
+        } else {
+            currDegrees = atan(y/x);
+        }
+        if (!haveAngle || (abs(degrees - currDegrees) < tolerence)) {
+            haveAngle = true;
+            i = i + gap;
+        } else {
+            haveAngle = false;
+            i = binarySearch(i, i+gap, degrees, tolerence);
+        }
+        degrees = currDegrees;
+    }
+
+    for (int j = 0; j < vertices.length(); j++) {
+        printf("x: %i ", *(vertices[j]));
+        printf("y: %i\n", *(vertices[j]+1));
+    }
+}
+
+int DrawnObject::binarySearch(int start, int end, float degrees, float tolerence) {
+    int difference = end - start;
+
+    // base case, if only two or less left, we are pretty much done
+    if (difference < 3) {
+        int* point = new int[2];
+        point[0] = *(vector[end]);
+        point[1] = *(vector[end] + 1);
+        vertices.append(point);
+        return end;
+    }
+
+    int halfway = end - int(difference/2);
+    int x0 = *(vector[start]);
+    int y0 = *(vector[start]+1);
+    int x1 = *(vector[halfway]);
+    int y1 = *(vector[halfway]+1);
+    int x = (x0 - x1);
+    int y = (y0 - y1);
+
+    float currDegrees;
+    if (x == 0) {
+        currDegrees = atan(MAXFLOAT);
+    } else {
+        currDegrees = atan(y/x);
+    }
+    if (abs(degrees - currDegrees) < tolerence) {
+        return binarySearch(halfway, end, currDegrees, tolerence);
+    } else {
+        return binarySearch(start, halfway, degrees, tolerence);
+    }
+}
+
 
 float DrawnObject::speedCalc(int i){
     float returnSpeed = 0;
