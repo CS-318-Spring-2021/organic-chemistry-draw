@@ -32,7 +32,9 @@ void DrawnObject::analyze(){
         speeds.append(speed);
         if (speeds[i-7]<speeds[i-6] && decreasing == true){
             decreasing = false;
-            printf("%f\n", speed);
+            //printf("%i\n", i-7);
+            vertices.append(vector[i-7]);
+            //printf("%f\n", speed);
         }else if (speeds[i-7]>speeds[i-6] && decreasing == false){
             decreasing = true;
         }
