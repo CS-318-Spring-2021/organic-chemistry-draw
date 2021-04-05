@@ -19,10 +19,12 @@ public:
     void clean();
     void analyze();
     float speedCalc(int index);
-    void analyzeWithSlopes(int gap);
+    void analyzeWithSlopes();
     int binarySearch(int start, int end, float slope, float tolerence);
     void drawVerticesx(QVector<int*> vertices, QPen pen);
     void drawVerticesy(QVector<int*> vertices, QPen pen);
+
+    void runTests();
     QVector<int*> cleanupVertices(QVector<int*> vertices);
 
 };

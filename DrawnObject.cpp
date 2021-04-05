@@ -46,7 +46,7 @@ void DrawnObject::analyze(){
     QVector<int*> cleanedVertices = cleanupVertices(vertices);
     drawVerticesx(cleanedVertices, QPen(Qt::red, 2.0));
 
-    analyzeWithSlopes(15);
+    analyzeWithSlopes();
 
 //    for (int i = 0;i<cleanedVertices.length()-1;i++){
 
@@ -56,15 +56,21 @@ void DrawnObject::analyze(){
 //    }
 }
 
-void DrawnObject::analyzeWithSlopes(int gap) {
+void DrawnObject::analyzeWithSlopes() {
 
     bool haveAngle = false;
 
-    float degrees = 0;
+    float radians = 0;
     float tolerence = 0.449;
+
+    int gap = 6;
 
     int maxLen = vector.length();
     int i = 0;
+
+    if ((maxLen/8) > 6) {
+        gap = int(floor(maxLen/8));
+    }
 
     vertices2.append(vector[0]);
 
@@ -73,31 +79,31 @@ void DrawnObject::analyzeWithSlopes(int gap) {
         int y0 = *(vector[i]+1);
         if ((i + gap) > maxLen-1) {
             gap = maxLen - 1 - i;
-            if (gap < 6) { break; }
+            if (gap < 3) { break; }
         }
         int x1 = *(vector[i+gap]);
         int y1 = *(vector[i+gap]+1);
         int x = (x0 - x1);
         int y = (y0 - y1);
 
-        float currDegrees;
+        float currRadians;
         if (x == 0) {
             if (y < 0) {
-                currDegrees = -3.1415;
+                currRadians = -3.1415;
             } else {
-                currDegrees = 0;
+                currRadians = 0;
             }
         } else {
-            currDegrees = atan(y/x);
+            currRadians = atan(y/x);
         }
-        if (!haveAngle || (abs(degrees - currDegrees) < tolerence)) {
+        if (!haveAngle || (abs(radians - currRadians) < tolerence)) {
             haveAngle = true;
             i = i + gap;
         } else {
             haveAngle = false;
-            i = binarySearch(i, i+gap, degrees, tolerence);
+            i = binarySearch(i, i+gap, radians, tolerence);
         }
-        degrees = currDegrees;
+        radians = currRadians;
     }
     vertices2.append(vector[maxLen-1]);
 
@@ -110,13 +116,13 @@ void DrawnObject::analyzeWithSlopes(int gap) {
     drawVerticesy(cleanedVertices2, QPen(Qt::blue, 2.0));
 }
 
-int DrawnObject::binarySearch(int start, int end, float degrees, float tolerence) {
+int DrawnObject::binarySearch(int start, int end, float radians, float tolerence) {
     int difference = end - start;
 
     // base case, if only two or less left, we are pretty much done
     if (difference < 3) {
-        vertices2.append(vector[end]);
-        return end;
+        vertices2.append(vector[start]);
+        return start;
     }
 
     int halfway = end - int(difference/2);
@@ -127,20 +133,20 @@ int DrawnObject::binarySearch(int start, int end, float degrees, float tolerence
     int x = (x0 - x1);
     int y = (y0 - y1);
 
-    float currDegrees;
+    float currRadians;
     if (x == 0) {
         if (y < 0) {
-            currDegrees = -3.1415;
+            currRadians = -3.1415;
         } else {
-            currDegrees = 0;
+            currRadians = 0;
         }
     } else {
-        currDegrees = atan(y/x);
+        currRadians = atan(y/x);
     }
-    if (abs(degrees - currDegrees) < tolerence) {
-        return binarySearch(halfway, end, currDegrees, tolerence);
+    if (abs(radians - currRadians) < tolerence) {
+        return binarySearch(halfway, end, radians, tolerence);
     } else {
-        return binarySearch(start, halfway, degrees, tolerence);
+        return binarySearch(start, halfway, radians, tolerence);
     }
 }
 
