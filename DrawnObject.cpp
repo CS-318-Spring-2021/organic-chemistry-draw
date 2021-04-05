@@ -113,7 +113,7 @@ void DrawnObject::analyzeWithSlopes() {
     QVector<int*> cleanedVertices2 = cleanupVertices(vertices2);
     //drawVerticesy(vertices2, QPen(Qt::red, 10.0));
     printf("vertices2 length: %i\n", vertices.length());
-    drawVerticesy(cleanedVertices2, QPen(Qt::blue, 2.0));
+    drawVertices(cleanedVertices2, QPen(Qt::blue, 2.0));
 }
 
 int DrawnObject::binarySearch(int start, int end, float radians, float tolerence) {
@@ -188,7 +188,7 @@ void DrawnObject::drawVerticesx(QVector<int*> vertices, QPen pen){
     }
 }
 
-void DrawnObject::drawVerticesy(QVector<int*> vertices, QPen pen){
+void DrawnObject::drawVertices(QVector<int*> vertices, QPen pen){
     for(int i = 0; i< vertices.length(); i++){
         QPointF firstPos = QPointF(*(vertices[i]), *(vertices[i]+1)-5);
         QPointF lastPos = QPointF(firstPos.x(), firstPos.y()+10);

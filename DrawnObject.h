@@ -22,7 +22,7 @@ public:
     void analyzeWithSlopes();
     int binarySearch(int start, int end, float slope, float tolerence);
     void drawVerticesx(QVector<int*> vertices, QPen pen);
-    void drawVerticesy(QVector<int*> vertices, QPen pen);
+    void drawVertices(QVector<int*> vertices, QPen pen);
 
     void runTests();
     QVector<int*> cleanupVertices(QVector<int*> vertices);
