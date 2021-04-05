@@ -12,11 +12,20 @@ DrawnObject::DrawnObject(drawspace* view){
 }
 
 void DrawnObject::addData(int x, int y, int time){
-    int *data = new int[3];
-    data[0] = x;
-    data[1] = y;
-    data[2] = time;
-    vector.append(data);
+//    if (vector.length() > 0) {
+//        int x0 = *(vector[vector.length()-1]);
+//        int y0 = *(vector[vector.length()-1]+1);
+//        int distance = int(sqrt((y-y0)^2 + (x - x0)^2));
+//        for (int i = 0; i < distance; i++) {
+
+//        }
+//    } else {
+        int *data = new int[3];
+        data[0] = x;
+        data[1] = y;
+        data[2] = time;
+        vector.append(data);
+//    }
 }
 
 void DrawnObject::analyze(){
@@ -61,9 +70,9 @@ void DrawnObject::analyzeWithSlopes() {
     bool haveAngle = false;
 
     float radians = 0;
-    float tolerence = 0.449;
+    float tolerence = 0.523598;
 
-    int gap = 6;
+    int gap = 4;
 
     int maxLen = vector.length();
     int i = 0;
@@ -112,7 +121,7 @@ void DrawnObject::analyzeWithSlopes() {
 
     printf("vertices length: %i\n", vertices.length());
     QVector<int*> cleanedVertices2 = cleanupVertices(vertices2);
-    //drawVerticesy(vertices2, QPen(Qt::red, 10.0));
+    //drawVertices(vertices2, QPen(Qt::blue, 2.0));
     printf("vertices2 length: %i\n", vertices.length());
     drawVertices(cleanedVertices2, QPen(Qt::blue, 2.0));
 }
@@ -200,7 +209,7 @@ void DrawnObject::drawVertices(QVector<int*> vertices, QPen pen){
 QVector<int*> DrawnObject::cleanupVertices(QVector<int*> vertices){
     float currentAngle;
     float lastAngle;
-    float tolerance = 15.0;
+    float tolerance = 20.0;
     QLineF line;
     QVector<int*> returnVertices;
     returnVertices.append(vertices[0]);
