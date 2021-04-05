@@ -68,8 +68,9 @@ void DrawnObject::analyzeWithSlopes() {
     int maxLen = vector.length();
     int i = 0;
 
-    if ((maxLen/8) > 6) {
-        gap = int(floor(maxLen/8));
+    if ((maxLen/6) > 6) {
+        gap = int(floor(maxLen/6));
+        if (gap > 18) { gap = 18; }
     }
 
     vertices2.append(vector[0]);
@@ -89,7 +90,7 @@ void DrawnObject::analyzeWithSlopes() {
         float currRadians;
         if (x == 0) {
             if (y < 0) {
-                currRadians = -3.1415;
+                currRadians = 3.1415;
             } else {
                 currRadians = 0;
             }
@@ -136,7 +137,7 @@ int DrawnObject::binarySearch(int start, int end, float radians, float tolerence
     float currRadians;
     if (x == 0) {
         if (y < 0) {
-            currRadians = -3.1415;
+            currRadians = 3.1415;
         } else {
             currRadians = 0;
         }
