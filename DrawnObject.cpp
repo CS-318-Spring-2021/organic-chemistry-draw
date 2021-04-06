@@ -12,20 +12,11 @@ DrawnObject::DrawnObject(drawspace* view){
 }
 
 void DrawnObject::addData(int x, int y, int time){
-//    if (vector.length() > 0) {
-//        int x0 = *(vector[vector.length()-1]);
-//        int y0 = *(vector[vector.length()-1]+1);
-//        int distance = int(sqrt((y-y0)^2 + (x - x0)^2));
-//        for (int i = 0; i < distance; i++) {
-
-//        }
-//    } else {
         int *data = new int[3];
         data[0] = x;
         data[1] = y;
         data[2] = time;
         vector.append(data);
-//    }
 }
 
 void DrawnObject::analyze(){
@@ -70,18 +61,13 @@ void DrawnObject::analyzeWithSlopes() {
     bool haveAngle = false;
 
     float radians = 0;
-    float tolerence = 0.523598;
+    float tolerence = 0.2617994;
 
-    int gap = 4;
+    int gap = 8;
 
     int maxLen = vector.length();
+    printf("maxLen = %i\n", maxLen);
     int i = 0;
-
-    if ((maxLen/6) > 6) {
-        gap = int(floor(maxLen/6));
-        if (gap > 18) { gap = 18; }
-    }
-
     vertices2.append(vector[0]);
 
     while (i < maxLen) {
@@ -93,34 +79,42 @@ void DrawnObject::analyzeWithSlopes() {
         }
         int x1 = *(vector[i+gap]);
         int y1 = *(vector[i+gap]+1);
-        int x = (x0 - x1);
-        int y = (y0 - y1);
+        int xDiff = (x0 - x1);
+        int yDiff = (y0 - y1);
 
         float currRadians;
-        if (x == 0) {
-            if (y < 0) {
-                currRadians = 3.1415;
+        if (xDiff == 0) {
+            if (yDiff < 0) {
+                currRadians = 1.570796;
             } else {
-                currRadians = 0;
+                currRadians = 4.7123896;
             }
         } else {
-            currRadians = atan(y/x);
+            currRadians = atan(yDiff/xDiff);
         }
-        if (!haveAngle || (abs(radians - currRadians) < tolerence)) {
+        if (!haveAngle) {
             haveAngle = true;
             i = i + gap;
+            radians = currRadians;
+        } else if (abs(radians - currRadians - tolerence) < tolerence) {
+            i = i + gap;
         } else {
-            haveAngle = false;
             i = binarySearch(i, i+gap, radians, tolerence);
+            vertices2.append(vector[i]);
+            haveAngle = false;
         }
-        radians = currRadians;
     }
     vertices2.append(vector[maxLen-1]);
 
+    QVector<int*> cleanedVertices2;
 
+    int prevCount = vertices2.length();
+    cleanedVertices2 = cleanupVertices(vertices2);
 
-    printf("vertices length: %i\n", vertices.length());
-    QVector<int*> cleanedVertices2 = cleanupVertices(vertices2);
+    while (prevCount > cleanedVertices2.length()) {
+        prevCount = cleanedVertices2.length();
+        cleanedVertices2 = cleanupVertices(cleanupVertices(vertices2));
+    }
     //drawVertices(vertices2, QPen(Qt::blue, 2.0));
     printf("vertices2 length: %i\n", vertices.length());
     drawVertices(cleanedVertices2, QPen(Qt::blue, 2.0));
@@ -131,7 +125,6 @@ int DrawnObject::binarySearch(int start, int end, float radians, float tolerence
 
     // base case, if only two or less left, we are pretty much done
     if (difference < 3) {
-        vertices2.append(vector[start]);
         return start;
     }
 
@@ -140,18 +133,18 @@ int DrawnObject::binarySearch(int start, int end, float radians, float tolerence
     int y0 = *(vector[start]+1);
     int x1 = *(vector[halfway]);
     int y1 = *(vector[halfway]+1);
-    int x = (x0 - x1);
-    int y = (y0 - y1);
+    int xDiff = (x0 - x1);
+    int yDiff = (y0 - y1);
 
     float currRadians;
-    if (x == 0) {
-        if (y < 0) {
-            currRadians = 3.1415;
+    if (xDiff == 0) {
+        if (yDiff < 0) {
+            currRadians = 1.570796;
         } else {
-            currRadians = 0;
+            currRadians = 4.7123896;
         }
     } else {
-        currRadians = atan(y/x);
+        currRadians = atan(yDiff/xDiff);
     }
     if (abs(radians - currRadians) < tolerence) {
         return binarySearch(halfway, end, radians, tolerence);
