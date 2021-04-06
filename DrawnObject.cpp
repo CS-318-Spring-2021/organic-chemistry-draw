@@ -1,10 +1,10 @@
 #include "DrawnObject.h"
+#include "drawspace.h"
+
 #include <QWidget>
 #include <stdio.h>
 #include <QtMath>
 #include <cfloat>
-
-#include "drawspace.h"
 
 DrawnObject::DrawnObject(drawspace* view){
     this->view = view;
@@ -63,7 +63,7 @@ void DrawnObject::analyzeWithSlopes() {
     float radians = 0;
     float tolerence = 0.2617994;
 
-    int gap = 8;
+    int gap = 10;
 
     int maxLen = vector.length();
     printf("maxLen = %i\n", maxLen);
@@ -146,7 +146,7 @@ int DrawnObject::binarySearch(int start, int end, float radians, float tolerence
     } else {
         currRadians = atan(yDiff/xDiff);
     }
-    if (abs(radians - currRadians) < tolerence) {
+    if (abs(radians - currRadians) < (tolerence + 0.05)) {
         return binarySearch(halfway, end, radians, tolerence);
     } else {
         return binarySearch(start, halfway, radians, tolerence);
