@@ -5,6 +5,11 @@ Atom::Atom(QPointF currentPos) {
     element = Carbon;
 }
 
+void Atom::addBond(Bond *p_bond){
+    bonds.append(p_bond);
+}
+
+/*
 void Atom::setFirstBond(Bond *p_firstBond){
     bondFirst = p_firstBond;
     numBonds += 1;
@@ -23,7 +28,7 @@ void Atom::setThirdBond(Bond *p_thirdBond){
 void Atom::setFourthBond(Bond *p_fourthBond){
     bondFourth = p_fourthBond;
     numBonds += 1;
-}
+}*/
 
 void Atom::setElement(enum Element changeElement){
     element = changeElement;

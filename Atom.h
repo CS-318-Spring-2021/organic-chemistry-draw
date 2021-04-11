@@ -26,18 +26,20 @@ public:
         Bromine
     };
 
-    void setFirstBond(Bond *p_firstBond);
-    void setSecondBond(Bond *p_secondBond);
-    void setThirdBond(Bond *p_thirdBond);
-    void setFourthBond(Bond *p_fourthBond);
+//    void setFirstBond(Bond *p_firstBond);
+//    void setSecondBond(Bond *p_secondBond);
+//    void setThirdBond(Bond *p_thirdBond);
+//    void setFourthBond(Bond *p_fourthBond);
     void setElement(Element changeElement);
+    void addBond(Bond *p_bond);
 
 private:
-    int numBonds = 0;
-    Bond *bondFirst;
-    Bond *bondSecond;
-    Bond *bondThird;
-    Bond *bondFourth;
+    QVector<Bond*> bonds;
+    //int numBonds = 0;
+    //Bond *bondFirst;
+    //Bond *bondSecond;
+    //Bond *bondThird;
+    //Bond *bondFourth;
     QPointF atomPos;
     double const atomRadius = 10; //need to decide this later
     Element element;
