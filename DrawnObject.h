@@ -17,7 +17,7 @@ public:
     void addData(int x, int y, int time);
     ~DrawnObject();
     void clean();
-    void analyze();
+    QVector<QPointF> analyze();
     //float speedCalc(int index);
     void analyzeWithSlopes(int gap);
     int binarySearch(int start, int end, float slope, float tolerence);

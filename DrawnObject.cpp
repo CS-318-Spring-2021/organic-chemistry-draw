@@ -5,6 +5,7 @@
 #include <cfloat>
 
 #include "drawspace.h"
+#include "Molecule.h"
 
 DrawnObject::DrawnObject(drawspace* view){
     this->view = view;
@@ -19,11 +20,11 @@ void DrawnObject::addData(int x, int y, int time){
     vector.append(data);
 }
 
-void DrawnObject::analyze(){
+QVector<QPointF> DrawnObject::analyze(){
     vertices.append(vector[0]); //first point drawn-- probably a vertex
 
     QLineF segment(*(vector[0]), *(vector[0]+1), *(vector[1]), *(vector[1]+1));
-    int dtime = *(vector[1]+2) - *(vector[0]+2);
+    int dtime = *(vector[1]+2) - *(vector[0]+2); //TODO: ...........
     for (int i=1; i<vector.size()-1; i++){
         segment = QLineF(*(vector[i]), *(vector[i]+1), *(vector[i+1]), *(vector[i+1]+1));
         dtime = *(vector[i]+2) - *(vector[i-1]+2);
@@ -41,12 +42,20 @@ void DrawnObject::analyze(){
 
     //analyzeWithSlopes(15);
 
-    for (int i = 0;i<cleanedVertices.length()-1;i++){
+
+    QVector<QPointF> bVertices;
+    for (int i = 0; i< cleanedVertices.size(); i++){
+        bVertices.append(QPointF(*(cleanedVertices[i]), *(cleanedVertices[i]+1)));
+    }
+
+    return bVertices;
+
+    /*for (int i = 0;i<cleanedVertices.length()-1;i++){
 
         QPointF firstPos = QPointF(*(cleanedVertices[i]), *(cleanedVertices[i]+1));
         QPointF lastPos = QPointF(*(cleanedVertices[i+1]), *(cleanedVertices[i+1]+1));
         view->replaceSegment(firstPos, lastPos);
-    }
+    }*/
 }
 
 void DrawnObject::analyzeWithSlopes(int gap) {

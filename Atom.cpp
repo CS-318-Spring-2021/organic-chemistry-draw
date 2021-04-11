@@ -33,3 +33,7 @@ void Atom::setFourthBond(Bond *p_fourthBond){
 void Atom::setElement(enum Element changeElement){
     element = changeElement;
 }
+
+QPointF Atom::getPos(){
+    return atomPos;
+}

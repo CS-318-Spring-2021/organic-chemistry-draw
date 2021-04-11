@@ -57,3 +57,7 @@ void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos) 
 void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos, QPen pen) {
     mScene.addLine(QLineF(firstPos, lastPos), pen);
 }
+
+void drawspace::replaceSegment(const QLineF line){
+    mScene.addLine(line);
+}

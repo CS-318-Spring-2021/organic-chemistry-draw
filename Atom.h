@@ -2,7 +2,8 @@
 #define ATOM_H
 
 #include "Molecule.h"
-#include "drawspace.h"
+#include <QPointF>
+#include <QVector>
 
 class Bond;
 
@@ -32,6 +33,7 @@ public:
 //    void setFourthBond(Bond *p_fourthBond);
     void setElement(Element changeElement);
     void addBond(Bond *p_bond);
+    QPointF getPos();
 
 private:
     QVector<Bond*> bonds;

@@ -2,6 +2,8 @@
 #define BOND_H
 
 #include "Molecule.h"
+#include <QPointF>
+#include <QVector>
 
 class Atom;
 

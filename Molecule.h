@@ -1,11 +1,12 @@
 #ifndef MOLECULE_H
 #define MOLECULE_H
 
-#include "drawspace.h"
 #include "Atom.h"
 #include "Bond.h"
+#include <QPointF>
+#include <QVector>
 
-class Molecule: public drawspace{
+class Molecule{
 
     enum MoleculeType {Cyclic, Linear};
 

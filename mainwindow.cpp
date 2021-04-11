@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "drawspace.h"
+#include "Molecule.h"
 
 using namespace std;
 
@@ -91,9 +92,21 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
 //    if (type == 0){
 //        currentDrawnObject->dealloc();
 //    }
-    currentDrawnObject->addData(pos.x(), pos.y(), when-when0);
+    currentDrawnObject->addData(pos.x(), pos.y(), when-when0); //TODO: pos.x() and pos.y() is DUMB and BAD. just use the qpoints!
     if (type == 1){
-        currentDrawnObject->analyze();
+        //currentDrawnObject->analyze();
+
+        Molecule molecule(currentDrawnObject->analyze());
+
+        //draw on the space: molecule vertices, molecule edges.
+        //QLineF segment()
+        for (int i = 0; i<molecule.getAtomSet().size()-1; i++){
+            //create line segment between two atoms
+            QPointF a = molecule.getAtomSet()[i]->getPos();
+            QPointF b = molecule.getAtomSet()[i+1]->getPos();
+            view->replaceSegment(a, b);
+        }
+
         //currentDrawnObject->analyzeWithSlopes(10);
         currentDrawnObject->clean();
     }
