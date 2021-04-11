@@ -4,6 +4,7 @@
 #include <QGraphicsView>
 #include <QObject>
 #include <QWidget>
+#include <cmath>
 
 class QGraphicsPathItem;
 
@@ -15,16 +16,15 @@ class drawspace : public QGraphicsView
     QPointF lastPos;
     QGraphicsPathItem *crosshairs;
 
-
+    void maybeAddSegment(const QPointF &pos);
 
 public:
-    enum { MousePressed, MouseReleased, MouseMoved };
+    enum {MousePressed, MouseReleased, MouseMoved};
 
     drawspace();
 
     void setCrosshairsVisible(bool visible);
     void setCrosshairsPos(const QPointF &pos);
-    void maybeAddSegment(const QPointF &pos);
     void replaceSegment(const QPointF &firstPos, const QPointF &lastPos);
     void replaceSegment(const QPointF &firstPos, const QPointF &lastPos, QPen pen);
 
