@@ -102,6 +102,7 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
         for (int i = 0; i<molecule.getAtomSet().size()-1; i++){
             //create line segment between two atoms
             QPointF a = molecule.getAtomSet()[i]->getPos();
+            //printf("(%i, %i)\n", int(a.x()), int(a.y()));
             QPointF b = molecule.getAtomSet()[i+1]->getPos();
             view->replaceSegment(a, b);
         }

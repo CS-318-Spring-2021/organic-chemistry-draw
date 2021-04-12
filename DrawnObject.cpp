@@ -34,24 +34,16 @@ QVector<QPointF> DrawnObject::analyze(){
             vertices.append(point);
         }
     }
-    vertices.append(next); //last point drawn-- probably a vertex
+    vertices.append(next);
 //    for (int i = 0; i<vertices.size(); i++){
 //        printf("%i: (%i, %i)\n", i, int(vertices[i].x()), int(vertices[i].y()));
 //    }
 
     //drawVerticesx(vertices, QPen(Qt::blue, 2.0));
-    QVector<QPointF> cleanedVertices = analyzeLengths(eliminateColinear(vertices)); /*
-    for (int i = 0; i<cleanedVertices.size(); i++){
-        printf("%i: (%i, %i)\n", i, int(cleanedVertices[i].x()), int(cleanedVertices[i].y()));
-    }*/
-
     //vertices.clear();
-    //vertices = cleanupVertices(cleanedVertices);
-    drawVerticesy(cleanedVertices, QPen(Qt::red, 2.0));
-
+    return analyzeLengths(eliminateColinear(vertices));
+    //drawVerticesy(cleanedVertices, QPen(Qt::red, 2.0));
     //analyzeWithSlopes(15);
-
-    return cleanedVertices;
 }
 /*
 void DrawnObject::analyzeWithSlopes(int gap) {
@@ -146,7 +138,7 @@ void DrawnObject::clean(){
     for(int i = 0; i < vector.size(); i++){
         free(vector[i]);
     }
-    cleanedVertices.clear();
+    //cleanedVertices.clear();
     vertices.clear();
     //vertices2.clear();
     vector.clear();
@@ -157,7 +149,7 @@ DrawnObject::~DrawnObject(){
     vector.~QVector();
     vertices.~QVector();
     //vertices2.~QVector();
-    cleanedVertices.~QVector();
+    //cleanedVertices.~QVector();
 }
 
 void DrawnObject::drawVerticesx(QVector<QPointF> vertices, QPen pen){
@@ -182,7 +174,6 @@ QVector<QPointF> DrawnObject::eliminateColinear(QVector<QPointF> vertices){
     int tolerance = 10;
     QVector<QPointF> returnVertices;
     returnVertices.append(vertices[0]);
-    //printf("length: %i\n", vertices.length());
 
     lastLine = QLineF(vertices[0], vertices[1]);
     for (int i = 1;i<vertices.length()-1;i++){
@@ -191,45 +182,67 @@ QVector<QPointF> DrawnObject::eliminateColinear(QVector<QPointF> vertices){
             returnVertices.append(vertices[i]);
         }
         lastLine = currentLine;
-
     }
     returnVertices.append(vertices[vertices.length()-1]);
-    //printf("vtx length: %i\n", returnVertices.length());
+
     return returnVertices;
 }
 
 QVector<QPointF> DrawnObject::analyzeLengths(QVector<QPointF> vertices){
+    QVector<int> lengths; //lengths at i is the distance between i-1 and i
     QVector<QPointF> returnVertices;
-    QVector<int> indices;
-    indices.append(0);
+    int maxLength = 0;
+
+    lengths.append(0);
     for (int i=1; i< vertices.size(); i++){
         int l = QLineF(vertices[i], vertices[i-1]).length();
-        printf("%i to %i: %i\n", i-1, i, l);
-        if (l>10){
-            indices.append(l);
+        lengths.append(l);
+        if (l>maxLength){
+            maxLength = l;
+        }
+    }
 
-        }
-        else {
-            indices.append(l);
-        }
-    }
-    int cot = 1;
-    int x = vertices[0].x();
-    int y = vertices[0].y();
-    //returnVertices.append(vertices[0]);
+
+    QVector<QPointF> clump;
+    clump.append(vertices[0]);
     for (int i = 1; i<vertices.size(); i++){
-        if (indices[i] < 10){ //if this is an inconsequential thing
-            x = x + vertices[i].x();
-            y = y + vertices[i].y();
-            cot = cot + 1;
+        if (lengths[i] < maxLength/3){
+            clump.append(vertices[i]);
         }
         else {
-            returnVertices.append(QPointF(x/cot, y/cot));
-            cot = 1;
-            x = vertices[i].x();
-            y = vertices[i].y();
+            returnVertices.append(pointAverage(clump));
+            clump.clear();
+            clump.append(vertices[i]);
         }
     }
-    returnVertices.append(QPointF(x/cot, y/cot));
+    QPointF p = pointAverage(clump);
+    clump.clear();
+    int l = QLineF(returnVertices[0], p).length();
+    if (l< maxLength/3){
+        returnVertices.append(returnVertices[0]);
+    }
+    else {
+        returnVertices.append(p);
+    }
     return returnVertices;
+}
+
+QPointF DrawnObject::pointAverage(QVector<QPointF> points){
+    if (points.size()==1){
+        return points[0];
+    }
+    int x = 0;
+    int y = 0;
+    //printf("------\n");
+    for (int i=0; i<points.size(); i++){
+        //printf("  (%i, %i)\n", int(points[i].x()), int(points[i].y()));
+        x = x + int(points[i].x());
+        y = y + int(points[i].y());
+    }
+    x = x/points.size();
+    y = y/points.size();
+    //printf("==(%i, %i)\n", int(points[0].x()), int(points[0].y()));
+    //printf("==(%i, %i)\n", x, y);
+    //TODO: does this actually do a good / reasonable job computing the average?
+    return QPointF(x, y);
 }

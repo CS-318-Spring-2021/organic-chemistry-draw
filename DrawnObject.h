@@ -5,7 +5,7 @@
 #include "drawspace.h"
 
 class DrawnObject{
-//    QVector<int*> vector;
+    //QVector<int*> vector;
     drawspace* view;
 public:
     QVector<int*> vector;
@@ -13,7 +13,7 @@ public:
     //QVector<int> indices;
     //QVector<int*> vertices2;
     //QVector<float> speeds;
-    QVector<QPointF> cleanedVertices;
+    //QVector<QPointF> cleanedVertices;
     DrawnObject(drawspace* view);
     void addData(int x, int y, int time);
     ~DrawnObject();
@@ -26,7 +26,7 @@ public:
     void drawVerticesx(QVector<QPointF> vertices, QPen pen);
     void drawVerticesy(QVector<QPointF> vertices, QPen pen);
     QVector<QPointF> eliminateColinear(QVector<QPointF> vertices);
-    int diff(int a, int b);
+    QPointF pointAverage(QVector<QPointF> points);
 
 };
 
