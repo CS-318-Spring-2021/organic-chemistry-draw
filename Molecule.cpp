@@ -8,7 +8,7 @@ Molecule::Molecule(QVector<QPointF> drawnVertices) {
     Atom *p_previousAtom = p_currentAtom;
     for (int i=1; i < drawnVertices.size(); i++) {
 
-        printf("%i:(%i, %i)\n", i, int((drawnVertices[i]).x()), int((drawnVertices[i]).y()));
+        //printf("%i:(%i, %i)\n", i, int((drawnVertices[i]).x()), int((drawnVertices[i]).y()));
 
         Bond *p_currentBond = new Bond();
         p_previousAtom->addBond(p_currentBond);

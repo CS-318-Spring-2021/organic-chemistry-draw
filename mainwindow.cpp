@@ -98,8 +98,7 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
 
         Molecule molecule(currentDrawnObject->analyze());
 
-        //draw on the space: molecule vertices, molecule edges.
-        //QLineF segment()
+
         for (int i = 0; i<molecule.getAtomSet().size()-1; i++){
             //create line segment between two atoms
             QPointF a = molecule.getAtomSet()[i]->getPos();

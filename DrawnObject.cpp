@@ -21,43 +21,39 @@ void DrawnObject::addData(int x, int y, int time){
 }
 
 QVector<QPointF> DrawnObject::analyze(){
-    vertices.append(vector[0]); //first point drawn-- probably a vertex
-
-    QLineF segment(*(vector[0]), *(vector[0]+1), *(vector[1]), *(vector[1]+1));
-    int dtime = *(vector[1]+2) - *(vector[0]+2); //TODO: ...........
+    QPointF point(*(vector[0]), *(vector[0]+1));
+    QPointF next(*(vector[1]), *(vector[1]+1));
+    vertices.append(point); //first point drawn-- probably a vertex
     for (int i=1; i<vector.size()-1; i++){
-        segment = QLineF(*(vector[i]), *(vector[i]+1), *(vector[i+1]), *(vector[i+1]+1));
-        dtime = *(vector[i]+2) - *(vector[i-1]+2);
+        point = QPointF(*(vector[i]), *(vector[i]+1));
+        next = QPointF(*(vector[i+1]), *(vector[i+1]+1));
+        QLineF segment(point, next);
+        int dtime = *(vector[i]+2) - *(vector[i-1]+2);
         int speed = int(100*(segment.length())/dtime);
-        if (speed<5){
-            vertices.append(vector[i]);
+        if (speed<5 && vertices[vertices.size()-1] != point){
+            vertices.append(point);
         }
     }
-    vertices.append(vector[vector.size()-1]);
+    vertices.append(next); //last point drawn-- probably a vertex
+//    for (int i = 0; i<vertices.size(); i++){
+//        printf("%i: (%i, %i)\n", i, int(vertices[i].x()), int(vertices[i].y()));
+//    }
+
     //drawVerticesx(vertices, QPen(Qt::blue, 2.0));
-    QVector<int*> cleanedVertices = cleanupVertices(vertices);
+    QVector<QPointF> cleanedVertices = analyzeLengths(eliminateColinear(vertices)); /*
+    for (int i = 0; i<cleanedVertices.size(); i++){
+        printf("%i: (%i, %i)\n", i, int(cleanedVertices[i].x()), int(cleanedVertices[i].y()));
+    }*/
+
     //vertices.clear();
     //vertices = cleanupVertices(cleanedVertices);
     drawVerticesy(cleanedVertices, QPen(Qt::red, 2.0));
 
     //analyzeWithSlopes(15);
 
-
-    QVector<QPointF> bVertices;
-    for (int i = 0; i< cleanedVertices.size(); i++){
-        bVertices.append(QPointF(*(cleanedVertices[i]), *(cleanedVertices[i]+1)));
-    }
-
-    return bVertices;
-
-    /*for (int i = 0;i<cleanedVertices.length()-1;i++){
-
-        QPointF firstPos = QPointF(*(cleanedVertices[i]), *(cleanedVertices[i]+1));
-        QPointF lastPos = QPointF(*(cleanedVertices[i+1]), *(cleanedVertices[i+1]+1));
-        view->replaceSegment(firstPos, lastPos);
-    }*/
+    return cleanedVertices;
 }
-
+/*
 void DrawnObject::analyzeWithSlopes(int gap) {
 
     bool haveAngle = false;
@@ -145,14 +141,14 @@ int DrawnObject::binarySearch(int start, int end, float degrees, float tolerence
         return binarySearch(start, halfway, degrees, tolerence);
     }
 }
-
+*/
 void DrawnObject::clean(){
     for(int i = 0; i < vector.size(); i++){
         free(vector[i]);
     }
     cleanedVertices.clear();
     vertices.clear();
-    vertices2.clear();
+    //vertices2.clear();
     vector.clear();
 }
 
@@ -160,63 +156,80 @@ DrawnObject::~DrawnObject(){
     clean();
     vector.~QVector();
     vertices.~QVector();
-    vertices2.~QVector();
+    //vertices2.~QVector();
     cleanedVertices.~QVector();
 }
 
-void DrawnObject::drawVerticesx(QVector<int*> vertices, QPen pen){
+void DrawnObject::drawVerticesx(QVector<QPointF> vertices, QPen pen){
     for(int i = 0; i< vertices.length(); i++){
-        QPointF firstPos = QPointF(*(vertices[i])-5, *(vertices[i]+1));
-        QPointF lastPos = QPointF(firstPos.x()+10, firstPos.y());
+        QPointF firstPos = QPointF(vertices[i].x()-5, vertices[i].y());
+        QPointF lastPos = QPointF(vertices[i].x()+10, vertices[i].y());
         view->replaceSegment(firstPos, lastPos, pen);
     }
 }
 
-void DrawnObject::drawVerticesy(QVector<int*> vertices, QPen pen){
+void DrawnObject::drawVerticesy(QVector<QPointF> vertices, QPen pen){
     for(int i = 0; i< vertices.length(); i++){
-        QPointF firstPos = QPointF(*(vertices[i]), *(vertices[i]+1)-5);
-        QPointF lastPos = QPointF(firstPos.x(), firstPos.y()+10);
+        QPointF firstPos = QPointF(vertices[i].x(), vertices[i].y()-5);
+        QPointF lastPos = QPointF(vertices[i].x(), vertices[i].y()+10);
         view->replaceSegment(firstPos, lastPos, pen);
     }
 }
 
-QVector<int*> DrawnObject::cleanupVertices(QVector<int*> vertices){
-    int currentAngle;
-    int lastAngle;
+QVector<QPointF> DrawnObject::eliminateColinear(QVector<QPointF> vertices){
+    QLineF currentLine;
+    QLineF lastLine;
     int tolerance = 10;
-    QLineF line;
-    QVector<int*> returnVertices;
+    QVector<QPointF> returnVertices;
     returnVertices.append(vertices[0]);
     //printf("length: %i\n", vertices.length());
-    QPointF firstPos = QPointF(*(vertices[0]), *(vertices[0]+1));
-    QPointF lastPos = QPointF(*(vertices[1]), *(vertices[1]+1));
-    line = QLineF(firstPos, lastPos);
-    currentAngle = int(line.angle());
+
+    lastLine = QLineF(vertices[0], vertices[1]);
     for (int i = 1;i<vertices.length()-1;i++){
-        firstPos = QPointF(*(vertices[i]), *(vertices[i]+1));
-        lastPos = QPointF(*(vertices[i+1]), *(vertices[i+1]+1));
-        lastAngle = currentAngle;
-        line = QLineF(firstPos, lastPos);
-        currentAngle = int(line.angle());
-        if(diff(lastAngle,currentAngle) > tolerance){
+        currentLine = QLineF(vertices[i], vertices[i+1]);
+        if (abs(currentLine.angleTo(lastLine))>tolerance){
             returnVertices.append(vertices[i]);
         }
+        lastLine = currentLine;
+
     }
     returnVertices.append(vertices[vertices.length()-1]);
-    printf("vtx length: %i\n", returnVertices.length());
+    //printf("vtx length: %i\n", returnVertices.length());
     return returnVertices;
 }
 
-int DrawnObject::diff(int a, int b){
-    //a and b are both on a scale of 0 to 360.
-    //if a is 0 and b is 350, return 10.
-    //if a is 350 and b is 0, return 10
-    //if a is 200 and b is 300, return 100
-    //is this modulo?
-    //oh crap! this totally is mod!
-    //so its? subtract them, mod 360?
+QVector<QPointF> DrawnObject::analyzeLengths(QVector<QPointF> vertices){
+    QVector<QPointF> returnVertices;
+    QVector<int> indices;
+    indices.append(0);
+    for (int i=1; i< vertices.size(); i++){
+        int l = QLineF(vertices[i], vertices[i-1]).length();
+        printf("%i to %i: %i\n", i-1, i, l);
+        if (l>10){
+            indices.append(l);
 
-    int t = (a-b)%360;
-    return abs(t);
-    //return 0;
+        }
+        else {
+            indices.append(l);
+        }
+    }
+    int cot = 1;
+    int x = vertices[0].x();
+    int y = vertices[0].y();
+    //returnVertices.append(vertices[0]);
+    for (int i = 1; i<vertices.size(); i++){
+        if (indices[i] < 10){ //if this is an inconsequential thing
+            x = x + vertices[i].x();
+            y = y + vertices[i].y();
+            cot = cot + 1;
+        }
+        else {
+            returnVertices.append(QPointF(x/cot, y/cot));
+            cot = 1;
+            x = vertices[i].x();
+            y = vertices[i].y();
+        }
+    }
+    returnVertices.append(QPointF(x/cot, y/cot));
+    return returnVertices;
 }
