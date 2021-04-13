@@ -83,18 +83,10 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
     static QString types = "PRM";
     static int when0 = -1;
 
-//    if(!recording){
-//        return;
-//    }
-
     if (when0==-1) when0 = when;
 
-//    if (type == 0){
-//        currentDrawnObject->dealloc();
-//    }
-    currentDrawnObject->addData(pos.x(), pos.y(), when-when0); //TODO: pos.x() and pos.y() is DUMB and BAD. just use the qpoints!
+    currentDrawnObject->addData(pos, when-when0);
     if (type == 1){
-        //currentDrawnObject->analyze();
 
         Molecule molecule(currentDrawnObject->analyze());
 
@@ -107,7 +99,6 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
             view->replaceSegment(a, b);
         }
 
-        //currentDrawnObject->analyzeWithSlopes(10);
         currentDrawnObject->clean();
     }
 
