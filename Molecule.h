@@ -23,6 +23,7 @@ public:
     QVector<Atom*> getAtomSet();
     QVector<Bond*> getBondSet();
     void correctLineStructure();
+    void correctCyclicStructure();
 
 };
 
