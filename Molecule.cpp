@@ -20,6 +20,7 @@ Molecule::Molecule(QVector<QPointF> drawnVertices) {
         p_previousAtom= p_currentAtom;
         atomSet.append(p_currentAtom);
     }
+    correctLineStructure();
 }
 
 
@@ -39,4 +40,10 @@ QVector<Atom*> Molecule::getAtomSet(){
 }
 QVector<Bond*> Molecule::getBondSet(){
     return bondSet;
+}
+
+void Molecule::correctLineStructure(){
+    for(int i = 1; i<atomSet.size(); i++){
+
+    }
 }
