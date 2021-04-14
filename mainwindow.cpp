@@ -23,6 +23,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(saveButton, &QPushButton::clicked, this, &MainWindow::bSave);
 
+    QVBoxLayout *taskBarLayout = new QVBoxLayout();
+    taskBarLayout->addWidget(recordCheckBox = new QCheckBox("Record"));
+    recordCheckBox->setCheckable(true);
+    recordCheckBox->setChecked(true);
+
+    connect(recordCheckBox, &QCheckBox::stateChanged, this, &MainWindow::bRecording);
+
+    mainLayout->addLayout(taskBarLayout);
     mainLayout->addWidget(view = new drawspace(), 1);
     mainLayout->addLayout(rightLayout);
 
@@ -79,7 +87,15 @@ void MainWindow::bSave() {
     return;
 }
 
+void MainWindow::bRecording(){
+
+}
+
 void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
+    if(!recordCheckBox->isChecked()){
+        return;
+    }
+
     static QString types = "PRM";
     static int when0 = -1;
 

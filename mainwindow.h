@@ -9,6 +9,7 @@
 class PollingGraphicsView;
 class QTableWidget;
 class QPushButton;
+class QCheckBox;
 
 class MainWindow : public QMainWindow
 {
@@ -17,16 +18,17 @@ class MainWindow : public QMainWindow
     drawspace *view;
     QTableWidget *table;
     QPushButton *saveButton;
+    QCheckBox *recordCheckBox;
 
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     DrawnObject *currentDrawnObject;
-    bool recording;
 
 public slots:
     void onMouseEvent(int type, int when, QPointF scenePos);
     void bSave();
+    void bRecording();
     void updateCrosshairs(int curRow, int curCol, int prevRow, int prevCol);
 };
 #endif // MAINWINDOW_H

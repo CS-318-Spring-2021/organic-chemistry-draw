@@ -1,5 +1,6 @@
 #include "Molecule.h"
 #include <array>
+#include <QtMath>
 
 Molecule::Molecule(QVector<QPointF> drawnVertices) {
     setBondLength(drawnVertices[0], drawnVertices[1]); //TODO: this isnt always right
@@ -28,9 +29,9 @@ void Molecule::setBondLength(QPointF first, QPointF second) {
 }
 
 double Molecule::calculateDistance(QPointF first, QPointF second) {
-    double xSquare = pow(second.x()- first.x(), 2);
-    double ySquare = pow(second.y()- first.y(), 2);
-    double distance = sqrt(xSquare+ySquare);
+    double xSquare = qPow(second.x()- first.x(), 2);
+    double ySquare = qPow(second.y()- first.y(), 2);
+    double distance = qSqrt(xSquare+ySquare);
     return distance;
 }
 
