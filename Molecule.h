@@ -22,6 +22,8 @@ public:
     static double calculateDistance(QPointF first, QPointF second);
     QVector<Atom*> getAtomSet();
     QVector<Bond*> getBondSet();
+    void correctLineStructure();
+    void correctCyclicStructure();
 
 };
 
