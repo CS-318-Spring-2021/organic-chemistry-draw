@@ -14,7 +14,7 @@ class Molecule{
     MoleculeType type;
     QVector<Atom*> atomSet;
     QVector<Bond*> bondSet;
-
+    const double standardLineSegmentAngle = (35.25*M_PI)/180.0;
 
 public:
     Molecule(QVector<QPointF> drawnVertices);
