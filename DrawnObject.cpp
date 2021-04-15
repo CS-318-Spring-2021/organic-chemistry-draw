@@ -44,6 +44,7 @@ void DrawnObject::clean(){
         free(timeInputPoints[i]);
     }
     vertices.clear();
+    altVertices.clear();
     positionInputPoints.clear();
     timeInputPoints.clear();
 }
@@ -74,6 +75,94 @@ QVector<QPointF> DrawnObject::eliminateColinear(QVector<QPointF> vertices){
 
     return returnVertices;
 }
+
+void DrawnObject::analyzeWithSlopes() {
+
+    bool haveAngle = false;
+
+    float radians = 0;
+    float tolerence = 0.2617994;
+
+    int gap = 10;
+
+    int maxLen = positionInputPoints.length();
+    printf("maxLen = %i\n", maxLen);
+    int i = 0;
+    altVertices.append(*positionInputPoints[0]);
+
+    while (i < maxLen) {
+        int x0 = positionInputPoints[i]->x();
+        int y0 = positionInputPoints[i]->y();
+        if ((i + gap) > maxLen-1) {
+            gap = maxLen - 1 - i;
+            if (gap < 3) { break; }
+        }
+        int x1 = positionInputPoints[i+gap]->x();
+        int y1 = positionInputPoints[i+gap]->y();
+        int xDiff = (x0 - x1);
+        int yDiff = (y0 - y1);
+
+        float currRadians;
+        if (xDiff == 0) {
+            if (yDiff < 0) {
+                currRadians = 1.570796;
+            } else {
+                currRadians = 4.7123896;
+            }
+        } else {
+            currRadians = atan(yDiff/xDiff);
+        }
+        if (!haveAngle) {
+            haveAngle = true;
+            i = i + gap;
+            radians = currRadians;
+        } else if (abs(radians - currRadians - tolerence) < tolerence) {
+            i = i + gap;
+        } else {
+            i = binarySearch(i, i+gap, radians, tolerence);
+            altVertices.append(*positionInputPoints[i]);
+            haveAngle = false;
+        }
+    }
+    altVertices.append(*positionInputPoints[maxLen-1]);
+    QVector<QPointF> cleanedPoints = eliminateColinear(altVertices);
+
+
+}
+
+int DrawnObject::binarySearch(int start, int end, float radians, float tolerence) {
+    int difference = end - start;
+
+    // base case, if only two or less left, we are pretty much done
+    if (difference < 3) {
+        return start;
+    }
+
+    int halfway = end - int(difference/2);
+    int x0 = positionInputPoints[start]->x();
+    int y0 = positionInputPoints[start]->y();
+    int x1 = positionInputPoints[halfway]->x();
+    int y1 = positionInputPoints[halfway]->y();
+    int xDiff = (x0 - x1);
+    int yDiff = (y0 - y1);
+
+    float currRadians;
+    if (xDiff == 0) {
+        if (yDiff < 0) {
+            currRadians = 1.570796;
+        } else {
+            currRadians = 4.7123896;
+        }
+    } else {
+        currRadians = atan(yDiff/xDiff);
+    }
+    if (abs(radians - currRadians) < (tolerence + 0.05)) {
+        return binarySearch(halfway, end, radians, tolerence);
+    } else {
+        return binarySearch(start, halfway, radians, tolerence);
+    }
+}
+
 
 QVector<QPointF> DrawnObject::analyzeLengths(QVector<QPointF> vertices){
     QVector<int> lengths; //lengths at i is the distance between i-1 and i
