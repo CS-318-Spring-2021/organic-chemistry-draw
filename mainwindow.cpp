@@ -90,13 +90,29 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
 
         Molecule molecule(currentDrawnObject->analyze());
 
+        //draws bonds
+        for (int i = 0; i<molecule.bondSet.size()-1; i++){
+            //create line segment representing bond object
+            Bond *bond = molecule.bondSet[i];
 
-        for (int i = 0; i<molecule.getAtomSet().size()-1; i++){
-            //create line segment between two atoms
-            QPointF a = molecule.getAtomSet()[i]->getPos();
-            //printf("(%i, %i)\n", int(a.x()), int(a.y()));
-            QPointF b = molecule.getAtomSet()[i+1]->getPos();
-            view->replaceSegment(a, b);
+            QPointF a = bond->atomFirst->getAtomPos();
+            QPointF b = bond->atomSecond->getAtomPos();
+
+            int quantity = bond->quantity; //0, 1, 2
+            int quality = bond->quality; //0, 1, 2
+
+            //00, 01, 02, or 10, 20 //TODO: i think there is a more efficient way to do this nesting of ifs 😎
+
+            if (quality==0 && quantity==0){
+                view->replaceSegment(a, b);
+            }
+            else if (quantity>0){
+                view->drawMultipleBond(a, b, quantity);
+            }
+            else if (quality>0){
+                view->drawDimensionalBond(a, b, quality);
+
+            }
         }
 
         currentDrawnObject->clean();

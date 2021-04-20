@@ -28,6 +28,9 @@ public:
     void replaceSegment(const QPointF &firstPos, const QPointF &lastPos);
     void replaceSegment(const QPointF &firstPos, const QPointF &lastPos, QPen pen);
     void replaceSegment(const QLineF line);
+    void drawMultipleBond(const QPointF &firstPos, const QPointF &lastPos, int num);
+    void drawDimensionalBond(const QPointF &firstPos, const QPointF &lastPos, int style);
+
 
 
 protected:

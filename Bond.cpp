@@ -1,7 +1,7 @@
 #include "Bond.h"
 
 Bond::Bond(){
-    quality = NormalBond;
+    quality = ThickBond;
     quantity = SingleBond;
 }
 

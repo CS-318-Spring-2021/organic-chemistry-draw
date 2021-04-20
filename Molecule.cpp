@@ -6,12 +6,8 @@ Molecule::Molecule(QVector<QPointF> drawnVertices) {
     Atom *p_currentAtom = new Atom(drawnVertices[0]);
     atomSet.append(p_currentAtom);
     Atom *p_previousAtom = p_currentAtom;
-    printf("%i\n", drawnVertices.size());
 
-    for (int i=1; i < drawnVertices.size(); i++) {
-
-//        printf("%i:(%i, %i)\n", i, int((drawnVertices[i]).x()), int((drawnVertices[i]).y()));
-//        printf("%i\n",int(bondLength));
+    for (int i=1; i <= drawnVertices.size(); i++) { //TODO: FIX THIS !! IT IS WACKADOODLE CRAZY TOWN
 
         Bond *p_currentBond = new Bond();
         p_previousAtom->addBond(p_currentBond);

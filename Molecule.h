@@ -7,6 +7,7 @@
 #include <QVector>
 
 class Molecule{
+public:
 
     enum MoleculeType {Cyclic, Linear};
 
@@ -14,9 +15,6 @@ class Molecule{
     MoleculeType type;
     QVector<Atom*> atomSet;
     QVector<Bond*> bondSet;
-
-
-public:
     Molecule(QVector<QPointF> drawnVertices);
     void setBondLength(QPointF first, QPointF second);
     static double calculateDistance(QPointF first, QPointF second);

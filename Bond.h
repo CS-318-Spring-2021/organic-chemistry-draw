@@ -19,8 +19,6 @@ public:
     void setFirstAtom(Atom *p_firstAtom);
     void setSecondAtom(Atom *p_secondAtom);
     void changeQuantity(BondQuantity quantity);
-
-private:
     Atom *atomFirst;
     Atom *atomSecond;
     double slope;
