@@ -30,4 +30,3 @@ public:
 };
 
 #endif // BOND_H
->>>>>>> molecules

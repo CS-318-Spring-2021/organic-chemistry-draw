@@ -114,7 +114,7 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
             currentDrawnObject->clean();
         }
 
-        for (int i = 0; i<molecules[0]->bondSet.size()-1; i++){
+        for (int i = 0; i<(molecules[0]->bondSet.size()); i++){
             //create line segment representing bond object
             Bond *bond = molecules[0]->bondSet[i];
 

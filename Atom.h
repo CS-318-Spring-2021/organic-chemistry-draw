@@ -27,17 +27,11 @@ public:
         Bromine
     };
 
-//    void setFirstBond(Bond *p_firstBond);
-//    void setSecondBond(Bond *p_secondBond);
-//    void setThirdBond(Bond *p_thirdBond);
-//    void setFourthBond(Bond *p_fourthBond);
     void setElement(Element changeElement);
     void setAtomPos(QPointF newPoint);
     QPointF getAtomPos();
     void addBond(Bond *p_bond);
     QPointF getPos();
-
-private:
     QVector<Bond*> bonds;
     //int numBonds = 0;
     //Bond *bondFirst;

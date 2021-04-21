@@ -5,14 +5,6 @@
 
 Molecule::Molecule(QVector<QPointF> drawnVertices) { //TODO: addBond should be a part of THIS class. adds an edge between two vertices. sets their neighbors, updates edgeset.
     setBondLength(drawnVertices[0], drawnVertices[1]); //ok we have a set bond length as the first value? not the average?
-/*=======
-Molecule::Molecule(QVector<QPointF> drawnVertices) {
-    setBondLength(drawnVertices[0], drawnVertices[1]);
-    Atom *p_currentAtom = new Atom(drawnVertices[0]);
-    atomSet.append(p_currentAtom);
-    Atom *p_previousAtom = p_currentAtom;
-//    printf("%i\n", drawnVertices.size());
->>>>>>> 2d43ca08ee7d03ceb60621edde6009c19acf6b0e*/
 
     Atom *p_currentAtom = new Atom(drawnVertices[0]);   //current atom
     atomSet.append(p_currentAtom);                      //add to atomSet
