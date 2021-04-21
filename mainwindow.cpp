@@ -103,17 +103,20 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
 
     currentDrawnObject->addData(pos, when-when0);
     if (type == 1){
+        currentDrawnObject->analyzeSpeed();
+        currentDrawnObject->analyzeDistances();
+        currentDrawnObject->analyzeColinearity();
+
         if (molecules.isEmpty()){
-            Molecule *molecule = new Molecule(currentDrawnObject->analyze());
+            Molecule *molecule = new Molecule(currentDrawnObject->vertices);
             molecules.append(molecule);
-            currentDrawnObject->clean();
         } else {
             //figure out WHICH molecule to add it to
             int i = 0;
-            molecules[i]->addNewVerts(currentDrawnObject->analyze());
-            currentDrawnObject->clean();
+            molecules[i]->addNewVerts(currentDrawnObject->vertices);
         }
 
+        currentDrawnObject->clean();
         for (int i = 0; i<(molecules[0]->bondSet.size()); i++){
             //create line segment representing bond object
             Bond *bond = molecules[0]->bondSet[i];

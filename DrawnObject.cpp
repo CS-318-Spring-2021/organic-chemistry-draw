@@ -20,24 +20,6 @@ void DrawnObject::addData(QPointF position, int time){
     timeInputPoints.append(t);
 }
 
-QVector<QPointF> DrawnObject::analyze(){
-    QPointF point(*positionInputPoints[0]);
-    QPointF next(*positionInputPoints[1]);
-    vertices.append(point); //first point drawn-- probably a vertex
-    for (int i=1; i<positionInputPoints.size()-1; i++){
-        point = QPointF(*positionInputPoints[i]);
-        next = QPointF(*positionInputPoints[i+1]);
-        QLineF segment(point, next);
-        int dtime = abs(*timeInputPoints[i+1] - *timeInputPoints[i]);
-        int speed = int(100*(segment.length())/dtime);
-        if (speed<5 && vertices[vertices.size()-1] != point){
-            vertices.append(point);
-        }
-    }
-    vertices.append(next);
-
-    return analyzeLengths(eliminateColinear(vertices));
-}
 void DrawnObject::clean(){
     for(int i = 0; i < positionInputPoints.size(); i++){
         free(positionInputPoints[i]);
@@ -55,7 +37,25 @@ DrawnObject::~DrawnObject(){
     vertices.~QVector();
 }
 
-QVector<QPointF> DrawnObject::eliminateColinear(QVector<QPointF> vertices){
+void DrawnObject::analyzeSpeed(){
+    QPointF point(*positionInputPoints[0]);
+    QPointF next(*positionInputPoints[1]);
+    vertices.append(point); //first point drawn-- probably a vertex
+    for (int i=1; i<positionInputPoints.size()-1; i++){
+        point = QPointF(*positionInputPoints[i]);
+        next = QPointF(*positionInputPoints[i+1]);
+        QLineF segment(point, next);
+        int dtime = abs(*timeInputPoints[i+1] - *timeInputPoints[i]);
+        int speed = int(100*(segment.length())/dtime);
+        if (speed<5 && vertices[vertices.size()-1] != point){
+            vertices.append(point);
+        }
+    }
+    vertices.append(next);
+    //return analyzeLengths(eliminateColinear(vertices));
+}
+
+void DrawnObject::analyzeColinearity(){
     QLineF currentLine;
     QLineF lastLine;
     int tolerance = 10;
@@ -71,23 +71,14 @@ QVector<QPointF> DrawnObject::eliminateColinear(QVector<QPointF> vertices){
         lastLine = currentLine;
     }
     returnVertices.append(vertices[vertices.length()-1]);
+    clean();
+    vertices = returnVertices;
+    returnVertices.clear();
 
-    return returnVertices;
+    //return returnVertices;
 }
 
-int DrawnObject::maxLength(QVector<QPointF> vertices){
-    int maxLength = 0;
-
-    for (int i=1; i< vertices.size(); i++){
-        int l = QLineF(vertices[i], vertices[i-1]).length();
-        if (l>maxLength){
-            maxLength = l;
-        }
-    }
-    return maxLength;
-}
-
-QVector<QPointF> DrawnObject::analyzeLengths(QVector<QPointF> vertices){
+void DrawnObject::analyzeDistances(){
     QVector<int> lengths; //lengths at i is the distance between i-1 and i
     QVector<QPointF> returnVertices;
     int maxLength = 0;
@@ -123,7 +114,11 @@ QVector<QPointF> DrawnObject::analyzeLengths(QVector<QPointF> vertices){
     else {
         returnVertices.append(p);
     }
-    return returnVertices;
+
+    clean();
+    vertices = returnVertices;
+    returnVertices.clear();
+    //return returnVertices;
 }
 
 QPointF DrawnObject::pointAverage(QVector<QPointF> points){
@@ -139,4 +134,16 @@ QPointF DrawnObject::pointAverage(QVector<QPointF> points){
     x = x/points.size();
     y = y/points.size();
     return QPointF(x, y);
+}
+
+int DrawnObject::maxLength(QVector<QPointF> vertices){
+    int maxLength = 0;
+
+    for (int i=1; i< vertices.size(); i++){
+        int l = QLineF(vertices[i], vertices[i-1]).length();
+        if (l>maxLength){
+            maxLength = l;
+        }
+    }
+    return maxLength;
 }
