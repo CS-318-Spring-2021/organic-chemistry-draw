@@ -10,6 +10,7 @@ class Atom;
 class Bond{
 public:
     Bond();
+    Bond(Atom *p_firstAtom, Atom *p_secondAtom);
 
     enum BondQuality {NormalBond, ThickBond, DashBond};
     enum BondQuantity {SingleBond, DoubleBond, TripleBond};

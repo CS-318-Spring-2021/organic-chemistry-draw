@@ -22,6 +22,7 @@ public:
     QVector<Bond*> getBondSet();
     void correctLineStructure();
     void correctCyclicStructure();
+    void addNewVerts(QVector<QPointF> drawnVertices);
 
 };
 
