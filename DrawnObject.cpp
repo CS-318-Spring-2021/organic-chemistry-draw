@@ -75,6 +75,18 @@ QVector<QPointF> DrawnObject::eliminateColinear(QVector<QPointF> vertices){
     return returnVertices;
 }
 
+int DrawnObject::maxLength(QVector<QPointF> vertices){
+    int maxLength = 0;
+
+    for (int i=1; i< vertices.size(); i++){
+        int l = QLineF(vertices[i], vertices[i-1]).length();
+        if (l>maxLength){
+            maxLength = l;
+        }
+    }
+    return maxLength;
+}
+
 QVector<QPointF> DrawnObject::analyzeLengths(QVector<QPointF> vertices){
     QVector<int> lengths; //lengths at i is the distance between i-1 and i
     QVector<QPointF> returnVertices;

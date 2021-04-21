@@ -19,6 +19,7 @@ public:
     QVector<QPointF> analyzeLengths(QVector<QPointF> vertices);
     QVector<QPointF> eliminateColinear(QVector<QPointF> vertices);
     QPointF pointAverage(QVector<QPointF> points);
+    int maxLength(QVector<QPointF> points);
 
 };
 

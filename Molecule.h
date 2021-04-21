@@ -25,6 +25,7 @@ public:
     void correctLineStructure();
     void correctCyclicStructure();
     void addNewVerts(QVector<QPointF> drawnVertices);
+    void addBond(Atom *p_start, Atom *p_finish);
 
 };
 

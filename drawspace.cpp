@@ -41,13 +41,13 @@ void drawspace::maybeAddSegment(const QPointF &pos) {
 void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
     QPointF pos = mapToScene(evt->pos());
     emit mouseEvent(MouseReleased, QDateTime::currentMSecsSinceEpoch(), pos);
-    maybeAddSegment(pos);
+    //maybeAddSegment(pos);
 }
 
 void drawspace::mouseMoveEvent(QMouseEvent *evt) {
     QPointF pos = mapToScene(evt->pos());
     emit mouseEvent(MouseMoved, QDateTime::currentMSecsSinceEpoch(), pos);
-    maybeAddSegment(pos);
+    //maybeAddSegment(pos);
 }
 
 void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos) {
