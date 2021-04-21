@@ -83,9 +83,14 @@ void drawspace::drawDimensionalBond(const QPointF &firstPos, const QPointF &last
         mScene.addPolygon(QPolygonF(points), QPen(Qt::black, 2.0), QBrush(Qt::SolidPattern));
     }
     if (style==2){
-        QBrush br(Qt::VerPattern);
-        br.setTransform(QTransform().rotate(0-line.angle()));
-        mScene.addPolygon(QPolygonF(points), QPen(Qt::white, 0), br); //TODO: use setTransform() QBrush stuff things to angle that striping
+    //br.setTransform(QTransform().rotate(50));
+    //br.setTransform(QTransform().scale(10,1));
+    QBrush br(Qt::VerPattern);
+    QTransform t;
+    t = t.inverted();
+    t.rotate(0-line.angle());//.scale(4,1);
+    br.setTransform(t);
+    mScene.addPolygon(QPolygonF(points), QPen(Qt::white, 0), br); //TODO: use setTransform() QBrush stuff things to angle that striping
     }
 }
 

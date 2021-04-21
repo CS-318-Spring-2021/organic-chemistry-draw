@@ -103,6 +103,7 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
 
     currentDrawnObject->addData(pos, when-when0);
     if (type == 1){
+
         currentDrawnObject->analyzeSpeed();
         currentDrawnObject->analyzeDistances();
         currentDrawnObject->analyzeColinearity();
