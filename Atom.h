@@ -32,6 +32,8 @@ public:
 //    void setThirdBond(Bond *p_thirdBond);
 //    void setFourthBond(Bond *p_fourthBond);
     void setElement(Element changeElement);
+    void setAtomPos(QPointF newPoint);
+    QPointF getAtomPos();
     void addBond(Bond *p_bond);
     QPointF getPos();
 

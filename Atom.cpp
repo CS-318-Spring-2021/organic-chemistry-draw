@@ -37,3 +37,11 @@ void Atom::setElement(enum Element changeElement){
 QPointF Atom::getPos(){
     return atomPos;
 }
+
+void Atom::setAtomPos(QPointF newPoint){
+    atomPos = newPoint;
+}
+
+QPointF Atom::getAtomPos(){
+   return atomPos;
+}

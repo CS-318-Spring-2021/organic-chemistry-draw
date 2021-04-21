@@ -10,6 +10,7 @@ class Atom;
 class Bond{
 public:
     Bond();
+    Bond(Atom *p_firstAtom, Atom *p_secondAtom);
 
     enum BondQuality {NormalBond, ThickBond, DashBond};
     enum BondQuantity {SingleBond, DoubleBond, TripleBond};
@@ -19,8 +20,6 @@ public:
     void setFirstAtom(Atom *p_firstAtom);
     void setSecondAtom(Atom *p_secondAtom);
     void changeQuantity(BondQuantity quantity);
-
-private:
     Atom *atomFirst;
     Atom *atomSecond;
     double slope;
@@ -31,3 +30,4 @@ private:
 };
 
 #endif // BOND_H
+>>>>>>> molecules

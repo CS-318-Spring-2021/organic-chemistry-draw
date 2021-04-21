@@ -1,3 +1,4 @@
+
 #ifndef MOLECULE_H
 #define MOLECULE_H
 
@@ -7,6 +8,7 @@
 #include <QVector>
 
 class Molecule{
+public:
 
     enum MoleculeType {Cyclic, Linear};
 
@@ -14,14 +16,14 @@ class Molecule{
     MoleculeType type;
     QVector<Atom*> atomSet;
     QVector<Bond*> bondSet;
-
-
-public:
     Molecule(QVector<QPointF> drawnVertices);
     void setBondLength(QPointF first, QPointF second);
     static double calculateDistance(QPointF first, QPointF second);
     QVector<Atom*> getAtomSet();
     QVector<Bond*> getBondSet();
+    void correctLineStructure();
+    void correctCyclicStructure();
+    void addNewVerts(QVector<QPointF> drawnVertices);
 
 };
 

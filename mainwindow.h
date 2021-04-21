@@ -5,6 +5,8 @@
 #include <drawspace.h>
 #include <QWidget>
 #include "DrawnObject.h"
+#include "Molecule.h"
+
 
 class PollingGraphicsView;
 class QTableWidget;
@@ -24,6 +26,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     DrawnObject *currentDrawnObject;
+    bool recording;
+    QVector<Molecule*> molecules;
 
 public slots:
     void onMouseEvent(int type, int when, QPointF scenePos);

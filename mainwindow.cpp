@@ -9,9 +9,8 @@
 
 using namespace std;
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-{
+MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
+    QVector<Molecule*> molecules;
     QWidget *w = new QWidget();
     setCentralWidget(w);
 
@@ -20,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     QVBoxLayout *rightLayout = new QVBoxLayout();
     rightLayout->addWidget(table = new QTableWidget());
     rightLayout->addWidget(saveButton = new QPushButton("Save"));
+
 
     connect(saveButton, &QPushButton::clicked, this, &MainWindow::bSave);
 
@@ -103,19 +103,42 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
 
     currentDrawnObject->addData(pos, when-when0);
     if (type == 1){
-
-        Molecule molecule(currentDrawnObject->analyze());
-
-
-        for (int i = 0; i<molecule.getAtomSet().size()-1; i++){
-            //create line segment between two atoms
-            QPointF a = molecule.getAtomSet()[i]->getPos();
-            //printf("(%i, %i)\n", int(a.x()), int(a.y()));
-            QPointF b = molecule.getAtomSet()[i+1]->getPos();
-            view->replaceSegment(a, b);
+        if (molecules.isEmpty()){
+            Molecule *molecule = new Molecule(currentDrawnObject->analyze());
+            molecules.append(molecule);
+            currentDrawnObject->clean();
+        } else {
+            //figure out WHICH molecule to add it to
+            int i = 0;
+            molecules[i]->addNewVerts(currentDrawnObject->analyze());
+            currentDrawnObject->clean();
         }
 
-        currentDrawnObject->clean();
+        for (int i = 0; i<molecules[0]->bondSet.size()-1; i++){
+            //create line segment representing bond object
+            Bond *bond = molecules[0]->bondSet[i];
+
+            QPointF a = bond->atomFirst->getAtomPos();
+            QPointF b = bond->atomSecond->getAtomPos();
+
+            int quantity = bond->quantity; //0, 1, 2
+            int quality = bond->quality; //0, 1, 2
+
+            //00, 01, 02, or 10, 20 //TODO: i think there is a more efficient way to do this nesting of ifs 😎
+
+            if (quality==0 && quantity==0){
+                view->replaceSegment(a, b);
+            }
+            else if (quantity>0){
+                view->drawMultipleBond(a, b, quantity);
+            }
+            else if (quality>0){
+                view->drawDimensionalBond(a, b, quality);
+
+            }
+        }
+
+
     }
 
     int row;

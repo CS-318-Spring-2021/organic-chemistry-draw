@@ -61,3 +61,55 @@ void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos, 
 void drawspace::replaceSegment(const QLineF line){
     mScene.addLine(line);
 }
+
+void drawspace::drawDimensionalBond(const QPointF &firstPos, const QPointF &lastPos, int style){
+    //xy coordinates for the two endpoints of the bond
+    const double TRIANGLE = 0.05;
+    QLineF line(lastPos, firstPos);
+    QLineF supplementary(lastPos, firstPos);
+    supplementary.setLength(TRIANGLE*line.length());
+    supplementary.setAngle(line.angle()+90);
+    QPointF cornerone = supplementary.p2();
+    supplementary.setAngle(line.angle()-90);
+    QPointF cornertwo = supplementary.p2();
+    mScene.addLine(QLineF(cornerone, cornertwo));
+
+    QVector<QPointF> points;
+    points.append(firstPos);
+    points.append(cornerone);
+    points.append(cornertwo);
+
+    if (style==1){
+        mScene.addPolygon(QPolygonF(points), QPen(Qt::black, 2.0), QBrush(Qt::SolidPattern));
+    }
+    if (style==2){
+        mScene.addPolygon(QPolygonF(points), QPen(Qt::white, 0), QBrush(Qt::FDiagPattern)); //TODO: use setTransform() QBrush stuff things to angle that striping
+    }
+}
+
+void drawspace::drawMultipleBond(const QPointF &firstPos, const QPointF &lastPos, int num){
+    double LENGTHMODIFIER = 0.018;
+    if (num==2){
+        LENGTHMODIFIER = 0.03;
+    }
+    QLineF line(firstPos, lastPos);
+    QLineF supplementary(firstPos, lastPos);
+    supplementary.setLength(LENGTHMODIFIER*line.length());
+    supplementary.setAngle(line.angle()+90);
+    QPointF cornerone = supplementary.p2();
+    supplementary.setAngle(line.angle()-90);
+    QPointF cornertwo = supplementary.p2();
+
+    supplementary = QLineF(lastPos, firstPos);
+    supplementary.setLength(LENGTHMODIFIER*line.length());
+    supplementary.setAngle(line.angle()+90);
+    QPointF cornerthree = supplementary.p2();
+    supplementary.setAngle(line.angle()-90);
+    QPointF cornerfour = supplementary.p2();
+
+    if (num==2){
+        mScene.addLine(line);
+    }
+    mScene.addLine(QLineF(cornerone, cornerthree));
+    mScene.addLine(QLineF(cornertwo, cornerfour));
+}
