@@ -40,6 +40,7 @@ void drawspace::maybeAddSegment(const QPointF &pos) {
 
 void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
     QPointF pos = mapToScene(evt->pos());
+    mScene.clear();
     emit mouseEvent(MouseReleased, QDateTime::currentMSecsSinceEpoch(), pos);
     //maybeAddSegment(pos);
 }
@@ -47,7 +48,7 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
 void drawspace::mouseMoveEvent(QMouseEvent *evt) {
     QPointF pos = mapToScene(evt->pos());
     emit mouseEvent(MouseMoved, QDateTime::currentMSecsSinceEpoch(), pos);
-    //maybeAddSegment(pos);
+    maybeAddSegment(pos);
 }
 
 void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos) {
@@ -83,14 +84,12 @@ void drawspace::drawDimensionalBond(const QPointF &firstPos, const QPointF &last
         mScene.addPolygon(QPolygonF(points), QPen(Qt::black, 2.0), QBrush(Qt::SolidPattern));
     }
     if (style==2){
-    //br.setTransform(QTransform().rotate(50));
-    //br.setTransform(QTransform().scale(10,1));
-    QBrush br(Qt::VerPattern);
-    QTransform t;
-    t = t.inverted();
-    t.rotate(0-line.angle());//.scale(4,1);
-    br.setTransform(t);
-    mScene.addPolygon(QPolygonF(points), QPen(Qt::white, 0), br); //TODO: use setTransform() QBrush stuff things to angle that striping
+        QBrush br(Qt::VerPattern);
+        QTransform t;
+        t = t.inverted();
+        t.rotate(0-line.angle()).scale(1,1);
+        br.setTransform(t);
+        mScene.addPolygon(QPolygonF(points), QPen(Qt::white, 0), br);
     }
 }
 
