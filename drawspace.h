@@ -8,6 +8,7 @@
 
 class QGraphicsPathItem;
 class QAtom;
+class QBond;
 class drawspace : public QGraphicsView
 {
     Q_OBJECT
@@ -26,11 +27,8 @@ public:
     void setCrosshairsVisible(bool visible);
     void setCrosshairsPos(const QPointF &pos);
     void replaceSegment(const QPointF &firstPos, const QPointF &lastPos);
-    void replaceSegment(const QPointF &firstPos, const QPointF &lastPos, QPen pen);
-    void replaceSegment(const QLineF line);
-    void drawMultipleBond(const QPointF &firstPos, const QPointF &lastPos, int num);
-    void drawDimensionalBond(const QPointF &firstPos, const QPointF &lastPos, int style);
     void drawAtom(QAtom *qatom);
+    void drawBond(QBond *qbond);
 
 
 protected:

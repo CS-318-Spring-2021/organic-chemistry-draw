@@ -30,7 +30,6 @@ Molecule::Molecule(QVector<QPointF> drawnVertices) { //initialize molecule with 
              && drawnVertices[0].y() == drawnVertices[drawnVertices.size()-1].y()){
         type = Cyclic;
         correctCyclicStructure();
-        //printf("%i\n", 0);
     } else{
         type = Linear;
         correctLineStructure();
@@ -40,29 +39,18 @@ Molecule::Molecule(QVector<QPointF> drawnVertices) { //initialize molecule with 
 
 
 void Molecule::setBondLength(QPointF first, QPointF second) { //set length
-    bondLength = calculateDistance(first, second);
-}
-
-double Molecule::calculateDistance(QPointF first, QPointF second) { //calculate distance? this should not be in molecule.... TODO: this should exist in Qpoint somewhere already.
-    return QLineF(first,second).length();
-}
-
-QVector<Atom*> Molecule::getAtomSet(){ //TODO: this is hopefully superfluous
-    return atomSet;
-}
-QVector<Bond*> Molecule::getBondSet(){ //TODO: this is also hopefully superfluous
-    return bondSet;
+    bondLength = QLineF(first, second).length();
 }
 
 void Molecule::correctLineStructure(){
     double y = sin(standardLineSegmentAngle)*bondLength;
     double x = cos(standardLineSegmentAngle)*bondLength;
-    if (atomSet[1]->getAtomPos().y() - atomSet[0]->getAtomPos().y() < 0){
+    if (atomSet[1]->atomPos.y() - atomSet[0]->atomPos.y() < 0){
         y = y*(-1);
     }
     for(int i = 1; i<atomSet.size(); i++){
-        double newXPos = atomSet[i-1]->getAtomPos().x() + x;
-        double newYPos = atomSet[i-1]->getAtomPos().y() + y;
+        double newXPos = atomSet[i-1]->atomPos.x() + x;
+        double newYPos = atomSet[i-1]->atomPos.y() + y;
         y = y*(-1);
         atomSet[i]->setAtomPos(QPointF(newXPos,newYPos));
     }
@@ -74,14 +62,14 @@ void Molecule::correctCyclicStructure() {
     assert(numVerts >1);
     QPointF center(0,0);
     for(int i = 0; i < numVerts; i++){
-        center += atomSet[i]->getAtomPos();
+        center += atomSet[i]->atomPos;
     }
     center/=numVerts;
 
     QVector<double> angles(numVerts);
 
     for(int i = 0; i < numVerts; i++){
-        angles[i] = QLineF(center, atomSet[i]->getAtomPos()).angle();
+        angles[i] = QLineF(center, atomSet[i]->atomPos).angle();
     }
 
     double firstAngle = angles[0];
@@ -102,9 +90,9 @@ void Molecule:: addNewVerts(QVector<QPointF> drawnVertices){ //adds a set of poi
     //the first item in drawnVertices is an existing atom, not sure yet which one though--
     QPointF finding = drawnVertices[0];                                     //so we loop through existing atoms,
     Atom *p_currentAtom = atomSet[0];
-    int smallest = calculateDistance(finding, p_currentAtom->getAtomPos()); //find the one that's closest to dV[0]
+    int smallest = QLineF(finding, p_currentAtom->atomPos).length(); //find the one that's closest to dV[0]
     for (int i=1; i<atomSet.size(); i++){
-        int d = calculateDistance(finding, atomSet[i]->getAtomPos());       // and remember it
+        int d = QLineF(finding, atomSet[i]->atomPos).length();       // and remember it
         if (d < smallest){
             smallest = d;
             p_currentAtom = atomSet[i];                                     //(remember it as p_previousAtom)
@@ -127,16 +115,5 @@ void Molecule:: addBond(Atom *p_start, Atom *p_finish){
     p_finish->addBond(p_bond);
     bondSet.append(p_bond);
 
-
-}
-
-
-void Molecule:: printMolecule(){
-    for (int i=0; i<atomSet.size(); i++){
-        atomSet[i]->printAtom();
-    }
-    for (int i=0; i<bondSet.size(); i++){
-        bondSet[i]->printBond();
-    }
 
 }

@@ -74,7 +74,6 @@ void DrawnObject::analyzeColinearity(){
     vertices = returnVertices;
     returnVertices.clear();
 
-    //return returnVertices;
 }
 
 void DrawnObject::analyzeDistances(){
@@ -117,7 +116,6 @@ void DrawnObject::analyzeDistances(){
     clean();
     vertices = returnVertices;
     returnVertices.clear();
-    //return returnVertices;
 }
 
 QPointF DrawnObject::pointAverage(QVector<QPointF> points){

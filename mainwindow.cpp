@@ -7,6 +7,7 @@
 #include "drawspace.h"
 #include "Molecule.h"
 #include "qatom.h"
+#include "qbond.h"
 
 using namespace std;
 
@@ -110,38 +111,8 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
         currentDrawnObject->analyzeColinearity();
         currentDrawnObject->analyzeDistances();
 
-
-        /*
-        printf("%i initially.\n", currentDrawnObject->vertices.size());
-        for (int i = 0; i < currentDrawnObject->vertices.size(); i++){
-            printf("         %i: (%i, %i)\n", i, int(currentDrawnObject->vertices[i].x()), int(currentDrawnObject->vertices[i].y()));
-        }
-        printf("\n");
-
-
-        printf("%i after speeds.\n", currentDrawnObject->vertices.size());
-        for (int i = 0; i < currentDrawnObject->vertices.size(); i++){
-            printf("         %i: (%i, %i)\n", i, int(currentDrawnObject->vertices[i].x()), int(currentDrawnObject->vertices[i].y()));
-        }
-        printf("\n");
-
-        printf("%i after colinearity.\n", currentDrawnObject->vertices.size());
-        for (int i = 0; i < currentDrawnObject->vertices.size(); i++){
-            printf("         %i: (%i, %i)\n", i, int(currentDrawnObject->vertices[i].x()), int(currentDrawnObject->vertices[i].y()));
-        }
-        printf("\n");
-
-        printf("%i after distances.\n", currentDrawnObject->vertices.size());
-        for (int i = 0; i < currentDrawnObject->vertices.size(); i++){
-            printf("         %i: (%i, %i)\n", i, int(currentDrawnObject->vertices[i].x()), int(currentDrawnObject->vertices[i].y()));
-        }
-        printf("\n");
-
-        */
-
         if (molecules.isEmpty()){
             Molecule *molecule = new Molecule(currentDrawnObject->vertices);
-            //molecule->printMolecule();
             molecules.append(molecule);
         } else {
             //figure out WHICH molecule to add it to
@@ -150,46 +121,22 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
         }
 
         currentDrawnObject->clean();
-
-        for (int i=0; i < (molecules[0]->atomSet.size()); i++){
-            //draw the atom
-            view->drawAtom(new QAtom(molecules[0]->atomSet[i], (molecules[0]->bondLength)/10));
-        }
-
-
-
-        for (int i = 0; i<(molecules[0]->bondSet.size()); i++){
-            //create line segment representing bond object
-            Bond *bond = molecules[0]->bondSet[i];
-
-            QPointF a = bond->atomFirst->getAtomPos();
-            QPointF b = bond->atomSecond->getAtomPos();
-
-            int quantity = bond->quantity; //0, 1, 2
-            int quality = bond->quality; //0, 1, 2
-
-            //00, 01, 02, or 10, 20 //TODO: i think there is a more efficient way to do this nesting of ifs 😎
-
-            if (quality==0 && quantity==0){
-                view->replaceSegment(a, b);
+        for (int m=0; m < molecules.size(); m++){
+            for (int i=0; i < (molecules[m]->atomSet.size()); i++){
+                //draw the atom
+                view->drawAtom(new QAtom(molecules[m]->atomSet[i], (molecules[m]->bondLength)/10));
             }
-            else if (quantity>0){
-                view->drawMultipleBond(a, b, quantity);
-            }
-            else if (quality>0){
-                view->drawDimensionalBond(a, b, quality);
-
+            for (int i = 0; i<(molecules[m]->bondSet.size()); i++){
+                view->drawBond(new QBond(molecules[m]->bondSet[i]));
             }
         }
-
 
     }
 
     int row;
     table->setRowCount((row = table->rowCount())+1);
 
-    table->setItem(row, 0, new QTableWidgetItem(QString::number(when-when0)));//types.mid(type, 1))); //time is stored in column 0
-    //table->setItem(row, 1, new QTableWidgetItem(QString::number(when-when0)));
+    table->setItem(row, 0, new QTableWidgetItem(QString::number(when-when0)));
     table->setItem(row, 2, new QTableWidgetItem(QString::number(pos.x())));
     table->setItem(row, 3, new QTableWidgetItem(QString::number(pos.y())));
     if (row>0){
@@ -198,13 +145,9 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
         table->setItem(row, 1, new QTableWidgetItem(QString::number(dtime)));
         table->setItem(row, 4, new QTableWidgetItem(QString::number(int(100*(segment.length())/dtime))));
         if (row>1){
-            //what is the distance right now? what was the distance before this?
             double prevdist = table->item(row-1, 4)->text().toDouble();
             double dist = table->item(row, 4)->text().toDouble();
             table->setItem(row, 5, new QTableWidgetItem(QString::number(dist-prevdist)));
         }
-        /*if (table->item(row,4)->text().toInt()<1){
-            printf("(%i, %i)\n", int(pos.x()), int(pos.y()));
-        }*/
     }
 }

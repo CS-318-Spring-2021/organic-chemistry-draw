@@ -10,10 +10,6 @@ public:
     QAtom(Atom *_atom, qreal radius);
     QGraphicsEllipseItem *coop;
     Atom *atom;
-
-protected:
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
 };
 
 #endif // QATOM_H
