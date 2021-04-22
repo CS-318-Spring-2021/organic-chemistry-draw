@@ -41,6 +41,8 @@ public:
     QPointF atomPos;
     double const atomRadius = 10; //need to decide this later
     Element element;
+    void printAtom();
+    void printAtomDetailed();
 
 
 

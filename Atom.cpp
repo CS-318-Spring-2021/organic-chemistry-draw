@@ -24,3 +24,14 @@ void Atom::setAtomPos(QPointF newPoint){
 QPointF Atom::getAtomPos(){
    return atomPos;
 }
+
+void Atom::printAtom(){
+    printf("(%i, %i)\n", int(atomPos.x()), int(atomPos.y()));
+}
+
+void Atom::printAtomDetailed(){
+    printf("neighbors: %i\n", bonds.size());
+    for (int i=0; i<bonds.size();i++){
+        bonds[i]->printBond();
+    }
+}

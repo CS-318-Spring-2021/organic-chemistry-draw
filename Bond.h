@@ -26,6 +26,7 @@ public:
     //double slope;
     BondQuality quality;
     BondQuantity quantity;
+    void printBond();
 
 
 };

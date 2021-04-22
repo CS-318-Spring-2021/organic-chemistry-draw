@@ -129,3 +129,14 @@ void Molecule:: addBond(Atom *p_start, Atom *p_finish){
 
 
 }
+
+
+void Molecule:: printMolecule(){
+    for (int i=0; i<atomSet.size(); i++){
+        atomSet[i]->printAtom();
+    }
+    for (int i=0; i<bondSet.size(); i++){
+        bondSet[i]->printBond();
+    }
+
+}

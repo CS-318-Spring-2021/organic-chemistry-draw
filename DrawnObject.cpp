@@ -52,7 +52,6 @@ void DrawnObject::analyzeSpeed(){
         }
     }
     vertices.append(next);
-    //return analyzeLengths(eliminateColinear(vertices));
 }
 
 void DrawnObject::analyzeColinearity(){

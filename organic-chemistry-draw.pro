@@ -15,7 +15,8 @@ SOURCES += \
     Molecule.cpp \
     drawspace.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    qatom.cpp
 
 HEADERS += \
     Atom.h \
@@ -23,7 +24,8 @@ HEADERS += \
     DrawnObject.h \
     Molecule.h \
     drawspace.h \
-    mainwindow.h
+    mainwindow.h \
+    qatom.h
 
 FORMS += \
     mainwindow.ui

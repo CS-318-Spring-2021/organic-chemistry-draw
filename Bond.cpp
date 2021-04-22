@@ -25,3 +25,10 @@ void Bond::setFirstAtom(Atom *p_firstAtom){
 void Bond::setSecondAtom(Atom *p_secondAtom){
     atomSecond = p_secondAtom;
 }*/
+
+void Bond::printBond(){
+    printf("firsta: ");
+    atomFirst->printAtom();
+    printf("seconda: ");
+    atomSecond->printAtom();
+}

@@ -6,6 +6,7 @@
 
 #include "drawspace.h"
 #include "Molecule.h"
+#include "qatom.h"
 
 using namespace std;
 
@@ -104,12 +105,43 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
     currentDrawnObject->addData(pos, when-when0);
     if (type == 1){
 
+
         currentDrawnObject->analyzeSpeed();
-        currentDrawnObject->analyzeDistances();
         currentDrawnObject->analyzeColinearity();
+        currentDrawnObject->analyzeDistances();
+
+
+        /*
+        printf("%i initially.\n", currentDrawnObject->vertices.size());
+        for (int i = 0; i < currentDrawnObject->vertices.size(); i++){
+            printf("         %i: (%i, %i)\n", i, int(currentDrawnObject->vertices[i].x()), int(currentDrawnObject->vertices[i].y()));
+        }
+        printf("\n");
+
+
+        printf("%i after speeds.\n", currentDrawnObject->vertices.size());
+        for (int i = 0; i < currentDrawnObject->vertices.size(); i++){
+            printf("         %i: (%i, %i)\n", i, int(currentDrawnObject->vertices[i].x()), int(currentDrawnObject->vertices[i].y()));
+        }
+        printf("\n");
+
+        printf("%i after colinearity.\n", currentDrawnObject->vertices.size());
+        for (int i = 0; i < currentDrawnObject->vertices.size(); i++){
+            printf("         %i: (%i, %i)\n", i, int(currentDrawnObject->vertices[i].x()), int(currentDrawnObject->vertices[i].y()));
+        }
+        printf("\n");
+
+        printf("%i after distances.\n", currentDrawnObject->vertices.size());
+        for (int i = 0; i < currentDrawnObject->vertices.size(); i++){
+            printf("         %i: (%i, %i)\n", i, int(currentDrawnObject->vertices[i].x()), int(currentDrawnObject->vertices[i].y()));
+        }
+        printf("\n");
+
+        */
 
         if (molecules.isEmpty()){
             Molecule *molecule = new Molecule(currentDrawnObject->vertices);
+            //molecule->printMolecule();
             molecules.append(molecule);
         } else {
             //figure out WHICH molecule to add it to
@@ -118,6 +150,14 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
         }
 
         currentDrawnObject->clean();
+
+        for (int i=0; i < (molecules[0]->atomSet.size()); i++){
+            //draw the atom
+            view->drawAtom(new QAtom(molecules[0]->atomSet[i], (molecules[0]->bondLength)/10));
+        }
+
+
+
         for (int i = 0; i<(molecules[0]->bondSet.size()); i++){
             //create line segment representing bond object
             Bond *bond = molecules[0]->bondSet[i];

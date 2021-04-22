@@ -2,11 +2,13 @@
 #include <QSurface>
 
 #include <QtWidgets>
+#include "qatom.h"
 
 drawspace::drawspace() {
     setScene(&mScene);
     setSceneRect(QRectF(-400.0, -300.0, 800.0, 600.0));
     setRenderHint(QPainter::Antialiasing);
+    //setMouseTracking(true);
 
     QPainterPath crossPath;
     crossPath.moveTo(-4.0, 0.0); crossPath.lineTo(-1.0, 0.0);
@@ -42,7 +44,6 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
     QPointF pos = mapToScene(evt->pos());
     mScene.clear();
     emit mouseEvent(MouseReleased, QDateTime::currentMSecsSinceEpoch(), pos);
-    //maybeAddSegment(pos);
 }
 
 void drawspace::mouseMoveEvent(QMouseEvent *evt) {
@@ -118,4 +119,9 @@ void drawspace::drawMultipleBond(const QPointF &firstPos, const QPointF &lastPos
     }
     mScene.addLine(QLineF(cornerone, cornerthree));
     mScene.addLine(QLineF(cornertwo, cornerfour));
+}
+
+void drawspace::drawAtom(QAtom *qatom){
+
+    mScene.addItem(qatom);
 }
