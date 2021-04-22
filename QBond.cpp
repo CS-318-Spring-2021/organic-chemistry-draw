@@ -6,8 +6,7 @@
 
 QBond::QBond(Bond *_bond):bond(_bond)
 {
-    QLineF qline(bond->atomFirst->atomPos, bond->atomSecond->atomPos);
-    QGraphicsLineItem qgline(qline);
+    qgline = new QGraphicsLineItem(QLineF(bond->atomFirst->atomPos, bond->atomSecond->atomPos));
     /*
     coop = new QGraphicsEllipseItem(-radius, -radius, 2*radius, 2*radius);
     coop->setPen(QPen(Qt::NoPen));

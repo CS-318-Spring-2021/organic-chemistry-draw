@@ -1,5 +1,5 @@
-#ifndef QATOM_H
-#define QATOM_H
+#ifndef QBOND_H
+#define QBOND_H
 
 #include <QGraphicsItemGroup>
 
@@ -9,6 +9,7 @@ class QBond : public QGraphicsItemGroup
 public:
     QBond(Bond *_bond);
     Bond *bond;
+    QGraphicsLineItem *qgline;
 
 };
 
