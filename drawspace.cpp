@@ -8,7 +8,6 @@ drawspace::drawspace() {
     setScene(&mScene);
     setSceneRect(QRectF(-400.0, -300.0, 800.0, 600.0));
     setRenderHint(QPainter::Antialiasing);
-    //setMouseTracking(true);
 
     QPainterPath crossPath;
     crossPath.moveTo(-4.0, 0.0); crossPath.lineTo(-1.0, 0.0);

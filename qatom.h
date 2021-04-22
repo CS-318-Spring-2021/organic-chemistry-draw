@@ -12,8 +12,8 @@ public:
     Atom *atom;
 
 protected:
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *) override;
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *) override;
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
 };
 
 #endif // QATOM_H

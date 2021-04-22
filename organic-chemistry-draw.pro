@@ -13,6 +13,7 @@ SOURCES += \
     Bond.cpp \
     DrawnObject.cpp \
     Molecule.cpp \
+    QBond.cpp \
     drawspace.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -23,6 +24,7 @@ HEADERS += \
     Bond.h \
     DrawnObject.h \
     Molecule.h \
+    QBond.h \
     drawspace.h \
     mainwindow.h \
     qatom.h
