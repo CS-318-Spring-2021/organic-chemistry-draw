@@ -6,6 +6,7 @@
 #include "Bond.h"
 #include <QPointF>
 #include <QVector>
+#include <cmath>
 
 class Molecule{
 

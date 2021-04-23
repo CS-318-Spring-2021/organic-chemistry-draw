@@ -16,6 +16,7 @@ class drawspace : public QGraphicsView
     QGraphicsScene mScene;
     QPointF lastPos;
     QGraphicsPathItem *crosshairs;
+    bool mouseIsDown;
 
     void maybeAddSegment(const QPointF &pos);
 

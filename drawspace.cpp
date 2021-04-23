@@ -17,6 +17,9 @@ drawspace::drawspace() {
     crossPath.moveTo(0.0, 1.0); crossPath.lineTo(0.0, 4.0);
     crosshairs = mScene.addPath(crossPath, QPen(Qt::red, 1.0));
     crosshairs->setVisible(false);
+
+    mouseIsDown = false;
+    setMouseTracking(true);
 }
 
 void drawspace::setCrosshairsVisible(bool visible) {
@@ -28,6 +31,8 @@ void drawspace::setCrosshairsPos(const QPointF &pos) {
 }
 
 void drawspace::mousePressEvent(QMouseEvent *evt) {
+    QGraphicsView::mousePressEvent(evt);
+    mouseIsDown = true;
     QPointF pos = mapToScene(evt->pos());
     emit mouseEvent(MousePressed, QDateTime::currentMSecsSinceEpoch(), pos);
     lastPos = pos;
@@ -41,15 +46,20 @@ void drawspace::maybeAddSegment(const QPointF &pos) {
 }
 
 void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
+    mouseIsDown = false;
+    QGraphicsView::mouseReleaseEvent(evt);
     QPointF pos = mapToScene(evt->pos());
     mScene.clear();
     emit mouseEvent(MouseReleased, QDateTime::currentMSecsSinceEpoch(), pos);
 }
 
 void drawspace::mouseMoveEvent(QMouseEvent *evt) {
-    QPointF pos = mapToScene(evt->pos());
-    emit mouseEvent(MouseMoved, QDateTime::currentMSecsSinceEpoch(), pos);
-    maybeAddSegment(pos);
+    QGraphicsView::mouseMoveEvent(evt);
+    if (mouseIsDown) {
+        QPointF pos = mapToScene(evt->pos());
+        emit mouseEvent(MouseMoved, QDateTime::currentMSecsSinceEpoch(), pos);
+        maybeAddSegment(pos);
+    }
 }
 
 void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos) {
