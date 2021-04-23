@@ -59,6 +59,7 @@ void Molecule::correctLineStructure(){
 void Molecule::correctCyclicStructure() {
 
     int numVerts = atomSet.size()-1;
+    printf("%i\n", numVerts);
     assert(numVerts >1);
     QPointF center(0,0);
     for(int i = 0; i < numVerts; i++){
@@ -69,6 +70,7 @@ void Molecule::correctCyclicStructure() {
     QVector<double> angles(numVerts);
 
     for(int i = 0; i < numVerts; i++){
+        printf("(%i, %i)\n", int(atomSet[i]->atomPos.x()), int(atomSet[i]->atomPos.y()));
         angles[i] = QLineF(center, atomSet[i]->atomPos).angle();
     }
 
@@ -78,10 +80,14 @@ void Molecule::correctCyclicStructure() {
 
     double radius = bondLength/(2*sin(M_PI/numVerts));
 
-    for(int i = 0; i <= numVerts; i++){
+    for(int i = 0; i <= numVerts; i++){ //why did this use <=? don't we want to get rid of the last atom? because it's a repeat
         double theta = firstAngle + i*((2*M_PI)/numVerts);
         atomSet[i]->setAtomPos(center+radius*QPointF(cos(theta),sin(theta)));
     }
+    addBond(atomSet.last(), atomSet.first());
+
+
+    atomSet.removeLast();
 }
 
 void Molecule:: addNewVerts(QVector<QPointF> drawnVertices){ //adds a set of points to the graph one after another
