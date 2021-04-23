@@ -48,34 +48,27 @@ QBond::QBond(Bond *_bond):bond(_bond)
     else if (quality>0){
         //xy coordinates for the two endpoints of the bond
         const double TRIANGLE = 0.05;
-        QLineF line(b, a);
-        QLineF supplementary(b, a);
-        supplementary.setLength(TRIANGLE*line.length());
-        supplementary.setAngle(line.angle()+90);
-        QPointF cornerone = supplementary.p2();
-        supplementary.setAngle(line.angle()-90);
-        QPointF cornertwo = supplementary.p2();
-        addToGroup(new QGraphicsLineItem(QLineF(cornerone, cornertwo)));
+        QLineF line(a, b);
+        QPointF perp(line.dy(), -line.dx());
 
-        QVector<QPointF> points;
-        points.append(a);
-        points.append(cornerone);
-        points.append(cornertwo);
-
-        if (quality==1){
-            addToGroup(new QGraphicsPolygonItem(QPolygonF(points)));
-            //QPen(Qt::black, 2.0)
-            //QBrush(Qt::SolidPattern)
-        }
-        if (quality==2){
-            QBrush br(Qt::VerPattern);
-            QTransform t;
-            t = t.inverted();
-            t.rotate(0-line.angle()).scale(1,1);
-            br.setTransform(t);
-            addToGroup(new QGraphicsPolygonItem(QPolygonF(points)));
-            //QPen(Qt::white, 0)
-            //brush br
+        if (quality==1 || quality==2) {
+            const int NBLACK = (quality==1 ? 1 : 8);
+            const double WHITE = 1.25, BLACK = 1.0;  // Relative lengths of white and black
+            double step = 1.0/(NBLACK*BLACK + (NBLACK-1)*WHITE);
+            double t = 0.0; // 0.0 is a, 1.0 is b
+            for (int i = 0; i < 2*NBLACK-1; ++i)
+                if (i & 1) { // WHITE
+                   t += WHITE*step;
+                } else {
+                    QPolygonF poly;
+                    poly << line.pointAt(t) + (t+0.1)*TRIANGLE*perp << line.pointAt(t) - (t+0.1)*TRIANGLE*perp;
+                    t += BLACK*step;
+                    poly << line.pointAt(t) - (t+0.1)*TRIANGLE*perp << line.pointAt(t) + (t+0.1)*TRIANGLE*perp;
+                    QGraphicsPolygonItem *item = new QGraphicsPolygonItem(poly);
+                    item->setPen(Qt::NoPen);
+                    item->setBrush(Qt::black);
+                    addToGroup(item);
+                }
         }
     }
 }
