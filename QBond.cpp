@@ -92,8 +92,12 @@ QBond::QBond(Bond *_bond):bond(_bond) {
 
 void QBond::hoverEnterEvent(QGraphicsSceneHoverEvent *evt) {
     hoverCircle->setOpacity(0.25);
+    //bond->quantity = Bond::DoubleBond; can we somehow make this be a button for switching the bond quantity?
 }
 
 void QBond::hoverLeaveEvent(QGraphicsSceneHoverEvent *evt) {
     hoverCircle->setOpacity(0.0);
+    //bond->quantity = Bond::SingleBond;
+
 }
+
