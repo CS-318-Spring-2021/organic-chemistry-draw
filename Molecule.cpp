@@ -58,8 +58,11 @@ void Molecule::correctLineStructure(){
 
 void Molecule::correctCyclicStructure() {
 
-    int numVerts = atomSet.size()-1;
-    printf("%i\n", numVerts);
+    removeAtom(atomSet.last());
+    //bondSet.last()->atomFirst->bonds.removeLast();
+    //bondSet.removeLast();
+
+    int numVerts = atomSet.size();
     assert(numVerts >1);
     QPointF center(0,0);
     for(int i = 0; i < numVerts; i++){
@@ -69,8 +72,10 @@ void Molecule::correctCyclicStructure() {
 
     QVector<double> angles(numVerts);
 
-    for(int i = 0; i < numVerts; i++){
-        printf("(%i, %i)\n", int(atomSet[i]->atomPos.x()), int(atomSet[i]->atomPos.y()));
+
+    for(int i = 0; i < atomSet.size(); i++){
+
+        printf("%i: (%i, %i)\n", i, int(atomSet[i]->atomPos.x()), int(atomSet[i]->atomPos.y()));
         angles[i] = QLineF(center, atomSet[i]->atomPos).angle();
     }
 
@@ -80,14 +85,23 @@ void Molecule::correctCyclicStructure() {
 
     double radius = bondLength/(2*sin(M_PI/numVerts));
 
-    for(int i = 0; i <= numVerts; i++){ //why did this use <=? don't we want to get rid of the last atom? because it's a repeat
+    for(int i = 0; i < atomSet.size(); i++){ //why did this use <=? don't we want to get rid of the last atom? because it's a repeat
         double theta = firstAngle + i*((2*M_PI)/numVerts);
         atomSet[i]->setAtomPos(center+radius*QPointF(cos(theta),sin(theta)));
     }
+
     addBond(atomSet.last(), atomSet.first());
+    printf("\n");
 
+    for(int i = 0; i < bondSet.size(); i++){
+        printf("btw ");
+        printf("(%i, %i)", int(bondSet[i]->atomFirst->atomPos.x()), int(bondSet[i]->atomFirst->atomPos.y()));
+        printf(" and ");
+        printf("(%i, %i)", int(bondSet[i]->atomSecond->atomPos.x()), int(bondSet[i]->atomSecond->atomPos.y()));
+        printf("\n");
 
-    atomSet.removeLast();
+    }
+
 }
 
 void Molecule:: addNewVerts(QVector<QPointF> drawnVertices){ //adds a set of points to the graph one after another
@@ -120,6 +134,34 @@ void Molecule:: addBond(Atom *p_start, Atom *p_finish){
     p_start->addBond(p_bond);
     p_finish->addBond(p_bond);
     bondSet.append(p_bond);
+}
 
+void Molecule:: removeAtom(Atom *p_atom){
+    for (int i=0; i<atomSet.size(); i++){
+        if (atomSet[i] == p_atom){
+            atomSet.remove(i);
+            break;
+        }
+    }
+    //remove all the bonds that are connected to it
+    for (int i = 0; i < p_atom->bonds.size(); i++){
+        //go through p_atom's bonds--
+        removeBond(p_atom->bonds[i]);
+        if (p_atom->bonds[i]->atomFirst==p_atom){ //if we're deleting atomFirst
+            p_atom->bonds[i]->atomSecond->removeBond(p_atom->bonds[i]);
+        } else if (p_atom->bonds[i]->atomSecond==p_atom){ //if we're deleting atomSecond
+            p_atom->bonds[i]->atomFirst->removeBond(p_atom->bonds[i]);
 
+        }
+    }
+    p_atom->bonds.clear();
+}
+
+void Molecule:: removeBond(Bond *p_bond){
+    for (int i=0; i<bondSet.size(); i++){
+        if (bondSet[i] == p_bond){
+            bondSet.remove(i);
+            return;
+        }
+    }
 }

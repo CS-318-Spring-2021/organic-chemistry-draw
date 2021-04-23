@@ -1,19 +1,34 @@
 #include "qbond.h"
 #include "Bond.h"
 #include <QGraphicsLineItem>
+#include <QGraphicsEllipseItem>
 #include <QGraphicsPolygonItem>
 #include <QPen>
 #include <QBrush>
 
-QBond::QBond(Bond *_bond):bond(_bond)
-{
-    qgline = new QGraphicsLineItem(QLineF(bond->atomFirst->atomPos, bond->atomSecond->atomPos));
-
+QBond::QBond(Bond *_bond):bond(_bond) {
     QPointF a = bond->atomFirst->atomPos;
     QPointF b = bond->atomSecond->atomPos;
 
     int quantity = bond->quantity;
     int quality = bond->quality;
+
+    QLineF line(a, b);
+
+    qgline = new QGraphicsLineItem(line);
+
+
+    hoverCircle = new QGraphicsEllipseItem(line.center().x()-15, line.center().y()-15, 30, 30);
+    hoverCircle->setPen(QPen(Qt::NoPen));
+    hoverCircle->setBrush(QColor(0, 0, 0, 30));
+    hoverCircle->setOpacity(0.0);
+
+    addToGroup(hoverCircle);
+
+
+    setAcceptHoverEvents(true);
+
+
 
     if (quality==0 && quantity==0){
         addToGroup(qgline);
@@ -24,7 +39,7 @@ QBond::QBond(Bond *_bond):bond(_bond)
         if (quantity==2){
             LENGTHMODIFIER = 0.03;
         }
-        QLineF line(a, b);
+
         QLineF supplementary(a, b);
         supplementary.setLength(LENGTHMODIFIER*line.length());
         supplementary.setAngle(line.angle()+90);
@@ -32,7 +47,7 @@ QBond::QBond(Bond *_bond):bond(_bond)
         supplementary.setAngle(line.angle()-90);
         QPointF cornertwo = supplementary.p2();
 
-        supplementary = QLineF(a, b);
+        supplementary = QLineF(b, a);
         supplementary.setLength(LENGTHMODIFIER*line.length());
         supplementary.setAngle(line.angle()+90);
         QPointF cornerthree = supplementary.p2();
@@ -40,10 +55,12 @@ QBond::QBond(Bond *_bond):bond(_bond)
         QPointF cornerfour = supplementary.p2();
 
         if (quantity==2){
-            addToGroup(new QGraphicsLineItem(line));
+            addToGroup(new QGraphicsLineItem(a.x(), a.y(), b.x(), b.y()));
         }
-        addToGroup(new QGraphicsLineItem(QLineF(cornerone, cornerthree)));
-        addToGroup(new QGraphicsLineItem(QLineF(cornertwo, cornerfour)));
+        addToGroup(new QGraphicsLineItem(cornerone.x(), cornerone.y(), cornerthree.x(), cornerthree.y()));
+        addToGroup(new QGraphicsLineItem(cornertwo.x(), cornertwo.y(), cornerfour.x(), cornerfour.y()));
+
+
     }
     else if (quality>0){
         //xy coordinates for the two endpoints of the bond
@@ -71,4 +88,12 @@ QBond::QBond(Bond *_bond):bond(_bond)
                 }
         }
     }
+}
+
+void QBond::hoverEnterEvent(QGraphicsSceneHoverEvent *evt) {
+    hoverCircle->setOpacity(0.25);
+}
+
+void QBond::hoverLeaveEvent(QGraphicsSceneHoverEvent *evt) {
+    hoverCircle->setOpacity(0.0);
 }

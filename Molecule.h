@@ -24,6 +24,8 @@ public:
     void correctCyclicStructure();
     void addNewVerts(QVector<QPointF> drawnVertices);
     void addBond(Atom *p_start, Atom *p_finish);
+    void removeAtom(Atom *p_atom);
+    void removeBond(Bond *p_bond);
 
 };
 

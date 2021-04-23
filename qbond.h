@@ -10,7 +10,11 @@ public:
     QBond(Bond *_bond);
     Bond *bond;
     QGraphicsLineItem *qgline;
+    QGraphicsEllipseItem *hoverCircle;
 
+protected:
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *evt);
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *evt);
 };
 
 #endif // QBOND_H
