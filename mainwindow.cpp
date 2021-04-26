@@ -104,6 +104,30 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
     if (when0==-1) when0 = when;
 
     currentDrawnObject->addData(pos, when-when0);
+    if (type == 0){
+        if(molecules.isEmpty()) {
+            appending = -1;
+        }else{
+            float dist;
+            float minDist = QLineF(pos, molecules[0]->atomSet[0]->atomPos).length();
+            float minI = 0;
+            for(int i = 0; i< molecules.size();i++){
+                for(int j = 0; j< molecules[i]->atomSet.size();j++){
+                    dist = QLineF(pos, molecules[i]->atomSet[j]->atomPos).length();
+                    if(dist<minDist) {
+                        minDist = dist;
+                        minI = i;
+                    }
+                }
+            }
+            if(minDist < (molecules[minI]->bondLength)/10){
+                appending = minI;
+                //printf("%i\n", appending);
+            }
+        }
+
+
+    }
     if (type == 1){
 
 
@@ -111,13 +135,12 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
         currentDrawnObject->analyzeColinearity();
         currentDrawnObject->analyzeDistances();
 
-        if (molecules.isEmpty()){
+        if(appending>-1){
+            molecules[appending]->addNewVerts(currentDrawnObject->vertices);
+            appending = -1;
+        }else{
             Molecule *molecule = new Molecule(currentDrawnObject->vertices);
             molecules.append(molecule);
-        } else {
-            //figure out WHICH molecule to add it to
-            int i = 0;
-            molecules[i]->addNewVerts(currentDrawnObject->vertices);
         }
 
         currentDrawnObject->clean();

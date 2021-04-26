@@ -27,6 +27,7 @@ public:
     ~MainWindow();
     DrawnObject *currentDrawnObject;
     bool recording;
+    int appending = -1;
     QVector<Molecule*> molecules;
 
 public slots:

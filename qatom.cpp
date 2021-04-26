@@ -15,10 +15,11 @@ QAtom::QAtom(Atom *_atom, qreal radius):atom(_atom)
     setAcceptHoverEvents(true);
 }
 
-void QAtom::hoverEnterEvent(QGraphicsSceneHoverEvent *evt) {
+void QAtom::hoverEnterEvent(QGraphicsSceneHoverEvent *) {
     coop->setOpacity(0.25);
+    //isHovering = true;
 }
 
-void QAtom::hoverLeaveEvent(QGraphicsSceneHoverEvent *evt) {
+void QAtom::hoverLeaveEvent(QGraphicsSceneHoverEvent *) {
     coop->setOpacity(0.0);
 }
