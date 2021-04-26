@@ -3,8 +3,7 @@
 #include <QLineF>
 #include <QDebug>
 
-Molecule::Molecule(QVector<QPointF> drawnVertices) { //initialize molecule with this constructor: we have a input set of vertices. make vertices and edges in a line, but in a cycle if it's connected at the end.
-                    //TODO: addBond should be a part of THIS class. adds an edge between two vertices. sets their neighbors, updates edgeset.
+Molecule::Molecule(QVector<QPointF> drawnVertices) {
     setBondLength(drawnVertices[0], drawnVertices[1]); //ok we have a set bond length as the first value? not the average?
 
     Atom *p_currentAtom = new Atom(drawnVertices[0]);   //current atom
@@ -75,7 +74,7 @@ void Molecule::correctCyclicStructure() {
 
     for(int i = 0; i < atomSet.size(); i++){
 
-        printf("%i: (%i, %i)\n", i, int(atomSet[i]->atomPos.x()), int(atomSet[i]->atomPos.y()));
+        //printf("%i: (%i, %i)\n", i, int(atomSet[i]->atomPos.x()), int(atomSet[i]->atomPos.y()));
         angles[i] = QLineF(center, atomSet[i]->atomPos).angle();
     }
 
@@ -91,7 +90,7 @@ void Molecule::correctCyclicStructure() {
     }
 
     addBond(atomSet.last(), atomSet.first());
-    printf("\n");
+    /*printf("\n");
 
     for(int i = 0; i < bondSet.size(); i++){
         printf("btw ");
@@ -100,13 +99,11 @@ void Molecule::correctCyclicStructure() {
         printf("(%i, %i)", int(bondSet[i]->atomSecond->atomPos.x()), int(bondSet[i]->atomSecond->atomPos.y()));
         printf("\n");
 
-    }
+    }*/
 
 }
 
 void Molecule:: addNewVerts(QVector<QPointF> drawnVertices){ //adds a set of points to the graph one after another
-    //when do you make double v triple? great question. i will not answer it B)
-
     //the first item in drawnVertices is an existing atom, not sure yet which one though--
     QPointF finding = drawnVertices[0];                                     //so we loop through existing atoms,
     Atom *p_currentAtom = atomSet[0];
@@ -133,17 +130,19 @@ void Molecule:: addBond(Atom *p_start, Atom *p_finish){
     QLineF line(p_start->atomPos, p_finish->atomPos);
     line.setLength(this->bondLength);
     float angle = 0;
-    QPointF average;
-//    if(p_start->getBonds()==2){
-//        average += p_start->bonds[0]->atomFirst->atomPos;
-//        average += p_start->bonds[0]->atomSecond->atomPos;
-//        average += p_start->bonds[1]->atomFirst->atomPos;
-//        average += p_start->bonds[1]->atomSecond->atomPos;
-//        angle = (-1)*QLineF(average, p_start->atomPos).angle();
-//        line.setAngle(angle);
-//    }
+    QPointF average(0,0);
+    if(p_start->getBonds()==2){
+        average -= 2*(p_start->atomPos);
+        average += p_start->bonds[0]->atomFirst->atomPos;
+        average += p_start->bonds[0]->atomSecond->atomPos;
+        average += p_start->bonds[1]->atomFirst->atomPos;
+        average += p_start->bonds[1]->atomSecond->atomPos;
+        average /= 2;
+        line = QLineF(p_start->atomPos, average);
+        line.setLength(-1*(this->bondLength));
+    }
     p_finish->atomPos = line.p2();
-    Bond *p_bond = new Bond(p_start, p_finish); //this is the point where i SHOULD be able to recognize how many neighbors this atom has, right?
+    Bond *p_bond = new Bond(p_start, p_finish);
     p_start->addBond(p_bond);
     p_finish->addBond(p_bond);
     bondSet.append(p_bond);
@@ -177,4 +176,12 @@ void Molecule:: removeBond(Bond *p_bond){
             return;
         }
     }
+}
+
+void Molecule:: combine(Molecule *other, Atom *connecting){
+    return;
+    //connecting is the atom in 'other' that is actually an atom in our molecule
+    //so we want to find which atom connecting is supposed to be in the molecule object, and add the bonds to it that connecting had
+    //then we want to add all atoms besides connecting (it already exists)
+    //we also want to add all of the bonds that exist in other, excepting the ones that involve 'connecting' (those were already taken care of
 }

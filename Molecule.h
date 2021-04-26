@@ -26,6 +26,7 @@ public:
     void addBond(Atom *p_start, Atom *p_finish);
     void removeAtom(Atom *p_atom);
     void removeBond(Bond *p_bond);
+    void combine(Molecule *other, Atom *connecting);
 
 };
 
