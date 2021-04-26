@@ -31,6 +31,7 @@ public:
     void setAtomPos(QPointF newPoint);
     void addBond(Bond *p_bond);
     void removeBond(Bond *p_bond);
+    int getBonds();
     QVector<Bond*> bonds;
     QPointF atomPos;
     double const atomRadius = 10; //need to decide this later

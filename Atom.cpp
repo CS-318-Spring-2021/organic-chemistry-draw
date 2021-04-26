@@ -6,7 +6,12 @@ Atom::Atom(QPointF currentPos) {
 }
 
 void Atom::addBond(Bond *p_bond){
+    //count neighbor bonds, calculate what bond we want, change neighbor bonds
     bonds.append(p_bond);
+    if(this->getBonds()==4){
+        bonds[2]->quality = Bond::ThickBond;
+        bonds[3]->quality = Bond::DashBond;
+    }
 }
 
 void Atom::removeBond(Bond *p_bond){
@@ -24,4 +29,8 @@ void Atom::setElement(enum Element changeElement){
 
 void Atom::setAtomPos(QPointF newPoint){
     atomPos = newPoint;
+}
+
+int Atom::getBonds(){
+    return bonds.size();
 }

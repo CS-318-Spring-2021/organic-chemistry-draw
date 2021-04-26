@@ -130,6 +130,19 @@ void Molecule:: addNewVerts(QVector<QPointF> drawnVertices){ //adds a set of poi
 }
 
 void Molecule:: addBond(Atom *p_start, Atom *p_finish){
+    QLineF line(p_start->atomPos, p_finish->atomPos);
+    line.setLength(this->bondLength);
+    float angle = 0;
+    QPointF average;
+//    if(p_start->getBonds()==2){
+//        average += p_start->bonds[0]->atomFirst->atomPos;
+//        average += p_start->bonds[0]->atomSecond->atomPos;
+//        average += p_start->bonds[1]->atomFirst->atomPos;
+//        average += p_start->bonds[1]->atomSecond->atomPos;
+//        angle = (-1)*QLineF(average, p_start->atomPos).angle();
+//        line.setAngle(angle);
+//    }
+    p_finish->atomPos = line.p2();
     Bond *p_bond = new Bond(p_start, p_finish); //this is the point where i SHOULD be able to recognize how many neighbors this atom has, right?
     p_start->addBond(p_bond);
     p_finish->addBond(p_bond);
