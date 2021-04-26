@@ -104,7 +104,7 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
     currentDrawnObject->addData(pos, when-when0);
     if (type == 1){
 
-        Molecule molecule(currentDrawnObject->analyze());
+        Molecule molecule(currentDrawnObject->analyzeWithSlopes());
 
 
         for (int i = 0; i<molecule.getAtomSet().size()-1; i++){

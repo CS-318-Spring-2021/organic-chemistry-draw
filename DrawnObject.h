@@ -20,7 +20,7 @@ public:
     QVector<QPointF> analyzeLengths(QVector<QPointF> vertices);
     QVector<QPointF> eliminateColinear(QVector<QPointF> vertices);
     QPointF pointAverage(QVector<QPointF> points);
-    void analyzeWithSlopes();
+    QVector<QPointF> analyzeWithSlopes();
     int binarySearch(int start, int end, float slope, float tolerence);
 
 };

@@ -76,7 +76,7 @@ QVector<QPointF> DrawnObject::eliminateColinear(QVector<QPointF> vertices){
     return returnVertices;
 }
 
-void DrawnObject::analyzeWithSlopes() {
+QVector<QPointF> DrawnObject::analyzeWithSlopes() {
 
     bool haveAngle = false;
 
@@ -125,8 +125,7 @@ void DrawnObject::analyzeWithSlopes() {
         }
     }
     altVertices.append(*positionInputPoints[maxLen-1]);
-    QVector<QPointF> cleanedPoints = eliminateColinear(altVertices);
-
+    return analyzeLengths(eliminateColinear(altVertices));
 
 }
 
