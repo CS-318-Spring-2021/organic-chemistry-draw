@@ -26,6 +26,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     DrawnObject *currentDrawnObject;
+    DrawnObject *freehandObject;
     bool recording;
     int appending = -1;
     QVector<Molecule*> molecules;
@@ -35,5 +36,6 @@ public slots:
     void bSave();
     void bRecording();
     void updateCrosshairs(int curRow, int curCol, int prevRow, int prevCol);
+    void drawExisting();
 };
 #endif // MAINWINDOW_H

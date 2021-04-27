@@ -10,33 +10,35 @@ QBond::QBond(Bond *_bond):bond(_bond) {
     QPointF a = bond->atomFirst->atomPos;
     QPointF b = bond->atomSecond->atomPos;
 
+
     int quantity = bond->quantity;
-    int quality = bond->quality;
+    int drawStyle = bond->drawStyle;
 
     QLineF line(a, b);
 
     qgline = new QGraphicsLineItem(line);
 
-
-    hoverCircle = new QGraphicsEllipseItem(line.center().x()-15, line.center().y()-15, 30, 30);
+    //instead, a polygon?
+    hoverCircle = new QGraphicsEllipseItem(line.center().x()-15, line.center().y()-15, 30, 30); //needs to use trig to adjust the TL of the circle
     hoverCircle->setPen(QPen(Qt::NoPen));
     hoverCircle->setBrush(QColor(0, 0, 0, 30));
     hoverCircle->setOpacity(0.0);
 
+
     addToGroup(hoverCircle);
 
 
-    //setAcceptHoverEvents(true);
+    setAcceptHoverEvents(true);
 
 
 
-    if (quality==0 && quantity==0){
+    if (drawStyle==0 && quantity==1){
         addToGroup(qgline);
     }
-    else if (quantity>0){
+    else if (quantity>1){
 
         double LENGTHMODIFIER = 0.018;
-        if (quantity==2){
+        if (quantity==3){
             LENGTHMODIFIER = 0.03;
         }
 
@@ -54,22 +56,30 @@ QBond::QBond(Bond *_bond):bond(_bond) {
         supplementary.setAngle(line.angle()-90);
         QPointF cornerfour = supplementary.p2();
 
-        if (quantity==2){
-            addToGroup(new QGraphicsLineItem(a.x(), a.y(), b.x(), b.y()));
+
+        QGraphicsLineItem* leftline = new QGraphicsLineItem(cornerone.x(), cornerone.y(), cornerthree.x(), cornerthree.y());
+        QGraphicsLineItem* centerline = new QGraphicsLineItem(a.x(), a.y(), b.x(), b.y());
+        QGraphicsLineItem* rightline = new QGraphicsLineItem(cornertwo.x(), cornertwo.y(), cornerfour.x(), cornerfour.y());
+        leftline->setPen(QPen(Qt::black, .05*line.length()));
+        centerline->setPen(QPen(Qt::black, .05*line.length())); //should we include lengthmod s.t. 3x bonds have enough space between?
+        rightline->setPen(QPen(Qt::black, .05*line.length()));
+
+        addToGroup(leftline);
+        addToGroup(rightline);
+        if (quantity==3){
+            addToGroup(centerline);
         }
-        addToGroup(new QGraphicsLineItem(cornerone.x(), cornerone.y(), cornerthree.x(), cornerthree.y()));
-        addToGroup(new QGraphicsLineItem(cornertwo.x(), cornertwo.y(), cornerfour.x(), cornerfour.y()));
 
 
     }
-    else if (quality>0){
+    else if (drawStyle>0){
         //xy coordinates for the two endpoints of the bond
         const double TRIANGLE = 0.05;
         QLineF line(a, b);
         QPointF perp(line.dy(), -line.dx());
 
-        if (quality==1 || quality==2) {
-            const int NBLACK = (quality==1 ? 1 : 8);
+        if (drawStyle==1 || drawStyle==2) {
+            const int NBLACK = (drawStyle==1 ? 1 : 8);
             const double WHITE = 1.25, BLACK = 1.0;  // Relative lengths of white and black
             double step = 1.0/(NBLACK*BLACK + (NBLACK-1)*WHITE);
             double t = 0.0; // 0.0 is a, 1.0 is b
@@ -90,14 +100,12 @@ QBond::QBond(Bond *_bond):bond(_bond) {
     }
 }
 
-//void QBond::hoverEnterEvent(QGraphicsSceneHoverEvent *evt) {
-//    hoverCircle->setOpacity(0.25);
-//    //bond->quantity = Bond::DoubleBond; can we somehow make this be a button for switching the bond quantity?
-//}
+void QBond::hoverEnterEvent(QGraphicsSceneHoverEvent *evt) {
+    hoverCircle->setOpacity(0.5);
+}
 
-//void QBond::hoverLeaveEvent(QGraphicsSceneHoverEvent *evt) {
-//    hoverCircle->setOpacity(0.0);
-//    //bond->quantity = Bond::SingleBond;
+void QBond::hoverLeaveEvent(QGraphicsSceneHoverEvent *evt) {
+    hoverCircle->setOpacity(0.0);
 
-//}
+}
 

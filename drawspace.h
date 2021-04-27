@@ -18,12 +18,13 @@ class drawspace : public QGraphicsView
     QGraphicsPathItem *crosshairs;
     bool mouseIsDown;
 
-    void maybeAddSegment(const QPointF &pos);
 
 public:
     enum {MousePressed, MouseReleased, MouseMoved};
 
     drawspace();
+    void maybeAddSegment(const QPointF &pos);
+
 
     void setCrosshairsVisible(bool visible);
     void setCrosshairsPos(const QPointF &pos);

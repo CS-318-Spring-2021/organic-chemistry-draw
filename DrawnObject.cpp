@@ -20,6 +20,11 @@ void DrawnObject::addData(QPointF position, int time){
     timeInputPoints.append(t);
 }
 
+void DrawnObject::addData(QPointF position){
+    QPointF* point = new QPointF(position.x(), position.y());
+    positionInputPoints.append(point);
+}
+
 void DrawnObject::clean(){
     for(int i = 0; i < positionInputPoints.size(); i++){
         free(positionInputPoints[i]);

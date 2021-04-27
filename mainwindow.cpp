@@ -9,6 +9,12 @@
 #include "qatom.h"
 #include "qbond.h"
 
+
+//save , label pages, keep in file system, save as a .png or .pdf? or interactive thing?
+//      students download Molecule class as a .txt or .xml file is possible,
+//      read into application-- if students have application they can open / use / edit
+//      easy way to jot things down.
+
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
@@ -35,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     mainLayout->addLayout(taskBarLayout);
     mainLayout->addWidget(view = new drawspace(), 1);
     mainLayout->addLayout(rightLayout);
-
+    /*
     table->setColumnCount(6);
     table->setColumnWidth(0, 50);
     table->setColumnWidth(1, 50);
@@ -48,8 +54,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     table->verticalHeader()->setVisible(false);
 
     table->setHorizontalHeaderLabels(QStringList() << "t" << "dt" << "x" << "y" << "speed" << "acceleration");
-
+    */
     currentDrawnObject = new DrawnObject(view);
+    freehandObject = new DrawnObject(view);
 
     connect(view, &drawspace::mouseEvent, this, &MainWindow::onMouseEvent);
 
@@ -94,68 +101,65 @@ void MainWindow::bRecording(){
 }
 
 void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
-    if(!recordCheckBox->isChecked()){
-        return;
-    }
+
 
     static QString types = "PRM";
     static int when0 = -1;
 
     if (when0==-1) when0 = when;
+    if(recordCheckBox->isChecked()){
+        currentDrawnObject->addData(pos, when-when0);
 
-    currentDrawnObject->addData(pos, when-when0);
-    if (type == 0){
-        if(molecules.isEmpty()) {
-            appending = -1;
-        }else{
-            float dist;
-            float minDist = QLineF(pos, molecules[0]->atomSet[0]->atomPos).length();
-            float minI = 0;
-            for(int i = 0; i< molecules.size();i++){
-                for(int j = 0; j< molecules[i]->atomSet.size();j++){
-                    dist = QLineF(pos, molecules[i]->atomSet[j]->atomPos).length();
-                    if(dist<minDist) {
-                        minDist = dist;
-                        minI = i;
+        if (type == 0){
+            /*if(){ //if we are hovering over a bond at the time
+                //this would be where we note that he's changing a bond
+            }
+            else */if(molecules.isEmpty()) {
+                appending = -1;
+            }else{
+                float dist;
+                float minDist = QLineF(pos, molecules[0]->atomSet[0]->atomPos).length();
+                float minI = 0;
+                for(int i = 0; i< molecules.size();i++){
+                    for(int j = 0; j< molecules[i]->atomSet.size();j++){
+                        dist = QLineF(pos, molecules[i]->atomSet[j]->atomPos).length();
+                        if(dist<minDist) {
+                            minDist = dist;
+                            minI = i;
+                        }
                     }
                 }
+                if(minDist < (molecules[minI]->bondLength)/10){
+                    appending = minI;
+                }
             }
-            if(minDist < (molecules[minI]->bondLength)/10){
-                appending = minI;
-                //printf("%i\n", appending);
-            }
+
+
         }
 
+        if (type == 1){
+            /*if (){
+                //if you are above a bond at the time, increment the value in that bond
+            }*/
+            currentDrawnObject->analyzeSpeed();
+            currentDrawnObject->analyzeColinearity();
+            currentDrawnObject->analyzeDistances();
 
+            if(appending>-1){
+                molecules[appending]->addNewVerts(currentDrawnObject->vertices);
+                appending = -1;
+            }else{
+                Molecule *molecule = new Molecule(currentDrawnObject->vertices);
+                molecules.append(molecule);
+            }
+            currentDrawnObject->clean();
+        }
+
+    } else {
+        freehandObject->addData(pos);
     }
-    if (type == 1){
-
-
-        currentDrawnObject->analyzeSpeed();
-        currentDrawnObject->analyzeColinearity();
-        currentDrawnObject->analyzeDistances();
-
-        if(appending>-1){
-            molecules[appending]->addNewVerts(currentDrawnObject->vertices);
-            appending = -1;
-        }else{
-            Molecule *molecule = new Molecule(currentDrawnObject->vertices);
-            molecules.append(molecule);
-        }
-
-        currentDrawnObject->clean();
-        for (int m=0; m < molecules.size(); m++){
-            for (int i=0; i < (molecules[m]->atomSet.size()); i++){
-                //draw the atom
-                view->drawAtom(new QAtom(molecules[m]->atomSet[i], (molecules[m]->bondLength)/10));
-            }
-            for (int i = 0; i<(molecules[m]->bondSet.size()); i++){
-                view->drawBond(new QBond(molecules[m]->bondSet[i]));
-            }
-        }
-
-    }
-
+    drawExisting();
+    /*
     int row;
     table->setRowCount((row = table->rowCount())+1);
 
@@ -172,5 +176,24 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
             double dist = table->item(row, 4)->text().toDouble();
             table->setItem(row, 5, new QTableWidgetItem(QString::number(dist-prevdist)));
         }
+    }*/
+}
+
+
+void MainWindow::drawExisting(){
+    for (int m=0; m < molecules.size(); m++){
+        for (int i=0; i < (molecules[m]->atomSet.size()); i++){
+            //draw the atom
+            view->drawAtom(new QAtom(molecules[m]->atomSet[i], (molecules[m]->bondLength)/10));
+        }
+        for (int i = 0; i<(molecules[m]->bondSet.size()); i++){
+            QBond* bond = new QBond(molecules[m]->bondSet[i]);
+            bond->setZValue(-1);
+            view->drawBond(bond);
+        }
+    }
+
+    for (int f = 0; f<freehandObject->positionInputPoints.size(); f++){
+        view->maybeAddSegment(*freehandObject->positionInputPoints[f]);
     }
 }

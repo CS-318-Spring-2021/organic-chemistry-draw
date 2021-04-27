@@ -13,6 +13,7 @@ public:
 
     DrawnObject(drawspace* view);
     void addData(QPointF position, int time);
+    void addData(QPointF position);
     ~DrawnObject();
     void clean();
     void analyzeSpeed();

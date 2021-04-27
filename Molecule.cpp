@@ -4,6 +4,9 @@
 #include <QDebug>
 
 Molecule::Molecule(QVector<QPointF> drawnVertices) {
+    //TODO:
+    //if there is one line off of the hex or structure
+    //if another one goes in, then change to wedges and dashes and reset the angles
     setBondLength(drawnVertices[0], drawnVertices[1]); //ok we have a set bond length as the first value? not the average?
 
     Atom *p_currentAtom = new Atom(drawnVertices[0]);   //current atom
@@ -127,6 +130,8 @@ void Molecule:: addNewVerts(QVector<QPointF> drawnVertices){ //adds a set of poi
 }
 
 void Molecule:: addBond(Atom *p_start, Atom *p_finish){
+    //when he draws in the THIRD bond it will be skewed off correctly if he anticipates drawing the fourth
+    //          could want angles freehanded?
     QLineF line(p_start->atomPos, p_finish->atomPos);
     line.setLength(this->bondLength);
     float angle = 0;

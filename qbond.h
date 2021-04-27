@@ -13,8 +13,8 @@ public:
     QGraphicsEllipseItem *hoverCircle;
 
 protected:
-//    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *evt);
-//    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *evt);
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *evt);
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *evt);
 };
 
 #endif // QBOND_H

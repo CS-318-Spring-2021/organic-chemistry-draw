@@ -11,16 +11,14 @@ class Bond{
 public:
     Bond(Atom *p_firstAtom, Atom *p_secondAtom);
 
-    enum BondQuality {NormalBond, ThickBond, DashBond};
-    enum BondQuantity {SingleBond, DoubleBond, TripleBond};
+    enum BondDrawStyle {NormalBond, ThickBond, DashBond, DoubleBond, TripleBond};
 
 
-    void setQuantity(BondQuantity quantity);
-    void setQuality(BondQuality quality);
     Atom *atomFirst;
     Atom *atomSecond;
-    BondQuality quality;
-    BondQuantity quantity;
+    BondDrawStyle drawStyle;
+    int quantity;
+    void changeBond();
 
 };
 
