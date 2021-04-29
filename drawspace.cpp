@@ -66,15 +66,28 @@ void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos) 
     mScene.addLine(QLineF(firstPos, lastPos), QPen(Qt::black, 2.0));
 }
 
+
+//TODO should this be consolidated into one function?
 void drawspace::drawAtom(QAtom *qatom){
     mScene.addItem(qatom);
+    locationMap[qatom->coop] = qatom;
+    printf("%i\n", locationMap.size());
 }
 
 void drawspace::drawBond(QBond *qbond){
     mScene.addItem(qbond);
-    //is this where i might specify pen and brush things? great question!
+    locationMap[qbond->hoverCircle] = qbond;
+    printf("%i\n", locationMap.size());
 }
 
-QGraphicsItem drawspace::getItem(QPointF pos) {
-    return mScene.itemAt(pos.x, pos.y)
+//?
+
+void* drawspace::getItem(QPointF pos) {
+    QList<QGraphicsItem*> items = mScene.items(pos);
+    for (int i= 0; i< items.length(); i++){
+        if (items[i]->type()==QGraphicsEllipseItem::Type){
+            return items[i];
+        }
+    }
+    return nullptr;
 }

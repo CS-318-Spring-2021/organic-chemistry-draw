@@ -41,20 +41,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     mainLayout->addLayout(taskBarLayout);
     mainLayout->addWidget(view = new drawspace(), 1);
     mainLayout->addLayout(rightLayout);
-    /*
-    table->setColumnCount(6);
-    table->setColumnWidth(0, 50);
-    table->setColumnWidth(1, 50);
-    table->setColumnWidth(2, 50);
-    table->setColumnWidth(3, 50);
-    table->setColumnWidth(4, 70);
-    table->setColumnWidth(5, 100);
-    table->horizontalHeader()->setStretchLastSection(true);
-    table->setMinimumWidth(350);
-    table->verticalHeader()->setVisible(false);
 
-    table->setHorizontalHeaderLabels(QStringList() << "t" << "dt" << "x" << "y" << "speed" << "acceleration");
-    */
     currentDrawnObject = new DrawnObject(view);
     freehandObject = new DrawnObject(view);
 
@@ -111,14 +98,21 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
         currentDrawnObject->addData(pos, when-when0);
 
         if (type == 0){
-            QGraphicsItem item = view->getMScene().itemAt(pos.x, pos.y);
+            /*void* item = view->getItem(pos);
 
-            if () {
-
-                //if we are hovering over a bond at the time
-                //this would be where we note that he's changing a bond
+            if (item != nullptr) {
+                //figure out what it is we're hovering over
+                void* classpointer = view->locationMap[item];
+                try { //atom!
+                    //if its an atom, know which atom we clicked
+                    QAtom* qa = static_cast<QAtom*>(classpointer);
+                    Atom* a = qa->atom;
+                } catch(nullptr_t){
+                    //if its a bond, know which bond we clicked
+                    Bond* b = static_cast<QBond*>(classpointer)->bond;
+                }
             }
-            else if(molecules.isEmpty()) {
+            else */if(molecules.isEmpty()) {
                 appending = -1;
             }else{
                 float dist;
@@ -142,52 +136,53 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
         }
 
         if (type == 1){
-            /*if (){
-                //if you are above a bond at the time, increment the value in that bond
-            }*/
-            currentDrawnObject->analyzeSpeed();
-            currentDrawnObject->analyzeColinearity();
-            currentDrawnObject->analyzeDistances();
+            void* item = view->getItem(pos);
 
-            if(appending>-1){
-                molecules[appending]->addNewVerts(currentDrawnObject->vertices);
-                appending = -1;
-            }else{
-                Molecule *molecule = new Molecule(currentDrawnObject->vertices);
-                molecules.append(molecule);
+            if (item != nullptr) {
+                printf("something happened?");
+                //figure out what it is we're hovering over
+                void* classpointer = view->locationMap[item];
+                try { //atom!
+                    //if its an atom, we are ENDING on an ATOM
+                    QAtom* qa = static_cast<QAtom*>(classpointer);
+                    Atom* a = qa->atom;
+                } catch(nullptr_t){
+                    //change the molecule's value at that point
+                    Bond* b = static_cast<QBond*>(classpointer)->bond;
+                    b->changeBond();
+                    printf("changing some bond qualities B) \n");
+                }
             }
+
+            if (currentDrawnObject->positionInputPoints.size()>5){
+
+                currentDrawnObject->analyzeSpeed();
+                currentDrawnObject->analyzeColinearity();
+                currentDrawnObject->analyzeDistances();
+
+                if(appending>-1){
+                    molecules[appending]->addNewVerts(currentDrawnObject->vertices);
+                    appending = -1;
+                }else{
+                    Molecule *molecule = new Molecule(currentDrawnObject->vertices);
+                    molecules.append(molecule);
+                }
+            }
+
             currentDrawnObject->clean();
+            view->locationMap.clear();
+            drawExisting();
         }
 
     } else {
         freehandObject->addData(pos);
     }
-    drawExisting();
-    /*
-    int row;
-    table->setRowCount((row = table->rowCount())+1);
-
-    table->setItem(row, 0, new QTableWidgetItem(QString::number(when-when0)));
-    table->setItem(row, 2, new QTableWidgetItem(QString::number(pos.x())));
-    table->setItem(row, 3, new QTableWidgetItem(QString::number(pos.y())));
-    if (row>0){
-        QLineF segment(pos.x(), pos.y(),table->item(row-1, 2)->text().toDouble(), table->item(row-1, 3)->text().toDouble());
-        int dtime = table->item(row, 0)->text().toInt()-(table->item(row-1,0)->text().toInt());
-        table->setItem(row, 1, new QTableWidgetItem(QString::number(dtime)));
-        table->setItem(row, 4, new QTableWidgetItem(QString::number(int(100*(segment.length())/dtime))));
-        if (row>1){
-            double prevdist = table->item(row-1, 4)->text().toDouble();
-            double dist = table->item(row, 4)->text().toDouble();
-            table->setItem(row, 5, new QTableWidgetItem(QString::number(dist-prevdist)));
-        }
-    }*/
 }
 
 
 void MainWindow::drawExisting(){
     for (int m=0; m < molecules.size(); m++){
         for (int i=0; i < (molecules[m]->atomSet.size()); i++){
-            //draw the atom
             view->drawAtom(new QAtom(molecules[m]->atomSet[i], (molecules[m]->bondLength)/10));
         }
         for (int i = 0; i<(molecules[m]->bondSet.size()); i++){

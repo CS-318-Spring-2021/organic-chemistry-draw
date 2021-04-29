@@ -25,7 +25,8 @@ public:
 
     drawspace();
     void maybeAddSegment(const QPointF &pos); 
-    QGraphicsItem getItem(QPointF pos);
+    void* getItem(QPointF pos);
+    QMap<void*, void*> locationMap = {};
 
     void setCrosshairsVisible(bool visible);
     void setCrosshairsPos(const QPointF &pos);
@@ -38,6 +39,7 @@ protected:
     virtual void mousePressEvent(QMouseEvent *evt) override;
     virtual void mouseReleaseEvent(QMouseEvent *evt) override;
     virtual void mouseMoveEvent(QMouseEvent *evt) override;
+
 
 signals:
     void mouseEvent(int type, int when, QPointF pos);
