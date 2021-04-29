@@ -74,3 +74,7 @@ void drawspace::drawBond(QBond *qbond){
     mScene.addItem(qbond);
     //is this where i might specify pen and brush things? great question!
 }
+
+QGraphicsItem drawspace::getItem(QPointF pos) {
+    return mScene.itemAt(pos.x, pos.y)
+}

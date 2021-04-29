@@ -106,6 +106,5 @@ void QBond::hoverEnterEvent(QGraphicsSceneHoverEvent *evt) {
 
 void QBond::hoverLeaveEvent(QGraphicsSceneHoverEvent *evt) {
     hoverCircle->setOpacity(0.0);
-
 }
 

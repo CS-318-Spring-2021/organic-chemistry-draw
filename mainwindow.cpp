@@ -111,10 +111,14 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
         currentDrawnObject->addData(pos, when-when0);
 
         if (type == 0){
-            /*if(){ //if we are hovering over a bond at the time
+            QGraphicsItem item = view->getMScene().itemAt(pos.x, pos.y);
+
+            if () {
+
+                //if we are hovering over a bond at the time
                 //this would be where we note that he's changing a bond
             }
-            else */if(molecules.isEmpty()) {
+            else if(molecules.isEmpty()) {
                 appending = -1;
             }else{
                 float dist;

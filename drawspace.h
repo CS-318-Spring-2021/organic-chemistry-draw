@@ -2,6 +2,7 @@
 #define DRAWSPACE_H
 
 #include <QGraphicsView>
+#include <QGraphicsItem>
 #include <QObject>
 #include <QWidget>
 #include <cmath>
@@ -23,8 +24,8 @@ public:
     enum {MousePressed, MouseReleased, MouseMoved};
 
     drawspace();
-    void maybeAddSegment(const QPointF &pos);
-
+    void maybeAddSegment(const QPointF &pos); 
+    QGraphicsItem getItem(QPointF pos);
 
     void setCrosshairsVisible(bool visible);
     void setCrosshairsPos(const QPointF &pos);
