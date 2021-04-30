@@ -23,7 +23,4 @@ void Bond::changeBond(){
     else {
         quantity = 1;
     }
-    printf("k\n");
 }
-
-//TODO: set angle? or within atom class...

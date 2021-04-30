@@ -1,42 +1,54 @@
 #include "drawspace.h"
 #include <QSurface>
-
+#include <QDebug>
 #include <QtWidgets>
+
 #include "qatom.h"
 #include "qbond.h"
+#include "Molecule.h"
+#include "DrawnObject.h"
+
+
+
+
 
 drawspace::drawspace() {
     setScene(&mScene);
     setSceneRect(QRectF(-400.0, -300.0, 800.0, 600.0));
     setRenderHint(QPainter::Antialiasing);
-
-    QPainterPath crossPath;
-    crossPath.moveTo(-4.0, 0.0); crossPath.lineTo(-1.0, 0.0);
-    crossPath.moveTo(1.0, 0.0); crossPath.lineTo(4.0, 0.0);
-    crossPath.moveTo(0.0, -4.0); crossPath.lineTo(0.0, -1.0);
-    crossPath.moveTo(0.0, 1.0); crossPath.lineTo(0.0, 4.0);
-    crosshairs = mScene.addPath(crossPath, QPen(Qt::red, 1.0));
-    crosshairs->setVisible(false);
-
     mouseIsDown = false;
     setMouseTracking(true);
-}
-//TODO: del
-void drawspace::setCrosshairsVisible(bool visible) {
-    crosshairs->setVisible(visible);
-}
-
-void drawspace::setCrosshairsPos(const QPointF &pos) {
-    crosshairs->setPos(pos);
+    currentDrawnObject = new DrawnObject();
+    freehandObject = new DrawnObject();
 }
 
 void drawspace::mousePressEvent(QMouseEvent *evt) {
     QGraphicsView::mousePressEvent(evt);
     mouseIsDown = true;
     QPointF pos = mapToScene(evt->pos());
-    emit mouseEvent(MousePressed, QDateTime::currentMSecsSinceEpoch(), pos);
+    if(molecules.isEmpty()) {
+        appending = -1;
+    } else {
+        float dist;
+        float minDist = QLineF(pos, molecules[0]->atomSet[0]->atomPos).length();
+        float minI = 0;
+        for(int i = 0; i< molecules.size();i++){
+            for(int j = 0; j< molecules[i]->atomSet.size();j++){
+                dist = QLineF(pos, molecules[i]->atomSet[j]->atomPos).length();
+                if(dist<minDist) {
+                    minDist = dist;
+                    minI = i;
+                }
+            }
+        }
+        if(minDist < (molecules[minI]->bondLength)/10){
+            appending = minI;
+        }
+    }
+
     lastPos = pos;
 }
+
 
 void drawspace::maybeAddSegment(const QPointF &pos) {
     if (lastPos!=pos) {
@@ -50,7 +62,23 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
     QGraphicsView::mouseReleaseEvent(evt);
     QPointF pos = mapToScene(evt->pos());
     mScene.clear();
-    emit mouseEvent(MouseReleased, QDateTime::currentMSecsSinceEpoch(), pos);
+    if (currentDrawnObject->positionInputPoints.size()>5){
+
+        currentDrawnObject->analyzeSpeed();
+        currentDrawnObject->analyzeColinearity();
+        currentDrawnObject->analyzeDistances();
+
+        if(appending>-1){
+            molecules[appending]->addNewVerts(currentDrawnObject->vertices);
+            appending = -1;
+        }else{
+            Molecule *molecule = new Molecule(currentDrawnObject->vertices);
+            molecules.append(molecule);
+        }
+    }
+
+    currentDrawnObject->clean();
+    drawExisting();
 }
 
 
@@ -58,7 +86,11 @@ void drawspace::mouseMoveEvent(QMouseEvent *evt) {
     QGraphicsView::mouseMoveEvent(evt);
     if (mouseIsDown) {
         QPointF pos = mapToScene(evt->pos());
-        emit mouseEvent(MouseMoved, QDateTime::currentMSecsSinceEpoch(), pos);
+        if(recording){
+            currentDrawnObject->addData(pos, evt->timestamp());
+        } else {
+            freehandObject->addData(pos);
+        }
         maybeAddSegment(pos);
     }
 }
@@ -70,30 +102,19 @@ void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos) 
 }
 
 
-//TODO should this be consolidated into one function?
-void drawspace::drawAtom(QAtom *qatom){
-    mScene.addItem(qatom);
-    //locationMap[qatom->coop] = qatom;
-    //printf("%i\n", locationMap.size());
-}
-
-void drawspace::drawBond(QBond *qbond){
-    mScene.addItem(qbond);
-    //locationMap[qbond->hoverCircle] = qbond;
-    //printf("%i\n", locationMap.size());
-}
-
-//?
-
-
-
-QGraphicsItem* drawspace::getItem(QPoint pos) {
-    QPointF newpos = mapToScene(pos);
-    QList<QGraphicsItem*> items = mScene.items(newpos);
-    for (int i= 0; i< items.length(); i++){
-        if (items[i]->type()==QGraphicsEllipseItem::Type){
-            return items[i];
+void drawspace::drawExisting(){
+    for (int m=0; m < molecules.size(); m++){
+        for (int i=0; i < (molecules[m]->atomSet.size()); i++){
+            mScene.addItem(new QAtom(molecules[m]->atomSet[i], (molecules[m]->bondLength)/10));
+        }
+        for (int i = 0; i<(molecules[m]->bondSet.size()); i++){
+            QBond* bond = new QBond(molecules[m]->bondSet[i]);
+            bond->setZValue(-1);
+            mScene.addItem(bond);
         }
     }
-    return nullptr;
+
+    for (int f = 0; f<freehandObject->positionInputPoints.size(); f++){
+        maybeAddSegment(*freehandObject->positionInputPoints[f]);
+    }
 }

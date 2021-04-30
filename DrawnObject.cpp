@@ -7,8 +7,7 @@
 #include "drawspace.h"
 #include "Molecule.h"
 
-DrawnObject::DrawnObject(drawspace* view){
-    this->view = view;
+DrawnObject::DrawnObject(){
     clean();
 }
 

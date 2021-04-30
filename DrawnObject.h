@@ -5,13 +5,12 @@
 #include "drawspace.h"
 
 class DrawnObject{
-    drawspace* view;
 public:
     QVector<QPointF*> positionInputPoints;
     QVector<int*> timeInputPoints;
     QVector<QPointF> vertices;
 
-    DrawnObject(drawspace* view);
+    DrawnObject();
     void addData(QPointF position, int time);
     void addData(QPointF position);
     ~DrawnObject();

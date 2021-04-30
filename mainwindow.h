@@ -18,23 +18,15 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
     drawspace *view;
-    QTableWidget *table;
     QPushButton *saveButton;
     QCheckBox *recordCheckBox;
 
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    DrawnObject *currentDrawnObject;
-    DrawnObject *freehandObject;
-    bool recording;
-    int appending = -1;
-    QVector<Molecule*> molecules;
 
 public slots:
-    void onMouseEvent(int type, int when, QPointF scenePos);
     void bSave();
     void bRecording();
-    void drawExisting();
 };
 #endif // MAINWINDOW_H
