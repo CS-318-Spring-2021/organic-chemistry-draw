@@ -30,13 +30,8 @@ QBond::QBond(Bond *_bond):bond(_bond) {
 
     setAcceptHoverEvents(true);
 
-
-
-    if (drawStyle==0 && quantity==1){
-        addToGroup(qgline);
-    }
-    else if (quantity>1){
-
+    if (drawStyle==0 || quantity>1){ //anything other than weighted and dashed
+        double WIDTHMODIFIER = .01;
         double LENGTHMODIFIER = 0.018;
         if (quantity==3){
             LENGTHMODIFIER = 0.03;
@@ -60,10 +55,13 @@ QBond::QBond(Bond *_bond):bond(_bond) {
         QGraphicsLineItem* leftline = new QGraphicsLineItem(cornerone.x(), cornerone.y(), cornerthree.x(), cornerthree.y());
         QGraphicsLineItem* centerline = new QGraphicsLineItem(a.x(), a.y(), b.x(), b.y());
         QGraphicsLineItem* rightline = new QGraphicsLineItem(cornertwo.x(), cornertwo.y(), cornerfour.x(), cornerfour.y());
-        leftline->setPen(QPen(Qt::black, .05*line.length()));
-        centerline->setPen(QPen(Qt::black, .05*line.length())); //should we include lengthmod s.t. 3x bonds have enough space between?
-        rightline->setPen(QPen(Qt::black, .05*line.length()));
-
+        leftline->setPen(QPen(Qt::black, WIDTHMODIFIER*line.length()));
+        centerline->setPen(QPen(Qt::black, WIDTHMODIFIER*line.length())); //should we include lengthmod s.t. 3x bonds have enough space between?
+        rightline->setPen(QPen(Qt::black, WIDTHMODIFIER*line.length()));
+        if (quantity==1){
+            addToGroup(centerline);
+            return;
+        }
         addToGroup(leftline);
         addToGroup(rightline);
         if (quantity==3){
@@ -72,7 +70,7 @@ QBond::QBond(Bond *_bond):bond(_bond) {
 
 
     }
-    else if (drawStyle>0){
+    else if (quantity==1){ //weighted and dashed
         //xy coordinates for the two endpoints of the bond
         const double TRIANGLE = 0.05;
         QLineF line(a, b);
@@ -106,5 +104,10 @@ void QBond::hoverEnterEvent(QGraphicsSceneHoverEvent *evt) {
 
 void QBond::hoverLeaveEvent(QGraphicsSceneHoverEvent *evt) {
     hoverCircle->setOpacity(0.0);
+}
+
+void QBond::mousePressEvent(QGraphicsSceneMouseEvent *evt) {
+    bond->changeBond();
+    //hoverCircle->setOpacity(0.0);
 }
 

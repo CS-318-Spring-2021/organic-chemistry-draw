@@ -35,7 +35,6 @@ public slots:
     void onMouseEvent(int type, int when, QPointF scenePos);
     void bSave();
     void bRecording();
-    void updateCrosshairs(int curRow, int curCol, int prevRow, int prevCol);
     void drawExisting();
 };
 #endif // MAINWINDOW_H

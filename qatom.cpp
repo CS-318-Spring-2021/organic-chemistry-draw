@@ -23,3 +23,6 @@ void QAtom::hoverEnterEvent(QGraphicsSceneHoverEvent *) {
 void QAtom::hoverLeaveEvent(QGraphicsSceneHoverEvent *) {
     coop->setOpacity(0.0);
 }
+
+void QAtom::mousePressEvent(QGraphicsSceneMouseEvent *)
+{}

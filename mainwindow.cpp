@@ -10,11 +10,6 @@
 #include "qbond.h"
 
 
-//save , label pages, keep in file system, save as a .png or .pdf? or interactive thing?
-//      students download Molecule class as a .txt or .xml file is possible,
-//      read into application-- if students have application they can open / use / edit
-//      easy way to jot things down.
-
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
@@ -47,17 +42,11 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
 
     connect(view, &drawspace::mouseEvent, this, &MainWindow::onMouseEvent);
 
-    connect(table, &QTableWidget::currentCellChanged, this, &MainWindow::updateCrosshairs);
 }
 
 MainWindow::~MainWindow()
 {
 
-}
-
-void MainWindow::updateCrosshairs(int curRow, int, int, int) {
-    view->setCrosshairsVisible(true);
-    view->setCrosshairsPos(QPointF(table->item(curRow, 2)->text().toDouble(), table->item(curRow, 3)->text().toDouble()));
 }
 
 void MainWindow::bSave() {
@@ -84,16 +73,18 @@ void MainWindow::bSave() {
 }
 
 void MainWindow::bRecording(){
-
+    //TODO: whats goin on here
 }
 
 void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
-
+    //this should all be in view on the mouse press and release event
 
     static QString types = "PRM";
     static int when0 = -1;
 
-    if (when0==-1) when0 = when;
+    if (when0==-1) {
+        when0 = when;
+    }
     if(recordCheckBox->isChecked()){
         currentDrawnObject->addData(pos, when-when0);
 
@@ -136,7 +127,7 @@ void MainWindow::onMouseEvent(int type, int when, QPointF pos) {
         }
 
         if (type == 1){
-            void* item = view->getItem(pos);
+            QGraphicsItem* item = view->getItem(QPoint(int(pos.x()), int(pos.y()))); //
 
             if (item != nullptr) {
                 printf("something happened?");

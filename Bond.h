@@ -11,12 +11,12 @@ class Bond{
 public:
     Bond(Atom *p_firstAtom, Atom *p_secondAtom);
 
-    enum BondDrawStyle {NormalBond, ThickBond, DashBond, DoubleBond, TripleBond};
+    enum {NormalBond, ThickBond, DashBond, DoubleBond, TripleBond, n};
 
 
     Atom *atomFirst;
     Atom *atomSecond;
-    BondDrawStyle drawStyle;
+    int drawStyle;
     int quantity;
     void changeBond();
 

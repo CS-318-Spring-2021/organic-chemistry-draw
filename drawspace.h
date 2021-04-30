@@ -25,8 +25,8 @@ public:
 
     drawspace();
     void maybeAddSegment(const QPointF &pos); 
-    void* getItem(QPointF pos);
-    QMap<void*, void*> locationMap = {};
+    QGraphicsItem* getItem(QPoint pos);
+    QMap<void*, void*> locationMap;
 
     void setCrosshairsVisible(bool visible);
     void setCrosshairsPos(const QPointF &pos);

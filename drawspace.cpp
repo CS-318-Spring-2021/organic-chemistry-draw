@@ -21,7 +21,7 @@ drawspace::drawspace() {
     mouseIsDown = false;
     setMouseTracking(true);
 }
-
+//TODO: del
 void drawspace::setCrosshairsVisible(bool visible) {
     crosshairs->setVisible(visible);
 }
@@ -53,6 +53,7 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
     emit mouseEvent(MouseReleased, QDateTime::currentMSecsSinceEpoch(), pos);
 }
 
+
 void drawspace::mouseMoveEvent(QMouseEvent *evt) {
     QGraphicsView::mouseMoveEvent(evt);
     if (mouseIsDown) {
@@ -62,6 +63,8 @@ void drawspace::mouseMoveEvent(QMouseEvent *evt) {
     }
 }
 
+
+
 void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos) {
     mScene.addLine(QLineF(firstPos, lastPos), QPen(Qt::black, 2.0));
 }
@@ -70,20 +73,23 @@ void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos) 
 //TODO should this be consolidated into one function?
 void drawspace::drawAtom(QAtom *qatom){
     mScene.addItem(qatom);
-    locationMap[qatom->coop] = qatom;
-    printf("%i\n", locationMap.size());
+    //locationMap[qatom->coop] = qatom;
+    //printf("%i\n", locationMap.size());
 }
 
 void drawspace::drawBond(QBond *qbond){
     mScene.addItem(qbond);
-    locationMap[qbond->hoverCircle] = qbond;
-    printf("%i\n", locationMap.size());
+    //locationMap[qbond->hoverCircle] = qbond;
+    //printf("%i\n", locationMap.size());
 }
 
 //?
 
-void* drawspace::getItem(QPointF pos) {
-    QList<QGraphicsItem*> items = mScene.items(pos);
+
+
+QGraphicsItem* drawspace::getItem(QPoint pos) {
+    QPointF newpos = mapToScene(pos);
+    QList<QGraphicsItem*> items = mScene.items(newpos);
     for (int i= 0; i< items.length(); i++){
         if (items[i]->type()==QGraphicsEllipseItem::Type){
             return items[i];
