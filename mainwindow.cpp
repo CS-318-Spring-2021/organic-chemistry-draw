@@ -37,7 +37,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     undoCheckBox->setCheckable(true);
     undoCheckBox->setChecked(false);
 
+    rightLayout->addWidget(undoButton = new QPushButton("Undo"));
 
+
+    connect(undoButton, &QPushButton::clicked, this, &MainWindow::bUndo);
 
 
     mainLayout->addLayout(taskBarLayout);
@@ -80,4 +83,18 @@ void MainWindow::bSave() {
 
 void MainWindow::bRecording(){
     view->recording = recordCheckBox->isChecked();
+}
+
+void MainWindow::bUndo(){
+    if(view->undoStack.size() <= 1) {
+        view->undoStack.clear();
+        view->molecules.clear();
+        view->mScene.clear();
+        return;
+    }
+    view->undoStack.pop_back();
+    view->molecules = view->undoStack.last();
+    view->mScene.clear();
+    if(view->undoStack.size() > 1) view->drawExisting();
+
 }

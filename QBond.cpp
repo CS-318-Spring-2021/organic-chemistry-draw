@@ -109,8 +109,9 @@ void QBond::hoverLeaveEvent(QGraphicsSceneHoverEvent *evt) {
 }
 
 void QBond::mousePressEvent(QGraphicsSceneMouseEvent *evt) {
-    //set variable if false, change bond
-    //if true, delete bond
+    //if undo is clicked
+        //delete
+    //else
     bond->changeBond();
     //hoverCircle->setOpacity(0.0);
 }

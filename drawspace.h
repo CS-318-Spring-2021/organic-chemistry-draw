@@ -17,20 +17,21 @@ class drawspace : public QGraphicsView
 {
     Q_OBJECT
 
-    QGraphicsScene mScene;
+
     QPointF lastPos;
     bool mouseIsDown;
 
 
+
 public:
     enum {MousePressed, MouseReleased, MouseMoved};
-
+    QGraphicsScene mScene;
     DrawnObject *currentDrawnObject;
     DrawnObject *freehandObject;
     bool recording;
     int appending = -1;
     QVector<Molecule*> molecules;
-
+    QVector<QVector<Molecule*>> undoStack;
     drawspace();
     void maybeAddSegment(const QPointF &pos); 
     void replaceSegment(const QPointF &firstPos, const QPointF &lastPos);
