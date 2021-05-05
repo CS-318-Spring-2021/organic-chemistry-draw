@@ -27,10 +27,18 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
 
     QVBoxLayout *taskBarLayout = new QVBoxLayout();
     taskBarLayout->addWidget(recordCheckBox = new QCheckBox("Record"));
+    taskBarLayout->addWidget(undoCheckBox = new QCheckBox("Undo"));
+
     recordCheckBox->setCheckable(true);
     recordCheckBox->setChecked(true);
 
     connect(recordCheckBox, &QCheckBox::stateChanged, this, &MainWindow::bRecording);
+
+    undoCheckBox->setCheckable(true);
+    undoCheckBox->setChecked(false);
+
+
+
 
     mainLayout->addLayout(taskBarLayout);
     mainLayout->addWidget(view = new drawspace(), 1);

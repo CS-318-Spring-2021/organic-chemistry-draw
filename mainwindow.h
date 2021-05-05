@@ -20,6 +20,7 @@ class MainWindow : public QMainWindow
     drawspace *view;
     QPushButton *saveButton;
     QCheckBox *recordCheckBox;
+    QCheckBox *undoCheckBox;
 
 public:
     MainWindow(QWidget *parent = nullptr);

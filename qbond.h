@@ -18,5 +18,4 @@ protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *evt);
 
 };
-
 #endif // QBOND_H
