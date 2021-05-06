@@ -38,10 +38,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     undoCheckBox->setChecked(false);
 
     rightLayout->addWidget(undoButton = new QPushButton("Undo"));
-
-
     connect(undoButton, &QPushButton::clicked, this, &MainWindow::bUndo);
 
+    rightLayout->addWidget(clearButton = new QPushButton("Clear"));
+    connect(clearButton, &QPushButton::clicked, this, &MainWindow::bClear);
 
     mainLayout->addLayout(taskBarLayout);
     mainLayout->addWidget(view = new drawspace(), 1);
@@ -99,13 +99,9 @@ void MainWindow::bUndo(){
 
 }
 
-
-
-
-
-
-
-
-
-
-
+void MainWindow::bClear(){
+    QVector<Molecule*> empty;
+    view->undoStack.append(empty);
+    view->molecules.clear();
+    view->mScene.clear();
+}

@@ -22,6 +22,7 @@ class MainWindow : public QMainWindow
     QCheckBox *recordCheckBox;
     QCheckBox *undoCheckBox;
     QPushButton *undoButton;
+    QPushButton *clearButton;
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -31,5 +32,6 @@ public slots:
     void bSave();
     void bRecording();
     void bUndo();
+    void bClear();
 };
 #endif // MAINWINDOW_H
