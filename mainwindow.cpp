@@ -95,6 +95,17 @@ void MainWindow::bUndo(){
     view->undoStack.pop_back();
     view->molecules = view->undoStack.last();
     view->mScene.clear();
-    if(view->undoStack.size() > 1) view->drawExisting();
+    if(view->undoStack.size() >= 1) view->drawExisting();
 
 }
+
+
+
+
+
+
+
+
+
+
+
