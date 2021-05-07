@@ -72,7 +72,7 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
             molecules[appending]->addNewVerts(currentDrawnObject->vertices);
             appending = -1;
         }else{
-            Molecule *molecule = new Molecule(currentDrawnObject->vertices, false);
+            Molecule *molecule = new Molecule(currentDrawnObject->vertices);
             molecules.append(molecule);
         }
         //Copies everything in molecule into undostack as pointers to new molecules
