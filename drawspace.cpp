@@ -60,7 +60,7 @@ void drawspace::maybeAddSegment(const QPointF &pos) {
 void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
     mouseIsDown = false;
     QGraphicsView::mouseReleaseEvent(evt);
-    QPointF pos = mapToScene(evt->pos());
+    //QPointF pos = mapToScene(evt->pos());
     mScene.clear();
     if (currentDrawnObject->positionInputPoints.size()>5){
 
@@ -72,7 +72,7 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
             molecules[appending]->addNewVerts(currentDrawnObject->vertices);
             appending = -1;
         }else{
-            Molecule *molecule = new Molecule(currentDrawnObject->vertices);
+            Molecule *molecule = new Molecule(currentDrawnObject->vertices, false);
             molecules.append(molecule);
         }
         //Copies everything in molecule into undostack as pointers to new molecules

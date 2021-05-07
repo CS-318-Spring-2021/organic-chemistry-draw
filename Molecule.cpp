@@ -3,7 +3,7 @@
 #include <QLineF>
 #include <QDebug>
 
-Molecule::Molecule(QVector<QPointF> drawnVertices) {
+Molecule::Molecule(QVector<QPointF> drawnVertices, bool appending) {
     //TODO:
     //if there is one line off of the hex or structure
     //if another one goes in, then change to wedges and dashes and reset the angles
@@ -34,7 +34,7 @@ Molecule::Molecule(QVector<QPointF> drawnVertices) {
         correctCyclicStructure();
     } else{
         type = Linear;
-        correctLineStructure();
+        correctLineStructure(appending);
     }
 
 }
@@ -44,18 +44,63 @@ void Molecule::setBondLength(QPointF first, QPointF second) { //set length
     bondLength = QLineF(first, second).length();
 }
 
-void Molecule::correctLineStructure(){
-    double y = sin(standardLineSegmentAngle)*bondLength;
-    double x = cos(standardLineSegmentAngle)*bondLength;
-    if (atomSet[1]->atomPos.y() - atomSet[0]->atomPos.y() < 0){
-        y = y*(-1);
+void Molecule::correctLineStructure(bool appending){
+    if(atomSet.size()<=2) return;
+    if(appending){
+        double y = sin(standardLineSegmentAngle)*bondLength;
+        double x = cos(standardLineSegmentAngle)*bondLength;
+        if (atomSet[1]->atomPos.y() - atomSet[0]->atomPos.y() < 0){
+            y = y*(-1);
+        }
+        for(int i = 1; i<atomSet.size(); i++){
+            double newXPos = atomSet[i-1]->atomPos.x() + x;
+            double newYPos = atomSet[i-1]->atomPos.y() + y;
+            y = y*(-1);
+            atomSet[i]->setAtomPos(QPointF(newXPos,newYPos));
+        }
+    }else{
+        QPointF point1 = atomSet[0]->atomPos;
+        QPointF point2 = atomSet[1]->atomPos;
+        QPointF point3 = atomSet[2]->atomPos;
+        QLineF firstLine(point1, point2);
+        double theta = firstLine.angle();
+        double theta2;
+        if(point1.y()<point2.y()) theta2 = upFirstCorrect(point2.y(),point3.y(),theta);
+        else theta2 = downFirstCorrect(point2.y(),point3.y(),theta);
+        theta = theta * M_PI / 180.0;
+        theta2 = theta2 * M_PI / 180.0;
+        printf("point2: %f, point3: %f\n",point2.y(), point3.y());
+        double x1 = cos(theta)*bondLength;
+        double x2 = cos(theta2)*bondLength;
+        double y1 = sin(theta)*bondLength;
+        double y2 = sin(theta2)*bondLength;
+        for(int i = 2; i<atomSet.size(); i++){
+            double newXPos = atomSet[i-1]->atomPos.x();
+            double newYPos = atomSet[i-1]->atomPos.y();
+            printf("x1: %f, x2: %f, y1: %f, y2: %f\n",x1, x2, y1, y2);
+            if (i%2==0) {
+                newXPos += x2;
+                newYPos += y2;
+            }else{
+                newXPos += x1;
+                newYPos += y1;
+            }
+            atomSet[i]->setAtomPos(QPointF(newXPos,newYPos));
+        }
     }
-    for(int i = 1; i<atomSet.size(); i++){
-        double newXPos = atomSet[i-1]->atomPos.x() + x;
-        double newYPos = atomSet[i-1]->atomPos.y() + y;
-        y = y*(-1);
-        atomSet[i]->setAtomPos(QPointF(newXPos,newYPos));
+}
+
+double Molecule::upFirstCorrect(double y2, double y3, double theta){
+    if(y2>y3) {
+        printf("y2>y3");
+        return 300.0 + theta;
     }
+    else return 60.0 - theta;
+}
+
+double Molecule::downFirstCorrect(double y2, double y3, double theta){
+    if(y2>y3) return 300.0 - theta;
+    else return 60.0 - theta;
 }
 
 void Molecule::correctCyclicStructure() {
