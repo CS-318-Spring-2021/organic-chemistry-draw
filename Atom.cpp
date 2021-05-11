@@ -8,7 +8,7 @@ Atom::Atom(QPointF currentPos) {
 void Atom::addBond(Bond *p_bond){
     //count neighbor bonds, calculate what bond we want, change neighbor bonds
     bonds.append(p_bond);
-    if(this->getBonds()==4){
+    if(this->getNumBonds()==4){
         bonds[2]->drawStyle = Bond::ThickBond;
         bonds[3]->drawStyle = Bond::DashBond;
     }
@@ -31,6 +31,6 @@ void Atom::setAtomPos(QPointF newPoint){
     atomPos = newPoint;
 }
 
-int Atom::getBonds(){
+int Atom::getNumBonds(){
     return bonds.size();
 }
