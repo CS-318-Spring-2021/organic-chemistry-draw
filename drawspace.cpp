@@ -57,34 +57,47 @@ void drawspace::maybeAddSegment(const QPointF &pos) {
     }
 }
 
+void drawspace::addFreehandSegment(const QPointF &pos) {
+    mScene.addLine(QLineF(lastPos, pos), QPen(Qt::gray, 2.0));
+    lastPos = pos;
+}
+
 
 void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
     mouseIsDown = false;
     QGraphicsView::mouseReleaseEvent(evt);
     //QPointF pos = mapToScene(evt->pos());
     mScene.clear();
-    if (currentDrawnObject->positionInputPoints.size()>5){
+    if(recording){
+        if (currentDrawnObject->positionInputPoints.size()>5){
 
-        currentDrawnObject->analyzeSpeed();
-        currentDrawnObject->analyzeColinearity();
-        currentDrawnObject->analyzeDistances();
+            currentDrawnObject->analyzeSpeed();
+            currentDrawnObject->analyzeColinearity();
+            currentDrawnObject->analyzeDistances();
 
-        if(appending>-1){
-            molecules[appending]->addNewVerts(currentDrawnObject->vertices);
-            appending = -1;
-        }else{
-            Molecule *molecule = new Molecule(currentDrawnObject->vertices);
-            molecules.append(molecule);
+            if(appending>-1){
+                molecules[appending]->addNewVerts(currentDrawnObject->vertices);
+                appending = -1;
+            }else{
+                Molecule *molecule = new Molecule(currentDrawnObject->vertices);
+                molecules.append(molecule);
+            }
+
+            QVector<Molecule*> deepCopy = makeMoleculesFreshCopy();
+            undoStackMolecule.append(deepCopy);
+
         }
 
-        QVector<Molecule*> deepCopy = makeMoleculesFreshCopy();
-        undoStack.append(deepCopy);
-
+        currentDrawnObject->clean();
+        drawExisting();
+    }else{
+        DrawnObject *copy = new DrawnObject(*freehandObject);
+        freeHandObjects.append(copy);
+        QVector<DrawnObject*> deepCopy = makeDrawnObjectsFreshCopy();
+        undoStackDrawnObject.append(deepCopy);
+        freehandObject->cleanFreehand();
+        drawExisting();
     }
-
-    currentDrawnObject->clean();
-    drawExisting();
-
 
 }
 
@@ -101,8 +114,18 @@ QVector<Molecule*> drawspace::makeMoleculesFreshCopy(){
     return deepCopy;
 }
 
+QVector<DrawnObject*> drawspace::makeDrawnObjectsFreshCopy(){
+    //Copies everything in freeHandObjects as pointers to new DrawnObjects
+    QVector<DrawnObject*> copy = freeHandObjects;
+    QVector<DrawnObject*> deepCopy;
+    for(int i =0; i < copy.length(); i++){
+        DrawnObject *copiedDrawnObject= new DrawnObject(*copy[i]);
+        deepCopy.append(copiedDrawnObject);
+     }
 
-
+    //returns list of new DrawnObjects
+    return deepCopy;
+}
 
 void drawspace::mouseMoveEvent(QMouseEvent *evt) {
     QGraphicsView::mouseMoveEvent(evt);
@@ -116,8 +139,6 @@ void drawspace::mouseMoveEvent(QMouseEvent *evt) {
         maybeAddSegment(pos);
     }
 }
-
-
 
 void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos) {
     mScene.addLine(QLineF(firstPos, lastPos), QPen(Qt::black, 2.0));
@@ -135,8 +156,10 @@ void drawspace::drawExisting(){
             mScene.addItem(bond);
         }
     }
-
-    for (int f = 0; f<freehandObject->positionInputPoints.size(); f++){
-        maybeAddSegment(*freehandObject->positionInputPoints[f]);
+    for (int m=0; m < freeHandObjects.size(); m++){
+        for (int i = 0; i<freeHandObjects[m]->positionInputPoints.size(); i++){
+            if (i==0) lastPos = *freeHandObjects[m]->positionInputPoints[i];
+            addFreehandSegment(*freeHandObjects[m]->positionInputPoints[i]);
+        }
     }
 }

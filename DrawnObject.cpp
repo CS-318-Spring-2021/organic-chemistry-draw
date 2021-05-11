@@ -34,6 +34,14 @@ void DrawnObject::clean(){
     timeInputPoints.clear();
 }
 
+void DrawnObject::cleanFreehand(){
+    for(int i = 0; i < positionInputPoints.size(); i++){
+        free(positionInputPoints[i]);
+    }
+    vertices.clear();
+    positionInputPoints.clear();
+}
+
 DrawnObject::~DrawnObject(){
     clean();
     positionInputPoints.~QVector();

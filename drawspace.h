@@ -31,12 +31,16 @@ public:
     bool recording;
     int appending = -1;
     QVector<Molecule*> molecules;
-    QVector<QVector<Molecule*>> undoStack;
+    QVector<DrawnObject*> freeHandObjects;
+    QVector<QVector<Molecule*>> undoStackMolecule;
+    QVector<QVector<DrawnObject*>> undoStackDrawnObject;
     drawspace();
     void maybeAddSegment(const QPointF &pos); 
+    void addFreehandSegment(const QPointF &pos);
     void replaceSegment(const QPointF &firstPos, const QPointF &lastPos);
     void drawExisting();
     QVector<Molecule*> makeMoleculesFreshCopy();
+    QVector<DrawnObject*> makeDrawnObjectsFreshCopy();
 
 
 protected:

@@ -86,23 +86,23 @@ void MainWindow::bRecording(){
 }
 
 void MainWindow::bUndo(){
-    if(view->undoStack.size() <= 1) {
-        view->undoStack.clear();
+    if(view->undoStackMolecule.size() <= 1) {
+        view->undoStackMolecule.clear();
         view->molecules.clear();
         view->mScene.clear();
         return;
     }
-    view->undoStack.removeLast();
-    QVector<Molecule*> deepCopy = view->undoStack.last();
+    view->undoStackMolecule.removeLast();
+    QVector<Molecule*> deepCopy = view->undoStackMolecule.last();
     view->molecules = deepCopy;
     view->molecules = view->makeMoleculesFreshCopy();
     view->mScene.clear();
-    if(view->undoStack.size() >= 1) view->drawExisting();
+    if(view->undoStackMolecule.size() >= 1) view->drawExisting();
 }
 
 void MainWindow::bClear(){
     QVector<Molecule*> empty;
-    view->undoStack.append(empty);
+    view->undoStackMolecule.append(empty);
     view->molecules.clear();
     view->mScene.clear();
 }

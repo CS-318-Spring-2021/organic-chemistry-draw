@@ -56,6 +56,7 @@ QVector<Atom*> Molecule::correctLineStructure(QVector<Atom*> atoms, Atom * appen
         atoms.push_front(preAppendee);
         //push front atom before appendee
     }
+    if(atoms.size()<3) return atoms;
     QPointF point1 = atoms[0]->atomPos;
     QPointF point2 = atoms[1]->atomPos;
     QPointF point3 = atoms[2]->atomPos;

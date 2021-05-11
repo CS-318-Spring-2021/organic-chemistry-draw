@@ -15,6 +15,7 @@ public:
     void addData(QPointF position);
     ~DrawnObject();
     void clean();
+    void cleanFreehand();
     void analyzeSpeed();
     void analyzeDistances();
     void analyzeColinearity();
