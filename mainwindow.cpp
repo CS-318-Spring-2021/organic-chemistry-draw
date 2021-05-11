@@ -92,11 +92,12 @@ void MainWindow::bUndo(){
         view->mScene.clear();
         return;
     }
-    view->undoStack.pop_back();
-    view->molecules = view->undoStack.last();
+    view->undoStack.removeLast();
+    QVector<Molecule*> deepCopy = view->undoStack.last();
+    view->molecules = deepCopy;
+    view->molecules = view->makeMoleculesFreshCopy();
     view->mScene.clear();
     if(view->undoStack.size() >= 1) view->drawExisting();
-
 }
 
 void MainWindow::bClear(){

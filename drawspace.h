@@ -36,6 +36,7 @@ public:
     void maybeAddSegment(const QPointF &pos); 
     void replaceSegment(const QPointF &firstPos, const QPointF &lastPos);
     void drawExisting();
+    QVector<Molecule*> makeMoleculesFreshCopy();
 
 
 protected:

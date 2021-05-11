@@ -57,6 +57,7 @@ void drawspace::maybeAddSegment(const QPointF &pos) {
     }
 }
 
+
 void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
     mouseIsDown = false;
     QGraphicsView::mouseReleaseEvent(evt);
@@ -75,14 +76,8 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
             Molecule *molecule = new Molecule(currentDrawnObject->vertices);
             molecules.append(molecule);
         }
-        //Copies everything in molecule into undostack as pointers to new molecules
-        QVector<Molecule*> copy = molecules;
-        QVector<Molecule*> deepCopy;
-        for(int i =0; i < copy.length(); i++){
-            Molecule *copiedMolecule= new Molecule(*copy[i]);
-            deepCopy.append(copiedMolecule);
-         }
-        //adds last group of molecules to the stack
+
+        QVector<Molecule*> deepCopy = makeMoleculesFreshCopy();
         undoStack.append(deepCopy);
 
     }
@@ -92,6 +87,21 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
 
 
 }
+
+QVector<Molecule*> drawspace::makeMoleculesFreshCopy(){
+    //Copies everything in molecule into undostack as pointers to new molecules
+    QVector<Molecule*> copy = molecules;
+    QVector<Molecule*> deepCopy;
+    for(int i =0; i < copy.length(); i++){
+        Molecule *copiedMolecule= new Molecule(*copy[i]);
+        deepCopy.append(copiedMolecule);
+     }
+
+    //returns a coppied molecules at a differnt address
+    return deepCopy;
+}
+
+
 
 
 void drawspace::mouseMoveEvent(QMouseEvent *evt) {
