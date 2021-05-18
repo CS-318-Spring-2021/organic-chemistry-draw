@@ -12,7 +12,7 @@ class Molecule{
 
 public:
     Molecule(QVector<QPointF> drawnVertices);
-
+    Molecule(const Molecule &originalMolecule);
     enum MoleculeType {Cyclic, Linear};
     double bondLength;
     MoleculeType type;

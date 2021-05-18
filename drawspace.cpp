@@ -26,27 +26,32 @@ void drawspace::mousePressEvent(QMouseEvent *evt) {
     QGraphicsView::mousePressEvent(evt);
     mouseIsDown = true;
     QPointF pos = mapToScene(evt->pos());
-    if(molecules.isEmpty()) {
-        appending = -1;
-    } else {
-        float dist;
-        float minDist = QLineF(pos, molecules[0]->atomSet[0]->atomPos).length();
-        float minI = 0;
-        for(int i = 0; i< molecules.size();i++){
-            for(int j = 0; j< molecules[i]->atomSet.size();j++){
-                dist = QLineF(pos, molecules[i]->atomSet[j]->atomPos).length();
-                if(dist<minDist) {
-                    minDist = dist;
-                    minI = i;
+    lastPos = pos;
+    if(!recording){
+        if(molecules.isEmpty()) {
+            appending = -1;
+        } else {
+            float dist;
+            float minDist = QLineF(pos, molecules[0]->atomSet[0]->atomPos).length();
+            float minI = 0;
+            for(int i = 0; i< molecules.size();i++){
+                for(int j = 0; j< molecules[i]->atomSet.size();j++){
+                    dist = QLineF(pos, molecules[i]->atomSet[j]->atomPos).length();
+                    if(dist<minDist) {
+                        minDist = dist;
+                        minI = i;
+                    }
                 }
             }
+            if(minDist < (molecules[minI]->bondLength)/10){
+                appending = minI;
+            }
         }
-        if(minDist < (molecules[minI]->bondLength)/10){
-            appending = minI;
-        }
-    }
 
-    lastPos = pos;
+        lastPos = pos;
+    }else{
+        freehandObject->addData(pos);
+    }
 }
 
 
@@ -57,18 +62,20 @@ void drawspace::maybeAddSegment(const QPointF &pos) {
     }
 }
 
-void drawspace::addFreehandSegment(const QPointF &pos) {
-    mScene.addLine(QLineF(lastPos, pos), QPen(Qt::gray, 2.0));
-    lastPos = pos;
+void drawspace::addFreehandSegment(QPointF pos) {
+    if (lastPos!=pos) {
+        mScene.addLine(QLineF(lastPos, pos), QPen(Qt::gray, 2.0));
+        lastPos = pos;
+    }
 }
 
 
 void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
     mouseIsDown = false;
     QGraphicsView::mouseReleaseEvent(evt);
-    //QPointF pos = mapToScene(evt->pos());
+    QPointF pos = mapToScene(evt->pos());
     mScene.clear();
-    if(recording){
+    if(!recording){
         if (currentDrawnObject->positionInputPoints.size()>5){
 
             currentDrawnObject->analyzeSpeed();
@@ -91,18 +98,21 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
         currentDrawnObject->clean();
         drawExisting();
     }else{
+        freehandObject->addData(pos);
         DrawnObject *copy = new DrawnObject(*freehandObject);
         freeHandObjects.append(copy);
         QVector<DrawnObject*> deepCopy = makeDrawnObjectsFreshCopy();
         undoStackDrawnObject.append(deepCopy);
-        freehandObject->cleanFreehand();
         drawExisting();
+        freehandObject->cleanFreehand();
+
     }
 
 }
 
 QVector<Molecule*> drawspace::makeMoleculesFreshCopy(){
     //Copies everything in molecule into undostack as pointers to new molecules
+    //all pointers are not being copied, needs to be fixed to be accurate
     QVector<Molecule*> copy = molecules;
     QVector<Molecule*> deepCopy;
     for(int i =0; i < copy.length(); i++){
@@ -131,7 +141,7 @@ void drawspace::mouseMoveEvent(QMouseEvent *evt) {
     QGraphicsView::mouseMoveEvent(evt);
     if (mouseIsDown) {
         QPointF pos = mapToScene(evt->pos());
-        if(recording){
+        if(!recording){
             currentDrawnObject->addData(pos, evt->timestamp());
         } else {
             freehandObject->addData(pos);
@@ -157,9 +167,10 @@ void drawspace::drawExisting(){
         }
     }
     for (int m=0; m < freeHandObjects.size(); m++){
-        for (int i = 0; i<freeHandObjects[m]->positionInputPoints.size(); i++){
-            if (i==0) lastPos = *freeHandObjects[m]->positionInputPoints[i];
-            addFreehandSegment(*freeHandObjects[m]->positionInputPoints[i]);
+        for (int i = 1; i<freeHandObjects[m]->positionInputPoints.size(); i++){
+            //printf("inputPoint: x: %f, y: %f\n", freeHandObjects[m]->positionInputPoints[i-1].x(),freeHandObjects[m]->positionInputPoints[i-1].y());
+            mScene.addLine(QLineF(freeHandObjects[m]->positionInputPoints[i-1], freeHandObjects[m]->positionInputPoints[i]), QPen(Qt::gray, 2.0));
+            //addFreehandSegment(*freeHandObjects[m]->positionInputPoints[i]);
         }
     }
 }

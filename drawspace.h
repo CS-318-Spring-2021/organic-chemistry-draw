@@ -36,7 +36,7 @@ public:
     QVector<QVector<DrawnObject*>> undoStackDrawnObject;
     drawspace();
     void maybeAddSegment(const QPointF &pos); 
-    void addFreehandSegment(const QPointF &pos);
+    void addFreehandSegment(QPointF pos);
     void replaceSegment(const QPointF &firstPos, const QPointF &lastPos);
     void drawExisting();
     QVector<Molecule*> makeMoleculesFreshCopy();

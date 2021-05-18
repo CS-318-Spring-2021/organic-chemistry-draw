@@ -12,32 +12,24 @@ DrawnObject::DrawnObject(){
 }
 
 void DrawnObject::addData(QPointF position, int time){
-    int* t = new int;
-    *t = time;
-    QPointF* point = new QPointF(position.x(), position.y());
+    int t = time;
+    QPointF point(position.x(), position.y());
     positionInputPoints.append(point);
     timeInputPoints.append(t);
 }
 
 void DrawnObject::addData(QPointF position){
-    QPointF* point = new QPointF(position.x(), position.y());
+    QPointF point(position.x(), position.y());
     positionInputPoints.append(point);
 }
 
 void DrawnObject::clean(){
-    for(int i = 0; i < positionInputPoints.size(); i++){
-        free(positionInputPoints[i]);
-        free(timeInputPoints[i]);
-    }
     vertices.clear();
     positionInputPoints.clear();
     timeInputPoints.clear();
 }
 
 void DrawnObject::cleanFreehand(){
-    for(int i = 0; i < positionInputPoints.size(); i++){
-        free(positionInputPoints[i]);
-    }
     vertices.clear();
     positionInputPoints.clear();
 }
@@ -50,14 +42,14 @@ DrawnObject::~DrawnObject(){
 }
 
 void DrawnObject::analyzeSpeed(){
-    QPointF point(*positionInputPoints[0]);
-    QPointF next(*positionInputPoints[1]);
+    QPointF point(positionInputPoints[0]);
+    QPointF next(positionInputPoints[1]);
     vertices.append(point); //first point drawn-- probably a vertex
     for (int i=1; i<positionInputPoints.size()-1; i++){
-        point = QPointF(*positionInputPoints[i]);
-        next = QPointF(*positionInputPoints[i+1]);
+        point = QPointF(positionInputPoints[i]);
+        next = QPointF(positionInputPoints[i+1]);
         QLineF segment(point, next);
-        int dtime = abs(*timeInputPoints[i+1] - *timeInputPoints[i]);
+        int dtime = abs(timeInputPoints[i+1] - timeInputPoints[i]);
         int speed = int(100*(segment.length())/dtime);
         if (speed<5 && vertices[vertices.size()-1] != point){
             vertices.append(point);

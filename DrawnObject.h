@@ -6,8 +6,8 @@
 
 class DrawnObject{
 public:
-    QVector<QPointF*> positionInputPoints;
-    QVector<int*> timeInputPoints;
+    QVector<QPointF> positionInputPoints;
+    QVector<int> timeInputPoints;
     QVector<QPointF> vertices;
 
     DrawnObject();

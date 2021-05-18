@@ -26,10 +26,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     connect(saveButton, &QPushButton::clicked, this, &MainWindow::bSave);
 
     QVBoxLayout *taskBarLayout = new QVBoxLayout();
-    taskBarLayout->addWidget(recordCheckBox = new QCheckBox("Record"));
+    taskBarLayout->addWidget(recordCheckBox = new QCheckBox("Free Draw"));
 
     recordCheckBox->setCheckable(true);
-    recordCheckBox->setChecked(true);
+    recordCheckBox->setChecked(false);
 
     connect(recordCheckBox, &QCheckBox::stateChanged, this, &MainWindow::bRecording);
 
@@ -74,14 +74,20 @@ void MainWindow::bRecording(){
 void MainWindow::bUndo(){
     if(view->undoStackMolecule.size() <= 1) {
         view->undoStackMolecule.clear();
+        view->undoStackDrawnObject.clear();
         view->molecules.clear();
+        view->freeHandObjects.clear();
         view->mScene.clear();
         return;
     }
     view->undoStackMolecule.removeLast();
+//    view->undoStackDrawnObject.removeLast();
     QVector<Molecule*> deepCopy = view->undoStackMolecule.last();
     view->molecules = deepCopy;
     view->molecules = view->makeMoleculesFreshCopy();
+//    QVector<DrawnObject*> freeHandCopy = view->undoStackDrawnObject.last();
+//    view->freeHandObjects = freeHandCopy;
+//    view->freeHandObjects = view->makeDrawnObjectsFreshCopy();
     view->mScene.clear();
     if(view->undoStackMolecule.size() >= 1) view->drawExisting();
 }
