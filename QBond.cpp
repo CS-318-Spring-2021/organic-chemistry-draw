@@ -1,5 +1,6 @@
 #include "qbond.h"
 #include "Bond.h"
+#include "mainwindow.h"
 #include <QGraphicsLineItem>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsPolygonItem>
@@ -26,6 +27,7 @@ QBond::QBond(Bond *_bond):bond(_bond) {
 
 
     addToGroup(hoverCircle);
+
 
 
     setAcceptHoverEvents(true);
@@ -107,6 +109,9 @@ void QBond::hoverLeaveEvent(QGraphicsSceneHoverEvent *evt) {
 }
 
 void QBond::mousePressEvent(QGraphicsSceneMouseEvent *evt) {
+    //if undo is clicked
+        //delete
+    //else
     bond->changeBond();
     //hoverCircle->setOpacity(0.0);
 }

@@ -27,10 +27,21 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
 
     QVBoxLayout *taskBarLayout = new QVBoxLayout();
     taskBarLayout->addWidget(recordCheckBox = new QCheckBox("Record"));
+    taskBarLayout->addWidget(undoCheckBox = new QCheckBox("Undo"));
+
     recordCheckBox->setCheckable(true);
     recordCheckBox->setChecked(true);
 
     connect(recordCheckBox, &QCheckBox::stateChanged, this, &MainWindow::bRecording);
+
+    undoCheckBox->setCheckable(true);
+    undoCheckBox->setChecked(false);
+
+    rightLayout->addWidget(undoButton = new QPushButton("Undo"));
+    connect(undoButton, &QPushButton::clicked, this, &MainWindow::bUndo);
+
+    rightLayout->addWidget(clearButton = new QPushButton("Clear"));
+    connect(clearButton, &QPushButton::clicked, this, &MainWindow::bClear);
 
     mainLayout->addLayout(taskBarLayout);
     mainLayout->addWidget(view = new drawspace(), 1);
@@ -72,4 +83,26 @@ void MainWindow::bSave() {
 
 void MainWindow::bRecording(){
     view->recording = recordCheckBox->isChecked();
+}
+
+void MainWindow::bUndo(){
+    if(view->undoStackMolecule.size() <= 1) {
+        view->undoStackMolecule.clear();
+        view->molecules.clear();
+        view->mScene.clear();
+        return;
+    }
+    view->undoStackMolecule.removeLast();
+    QVector<Molecule*> deepCopy = view->undoStackMolecule.last();
+    view->molecules = deepCopy;
+    view->molecules = view->makeMoleculesFreshCopy();
+    view->mScene.clear();
+    if(view->undoStackMolecule.size() >= 1) view->drawExisting();
+}
+
+void MainWindow::bClear(){
+    QVector<Molecule*> empty;
+    view->undoStackMolecule.append(empty);
+    view->molecules.clear();
+    view->mScene.clear();
 }

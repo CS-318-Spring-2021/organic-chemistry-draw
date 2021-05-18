@@ -28,13 +28,15 @@ Molecule::Molecule(QVector<QPointF> drawnVertices) {
 
     }
 
+
     if(drawnVertices[0].x() == drawnVertices[drawnVertices.size()-1].x()
              && drawnVertices[0].y() == drawnVertices[drawnVertices.size()-1].y()){
         type = Cyclic;
-        correctCyclicStructure();
+        //correctCyclicStructure();
+        correctLineStructure(atomSet,nullptr,drawnVertices.size()-1);
     } else{
         type = Linear;
-        correctLineStructure();
+        atomSet = correctLineStructure(atomSet, nullptr);
     }
 
 }
@@ -44,19 +46,38 @@ void Molecule::setBondLength(QPointF first, QPointF second) { //set length
     bondLength = QLineF(first, second).length();
 }
 
-void Molecule::correctLineStructure(){
-    double y = sin(standardLineSegmentAngle)*bondLength;
-    double x = cos(standardLineSegmentAngle)*bondLength;
-    if (atomSet[1]->atomPos.y() - atomSet[0]->atomPos.y() < 0){
-        y = y*(-1);
+QVector<Atom*> Molecule::correctLineStructure(QVector<Atom*> atoms, Atom * appendee, int nSides){
+    if(appendee){
+        Atom * preAppendee;
+        if(appendee->bonds[0]->atomFirst==appendee){
+            preAppendee = appendee->bonds[0]->atomSecond;
+        }else preAppendee = appendee->bonds[0]->atomFirst;
+        atoms.push_front(appendee);
+        atoms.push_front(preAppendee);
+        //push front atom before appendee
     }
-    for(int i = 1; i<atomSet.size(); i++){
-        double newXPos = atomSet[i-1]->atomPos.x() + x;
-        double newYPos = atomSet[i-1]->atomPos.y() + y;
-        y = y*(-1);
-        atomSet[i]->setAtomPos(QPointF(newXPos,newYPos));
+    if(atoms.size()<3) return atoms;
+    QPointF point1 = atoms[0]->atomPos;
+    QPointF point2 = atoms[1]->atomPos;
+    QPointF point3 = atoms[2]->atomPos;
+    QLineF previousLine(point1, point2);
+    double length = previousLine.length();
+    //compute the angles first and use those
+    for(int i = 2; i<atoms.size();i++){
+        point2 = atoms[i-1]->atomPos;
+        point3 = atoms[i]->atomPos;
+        QLineF nextLine(point2, point3);
+        double theta = previousLine.angleTo(nextLine);
+        theta =((theta>=180.0) ? -1:1)*(360/nSides);
+        nextLine.setLength(length);
+        nextLine.setAngle(theta + previousLine.angle());
+        atoms[i]->setAtomPos(nextLine.p2());
+        previousLine = nextLine;
     }
+    return atoms;
 }
+
+
 
 void Molecule::correctCyclicStructure() {
 
@@ -118,14 +139,18 @@ void Molecule:: addNewVerts(QVector<QPointF> drawnVertices){ //adds a set of poi
             p_currentAtom = atomSet[i];                                     //(remember it as p_previousAtom)
         }
     }
-
+    Atom *p_smallestDistanceAtom = p_currentAtom;
     Atom *p_previousAtom = p_currentAtom;
-
+    QVector<Atom*> atomsToBeCleaned;
     for (int i=1; i< drawnVertices.size(); i++){                    //now for each of the vertices in this set that we are adding, we:
         Atom *p_currentAtom = new Atom(drawnVertices[i]);                   //make a new atom out of the vertex
         addBond(p_previousAtom, p_currentAtom);                             //add a bond between the two to the molecule
-        atomSet.append(p_currentAtom);                                      //add the atom to the molecule
+        atomsToBeCleaned.append(p_currentAtom);                                      //add the atom to the set we are sending to the correctLineStructure
         p_previousAtom = p_currentAtom;                                     //move to next one
+    }
+    QVector<Atom*> cleanedAtoms = correctLineStructure(atomsToBeCleaned, p_smallestDistanceAtom);
+    for(int i = 2; i<cleanedAtoms.size(); i++){
+        atomSet.append(cleanedAtoms[i]);
     }
 }
 
@@ -134,9 +159,9 @@ void Molecule:: addBond(Atom *p_start, Atom *p_finish){
     //          could want angles freehanded?
     QLineF line(p_start->atomPos, p_finish->atomPos);
     line.setLength(this->bondLength);
-    float angle = 0;
+    //float angle = 0;
     QPointF average(0,0);
-    if(p_start->getBonds()==2){
+    if(p_start->getNumBonds()==2){
         average -= 2*(p_start->atomPos);
         average += p_start->bonds[0]->atomFirst->atomPos;
         average += p_start->bonds[0]->atomSecond->atomPos;
