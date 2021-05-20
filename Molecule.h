@@ -21,8 +21,7 @@ public:
     QVector<Bond*> bondSet;
     const double standardLineSegmentAngle = (35.25*M_PI)/180.0;
     void setBondLength(QPointF first, QPointF second);
-    QVector<Atom*> correctLineStructure(QVector<Atom*> atoms, Atom * appendee, int nSides = 6);
-    void correctCyclicStructure();
+    QVector<Atom*> correctStructure(QVector<Atom*> atoms, Atom * appendee, int nSides = 6);
     void addNewVerts(QVector<QPointF> drawnVertices);
     void addBond(Atom *p_start, Atom *p_finish);
     void removeAtom(Atom *p_atom);

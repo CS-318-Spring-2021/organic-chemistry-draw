@@ -85,6 +85,7 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
             currentDrawnObject->analyzeSpeed();
             currentDrawnObject->analyzeColinearity();
             currentDrawnObject->analyzeDistances();
+            //check if there is an atom underneath the atom we released
 
             if(appending>-1){
                 molecules[appending]->addNewVerts(currentDrawnObject->vertices);
@@ -100,7 +101,24 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
             undoStackDrawnObject.append(drawnCopy);
 
         }
-
+//        if(appending>-1){
+//            QPointF lastPoint = molecules[appending]->atomSet.last()->atomPos;
+//            for(int i = 0; i< molecules[appending]->atomSet.size()-1;i++){
+//                QPointF currentPoint = molecules[appending]->atomSet[i]->atomPos;
+//                QLineF line(lastPoint, currentPoint);
+//                //printf("%f\n",line.length());
+//                if(line.length()>.1){
+//                    //printf("equal\n");
+//                    //remove the last atom
+//                    //put a pointer to i in the last bond
+//                    molecules[appending]->atomSet.pop_back();
+//                    molecules[appending]->bondSet.last()->atomSecond = molecules[appending]->atomSet[i];
+//                    molecules[appending]->atomSet[i]->addBond(molecules[appending]->bondSet.last());
+//                    break;
+//                    //*molecules[appending]->atomSet[i] = &molecules[appending]->atomSet.last();
+//                }
+//            }
+//        }
         currentDrawnObject->clean();
         drawExisting();
     }else{

@@ -32,11 +32,10 @@ Molecule::Molecule(QVector<QPointF> drawnVertices) {
     if(drawnVertices[0].x() == drawnVertices[drawnVertices.size()-1].x()
              && drawnVertices[0].y() == drawnVertices[drawnVertices.size()-1].y()){
         type = Cyclic;
-        //correctCyclicStructure();
-        correctLineStructure(atomSet,nullptr,drawnVertices.size()-1);
+        correctStructure(atomSet,nullptr,drawnVertices.size()-1);
     } else{
         type = Linear;
-        atomSet = correctLineStructure(atomSet, nullptr);
+        atomSet = correctStructure(atomSet, nullptr);
     }
 
 }
@@ -50,13 +49,14 @@ void Molecule::setBondLength(QPointF first, QPointF second) { //set length
     bondLength = QLineF(first, second).length();
 }
 
-QVector<Atom*> Molecule::correctLineStructure(QVector<Atom*> atoms, Atom * appendee, int nSides){
+QVector<Atom*> Molecule::correctStructure(QVector<Atom*> atoms, Atom * appendee, int nSides){
     if(appendee){
         Atom * preAppendee;
         if(appendee->bonds[0]->atomFirst==appendee){
             preAppendee = appendee->bonds[0]->atomSecond;
         }else preAppendee = appendee->bonds[0]->atomFirst;
         atoms.push_front(appendee);
+        //if three neighbors for appendee: dont append preAppendee?
         atoms.push_front(preAppendee);
         //push front atom before appendee
     }
@@ -65,70 +65,33 @@ QVector<Atom*> Molecule::correctLineStructure(QVector<Atom*> atoms, Atom * appen
     QPointF point2 = atoms[1]->atomPos;
     QPointF point3 = atoms[2]->atomPos;
     QLineF previousLine(point1, point2);
+    QLineF savePreviousLine(point1, point2);
     double length = previousLine.length();
-    //compute the angles first and use those
+    QVector<bool> upDownArray;
+    upDownArray.append(false);
+    upDownArray.append(false);
+    //appends two bools so we are even with the atoms.size()
+    //calculates angles before we start changing the position of the atoms
     for(int i = 2; i<atoms.size();i++){
         point2 = atoms[i-1]->atomPos;
         point3 = atoms[i]->atomPos;
         QLineF nextLine(point2, point3);
-        double theta = previousLine.angleTo(nextLine);
-        theta =((theta>=180.0) ? -1:1)*(360/nSides);
+        bool upDown =((previousLine.angleTo(nextLine)>=180.0) ? true:false);
+        upDownArray.append(upDown);
+        previousLine = nextLine;
+    }
+    previousLine = savePreviousLine;
+    for(int i = 2; i<atoms.size();i++){
+        point2 = atoms[i-1]->atomPos;
+        point3 = atoms[i]->atomPos;
+        QLineF nextLine(point2, point3);
+        double theta =((upDownArray[i]) ? -1:1)*(360/nSides);
         nextLine.setLength(length);
         nextLine.setAngle(theta + previousLine.angle());
         atoms[i]->setAtomPos(nextLine.p2());
         previousLine = nextLine;
     }
     return atoms;
-}
-
-
-
-void Molecule::correctCyclicStructure() {
-
-    removeAtom(atomSet.last());
-    //bondSet.last()->atomFirst->bonds.removeLast();
-    //bondSet.removeLast();
-
-    int numVerts = atomSet.size();
-    assert(numVerts >1);
-    QPointF center(0,0);
-    for(int i = 0; i < numVerts; i++){
-        center += atomSet[i]->atomPos;
-    }
-    center/=numVerts;
-
-    QVector<double> angles(numVerts);
-
-
-    for(int i = 0; i < atomSet.size(); i++){
-
-        //printf("%i: (%i, %i)\n", i, int(atomSet[i]->atomPos.x()), int(atomSet[i]->atomPos.y()));
-        angles[i] = QLineF(center, atomSet[i]->atomPos).angle();
-    }
-
-    double firstAngle = angles[0];
-
-    firstAngle = round(firstAngle/(180/numVerts))*(M_PI/numVerts);
-
-    double radius = bondLength/(2*sin(M_PI/numVerts));
-
-    for(int i = 0; i < atomSet.size(); i++){ //why did this use <=? don't we want to get rid of the last atom? because it's a repeat
-        double theta = firstAngle + i*((2*M_PI)/numVerts);
-        atomSet[i]->setAtomPos(center+radius*QPointF(cos(theta),sin(theta)));
-    }
-
-    addBond(atomSet.last(), atomSet.first());
-    /*printf("\n");
-
-    for(int i = 0; i < bondSet.size(); i++){
-        printf("btw ");
-        printf("(%i, %i)", int(bondSet[i]->atomFirst->atomPos.x()), int(bondSet[i]->atomFirst->atomPos.y()));
-        printf(" and ");
-        printf("(%i, %i)", int(bondSet[i]->atomSecond->atomPos.x()), int(bondSet[i]->atomSecond->atomPos.y()));
-        printf("\n");
-
-    }*/
-
 }
 
 void Molecule:: addNewVerts(QVector<QPointF> drawnVertices){ //adds a set of points to the graph one after another
@@ -152,9 +115,45 @@ void Molecule:: addNewVerts(QVector<QPointF> drawnVertices){ //adds a set of poi
         atomsToBeCleaned.append(p_currentAtom);                                      //add the atom to the set we are sending to the correctLineStructure
         p_previousAtom = p_currentAtom;                                     //move to next one
     }
-    QVector<Atom*> cleanedAtoms = correctLineStructure(atomsToBeCleaned, p_smallestDistanceAtom);
-    for(int i = 2; i<cleanedAtoms.size(); i++){
-        atomSet.append(cleanedAtoms[i]);
+    QVector<Atom*> cleanedAtoms;
+    if(p_smallestDistanceAtom->bonds.size()>3){
+        Atom * preAppendee;
+        if(p_smallestDistanceAtom->bonds[2]->atomFirst==p_smallestDistanceAtom){
+            preAppendee = p_smallestDistanceAtom->bonds[2]->atomSecond;
+        }else preAppendee = p_smallestDistanceAtom->bonds[2]->atomFirst;
+        if(p_smallestDistanceAtom->bonds[3]->atomFirst==p_smallestDistanceAtom){
+            p_currentAtom = p_smallestDistanceAtom->bonds[3]->atomSecond;
+        }else p_currentAtom = p_smallestDistanceAtom->bonds[3]->atomFirst;
+        QLineF previousLine(p_smallestDistanceAtom->atomPos,preAppendee->atomPos);
+        QLineF nextLine(p_smallestDistanceAtom->atomPos, p_currentAtom->atomPos);
+        double theta =previousLine.angleTo(nextLine);
+        if(theta>180) theta = 360 - theta;
+        nextLine.setLength(this->bondLength);
+        atomsToBeCleaned.pop_front();
+        cleanedAtoms = correctStructure(atomsToBeCleaned, p_currentAtom);
+        for(int i = 0; i<cleanedAtoms.size(); i++){
+            if(!atomSet.contains(cleanedAtoms[i]))atomSet.append(cleanedAtoms[i]);
+        }
+        if(previousLine.angle()<nextLine.angle()){
+            previousLine.setAngle(previousLine.angle()-theta);
+        }else{
+            previousLine.setAngle(previousLine.angle()+theta);
+        }
+        atomsToBeCleaned.clear();
+        if(preAppendee->bonds.size()>1){
+            Atom * atom = preAppendee;
+            while(atom->bonds.size()>1){
+                atom = atom->bonds[1]->atomSecond;
+                atomsToBeCleaned.append(atom);
+            }
+        }
+        preAppendee->atomPos = previousLine.p2();
+        cleanedAtoms = correctStructure(atomsToBeCleaned, preAppendee);
+    }else{
+        cleanedAtoms = correctStructure(atomsToBeCleaned, p_smallestDistanceAtom);
+    }
+    for(int i = 0; i<cleanedAtoms.size(); i++){
+        if(!atomSet.contains(cleanedAtoms[i]))atomSet.append(cleanedAtoms[i]);
     }
 }
 

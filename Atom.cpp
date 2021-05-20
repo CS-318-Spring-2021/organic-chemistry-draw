@@ -8,10 +8,11 @@ Atom::Atom(QPointF currentPos) {
 void Atom::addBond(Bond *p_bond){
     //count neighbor bonds, calculate what bond we want, change neighbor bonds
     bonds.append(p_bond);
+    /*
     if(this->getNumBonds()==4){
         bonds[2]->drawStyle = Bond::ThickBond;
         bonds[3]->drawStyle = Bond::DashBond;
-    }
+    }*/
 }
 
 void Atom::removeBond(Bond *p_bond){
