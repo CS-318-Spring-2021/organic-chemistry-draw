@@ -12,7 +12,8 @@ class Molecule{
 
 public:
     Molecule(QVector<QPointF> drawnVertices);
-    Molecule(const Molecule &originalMolecule);
+    //Molecule(const Molecule &originalMolecule);
+    //This can be used in future to allow us to make deep copies of all items store in a Molecule
     enum MoleculeType {Cyclic, Linear};
     double bondLength;
     MoleculeType type;

@@ -41,9 +41,9 @@ Molecule::Molecule(QVector<QPointF> drawnVertices) {
 
 }
 
-Molecule::Molecule(const Molecule &originalMolecule) {
-    //to be used to deepCopy the molecules to be used in undo
-}
+//Molecule::Molecule(const Molecule &originalMolecule) {
+//    //to be used to deepCopy the molecules to be used in undo
+//}
 
 
 void Molecule::setBondLength(QPointF first, QPointF second) { //set length

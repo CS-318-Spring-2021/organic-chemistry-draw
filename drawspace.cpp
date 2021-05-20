@@ -20,6 +20,10 @@ drawspace::drawspace() {
     setMouseTracking(true);
     currentDrawnObject = new DrawnObject();
     freehandObject = new DrawnObject();
+    QVector<Molecule*> empty;
+    undoStackMolecule.append(empty);
+    QVector<DrawnObject*> emptyDO;
+    undoStackDrawnObject.append(emptyDO);
 }
 
 void drawspace::mousePressEvent(QMouseEvent *evt) {
@@ -92,6 +96,8 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
 
             QVector<Molecule*> deepCopy = makeMoleculesFreshCopy();
             undoStackMolecule.append(deepCopy);
+            QVector<DrawnObject*> drawnCopy = makeDrawnObjectsFreshCopy();
+            undoStackDrawnObject.append(drawnCopy);
 
         }
 
@@ -103,6 +109,8 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
         freeHandObjects.append(copy);
         QVector<DrawnObject*> deepCopy = makeDrawnObjectsFreshCopy();
         undoStackDrawnObject.append(deepCopy);
+        QVector<Molecule*> moleculeCopy = makeMoleculesFreshCopy();
+        undoStackMolecule.append(moleculeCopy);
         drawExisting();
         freehandObject->cleanFreehand();
 

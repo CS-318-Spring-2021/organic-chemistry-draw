@@ -20,26 +20,24 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     QHBoxLayout *mainLayout = new QHBoxLayout(w);
 
     QVBoxLayout *rightLayout = new QVBoxLayout();
-    rightLayout->addWidget(saveButton = new QPushButton("Save"));
 
 
-    connect(saveButton, &QPushButton::clicked, this, &MainWindow::bSave);
-
-    QVBoxLayout *taskBarLayout = new QVBoxLayout();
-    taskBarLayout->addWidget(recordCheckBox = new QCheckBox("Free Draw"));
+    rightLayout->addWidget(recordCheckBox = new QCheckBox("Free Draw"));
 
     recordCheckBox->setCheckable(true);
     recordCheckBox->setChecked(false);
 
     connect(recordCheckBox, &QCheckBox::stateChanged, this, &MainWindow::bRecording);
-
     rightLayout->addWidget(undoButton = new QPushButton("Undo"));
     connect(undoButton, &QPushButton::clicked, this, &MainWindow::bUndo);
 
     rightLayout->addWidget(clearButton = new QPushButton("Clear"));
     connect(clearButton, &QPushButton::clicked, this, &MainWindow::bClear);
 
-    mainLayout->addLayout(taskBarLayout);
+    rightLayout->addWidget(saveButton = new QPushButton("Save"));
+
+
+    connect(saveButton, &QPushButton::clicked, this, &MainWindow::bSave);
     mainLayout->addWidget(view = new drawspace(), 1);
     mainLayout->addLayout(rightLayout);
     bRecording();
@@ -75,26 +73,36 @@ void MainWindow::bUndo(){
     if(view->undoStackMolecule.size() <= 1) {
         view->undoStackMolecule.clear();
         view->undoStackDrawnObject.clear();
+        QVector<Molecule*> empty;
+        view->undoStackMolecule.append(empty);
+        QVector<DrawnObject*> emptyDO;
+        view->undoStackDrawnObject.append(emptyDO);
         view->molecules.clear();
         view->freeHandObjects.clear();
         view->mScene.clear();
         return;
     }
     view->undoStackMolecule.removeLast();
-//    view->undoStackDrawnObject.removeLast();
+    view->undoStackDrawnObject.removeLast();
     QVector<Molecule*> deepCopy = view->undoStackMolecule.last();
     view->molecules = deepCopy;
     view->molecules = view->makeMoleculesFreshCopy();
-//    QVector<DrawnObject*> freeHandCopy = view->undoStackDrawnObject.last();
-//    view->freeHandObjects = freeHandCopy;
-//    view->freeHandObjects = view->makeDrawnObjectsFreshCopy();
+    QVector<DrawnObject*> freeHandCopy = view->undoStackDrawnObject.last();
+    view->freeHandObjects = freeHandCopy;
+    view->freeHandObjects = view->makeDrawnObjectsFreshCopy();
     view->mScene.clear();
-    if(view->undoStackMolecule.size() >= 1) view->drawExisting();
+    if(view->undoStackMolecule.size() >= 1) {
+        view->drawExisting();
+
+    }
 }
 
 void MainWindow::bClear(){
     QVector<Molecule*> empty;
     view->undoStackMolecule.append(empty);
+    QVector<DrawnObject*> emptyDO;
+    view->undoStackDrawnObject.append(emptyDO);
     view->molecules.clear();
+    view->freeHandObjects.clear();
     view->mScene.clear();
 }
