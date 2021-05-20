@@ -91,7 +91,7 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
                 molecules[appending]->addNewVerts(currentDrawnObject->vertices);
                 appending = -1;
             }else{
-                Molecule *molecule = new Molecule(currentDrawnObject->vertices);
+                Molecule *molecule = new Molecule(currentDrawnObject->vertices, bondLength);
                 molecules.append(molecule);
             }
 
@@ -121,6 +121,9 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
 //        }
         currentDrawnObject->clean();
         drawExisting();
+        if(bondLength == -1){
+            bondLength = molecules[0]->bondLength;
+        }
     }else{
         freehandObject->addData(pos);
         DrawnObject *copy = new DrawnObject(*freehandObject);

@@ -30,6 +30,7 @@ public:
     DrawnObject *freehandObject;
     bool recording;
     int appending = -1;
+    float bondLength = -1;
     QVector<Molecule*> molecules;
     QVector<DrawnObject*> freeHandObjects;
     QVector<QVector<Molecule*>> undoStackMolecule;

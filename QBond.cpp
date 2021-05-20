@@ -33,7 +33,7 @@ QBond::QBond(Bond *_bond):bond(_bond) {
     setAcceptHoverEvents(true);
 
     if (drawStyle==0 || quantity>1){ //anything other than weighted and dashed
-        double WIDTHMODIFIER = .01;
+        double WIDTHMODIFIER = .02;
         double LENGTHMODIFIER = 0.018;
         if (quantity==3){
             LENGTHMODIFIER = 0.03;

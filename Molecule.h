@@ -11,7 +11,7 @@
 class Molecule{
 
 public:
-    Molecule(QVector<QPointF> drawnVertices);
+    Molecule(QVector<QPointF> drawnVertices, float bondLength = -1);
     //Molecule(const Molecule &originalMolecule);
     //This can be used in future to allow us to make deep copies of all items store in a Molecule
     enum MoleculeType {Cyclic, Linear};
@@ -21,6 +21,7 @@ public:
     QVector<Bond*> bondSet;
     const double standardLineSegmentAngle = (35.25*M_PI)/180.0;
     void setBondLength(QPointF first, QPointF second);
+    void setBondLength(float length);
     QVector<Atom*> correctStructure(QVector<Atom*> atoms, Atom * appendee, int nSides = 6);
     void addNewVerts(QVector<QPointF> drawnVertices);
     void addBond(Atom *p_start, Atom *p_finish);

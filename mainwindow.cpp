@@ -104,5 +104,6 @@ void MainWindow::bClear(){
     view->undoStackDrawnObject.append(emptyDO);
     view->molecules.clear();
     view->freeHandObjects.clear();
+    view->bondLength = -1;
     view->mScene.clear();
 }

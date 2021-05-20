@@ -3,11 +3,15 @@
 #include <QLineF>
 #include <QDebug>
 
-Molecule::Molecule(QVector<QPointF> drawnVertices) {
+Molecule::Molecule(QVector<QPointF> drawnVertices, float bondLength) {
     //TODO:
     //if there is one line off of the hex or structure
     //if another one goes in, then change to wedges and dashes and reset the angles
-    setBondLength(drawnVertices[0], drawnVertices[1]); //ok we have a set bond length as the first value? not the average?
+    if(bondLength == -1){
+        setBondLength(drawnVertices[0], drawnVertices[1]); //ok we have a set bond length as the first value? not the average?
+    }else{
+        setBondLength(bondLength);
+    }
 
     Atom *p_currentAtom = new Atom(drawnVertices[0]);   //current atom
     atomSet.append(p_currentAtom);                      //add to atomSet
@@ -49,6 +53,10 @@ void Molecule::setBondLength(QPointF first, QPointF second) { //set length
     bondLength = QLineF(first, second).length();
 }
 
+void Molecule::setBondLength(float length) { //set length
+    bondLength = length;
+}
+
 QVector<Atom*> Molecule::correctStructure(QVector<Atom*> atoms, Atom * appendee, int nSides){
     if(appendee){
         Atom * preAppendee;
@@ -66,7 +74,8 @@ QVector<Atom*> Molecule::correctStructure(QVector<Atom*> atoms, Atom * appendee,
     QPointF point3 = atoms[2]->atomPos;
     QLineF previousLine(point1, point2);
     QLineF savePreviousLine(point1, point2);
-    double length = previousLine.length();
+    //double length = previousLine.length();
+    double length = bondLength;
     QVector<bool> upDownArray;
     upDownArray.append(false);
     upDownArray.append(false);
@@ -81,6 +90,8 @@ QVector<Atom*> Molecule::correctStructure(QVector<Atom*> atoms, Atom * appendee,
         previousLine = nextLine;
     }
     previousLine = savePreviousLine;
+    previousLine.setLength(bondLength);
+    atoms[1]->setAtomPos(previousLine.p2());
     for(int i = 2; i<atoms.size();i++){
         point2 = atoms[i-1]->atomPos;
         point3 = atoms[i]->atomPos;
