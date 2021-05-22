@@ -4,11 +4,8 @@
 #include <QDebug>
 
 Molecule::Molecule(QVector<QPointF> drawnVertices, float bondLength) {
-    //TODO:
-    //if there is one line off of the hex or structure
-    //if another one goes in, then change to wedges and dashes and reset the angles
     if(bondLength == -1){
-        setBondLength(drawnVertices[0], drawnVertices[1]); //ok we have a set bond length as the first value? not the average?
+        setBondLength(drawnVertices[0], drawnVertices[1]);
     }else{
         setBondLength(bondLength);
     }
@@ -45,7 +42,7 @@ Molecule::Molecule(QVector<QPointF> drawnVertices, float bondLength) {
 }
 
 //Molecule::Molecule(const Molecule &originalMolecule) {
-//    //to be used to deepCopy the molecules to be used in undo
+    //to be used to deepCopy the molecules to be used in undo
 //}
 
 
@@ -64,7 +61,6 @@ QVector<Atom*> Molecule::correctStructure(QVector<Atom*> atoms, Atom * appendee,
             preAppendee = appendee->bonds[0]->atomSecond;
         }else preAppendee = appendee->bonds[0]->atomFirst;
         atoms.push_front(appendee);
-        //if three neighbors for appendee: dont append preAppendee?
         atoms.push_front(preAppendee);
         //push front atom before appendee
     }
@@ -74,7 +70,6 @@ QVector<Atom*> Molecule::correctStructure(QVector<Atom*> atoms, Atom * appendee,
     QPointF point3 = atoms[2]->atomPos;
     QLineF previousLine(point1, point2);
     QLineF savePreviousLine(point1, point2);
-    //double length = previousLine.length();
     double length = bondLength;
     QVector<bool> upDownArray;
     upDownArray.append(false);
@@ -106,7 +101,7 @@ QVector<Atom*> Molecule::correctStructure(QVector<Atom*> atoms, Atom * appendee,
 }
 
 void Molecule:: addNewVerts(QVector<QPointF> drawnVertices){ //adds a set of points to the graph one after another
-    //the first item in drawnVertices is an existing atom, not sure yet which one though--
+    //the first item in drawnVertices is an existing atom
     QPointF finding = drawnVertices[0];                                     //so we loop through existing atoms,
     Atom *p_currentAtom = atomSet[0];
     int smallest = QLineF(finding, p_currentAtom->atomPos).length(); //find the one that's closest to dV[0]
@@ -135,6 +130,8 @@ void Molecule:: addNewVerts(QVector<QPointF> drawnVertices){ //adds a set of poi
         if(p_smallestDistanceAtom->bonds[3]->atomFirst==p_smallestDistanceAtom){
             p_currentAtom = p_smallestDistanceAtom->bonds[3]->atomSecond;
         }else p_currentAtom = p_smallestDistanceAtom->bonds[3]->atomFirst;
+        //at this point, preAppendee is the first point on the third line off this atom,
+        //and p_currentAtom is the first point on the fourth line off this atom.
         QLineF previousLine(p_smallestDistanceAtom->atomPos,preAppendee->atomPos);
         QLineF nextLine(p_smallestDistanceAtom->atomPos, p_currentAtom->atomPos);
         double theta =previousLine.angleTo(nextLine);
@@ -142,15 +139,17 @@ void Molecule:: addNewVerts(QVector<QPointF> drawnVertices){ //adds a set of poi
         nextLine.setLength(this->bondLength);
         atomsToBeCleaned.pop_front();
         cleanedAtoms = correctStructure(atomsToBeCleaned, p_currentAtom);
+        //corrects the rest of the fourth line off the atom
         for(int i = 0; i<cleanedAtoms.size(); i++){
             if(!atomSet.contains(cleanedAtoms[i]))atomSet.append(cleanedAtoms[i]);
         }
-        if(previousLine.angle()<nextLine.angle()){
+        if(previousLine.angle()<nextLine.angle()){ //if we draw to the right of the vertical or the left
             previousLine.setAngle(previousLine.angle()-theta);
         }else{
             previousLine.setAngle(previousLine.angle()+theta);
         }
         atomsToBeCleaned.clear();
+        //remakes atomsToBeCleaned to correct the rest of the third line off the atom
         if(preAppendee->bonds.size()>1){
             Atom * atom = preAppendee;
             while(atom->bonds.size()>1){
@@ -170,7 +169,6 @@ void Molecule:: addNewVerts(QVector<QPointF> drawnVertices){ //adds a set of poi
 
 void Molecule:: addBond(Atom *p_start, Atom *p_finish){
     //when he draws in the THIRD bond it will be skewed off correctly if he anticipates drawing the fourth
-    //          could want angles freehanded?
     QLineF line(p_start->atomPos, p_finish->atomPos);
     line.setLength(this->bondLength);
     //float angle = 0;

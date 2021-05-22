@@ -85,11 +85,10 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
             currentDrawnObject->analyzeSpeed();
             currentDrawnObject->analyzeColinearity();
             currentDrawnObject->analyzeDistances();
-            //check if there is an atom underneath the atom we released
 
             if(appending>-1){
                 molecules[appending]->addNewVerts(currentDrawnObject->vertices);
-                appending = -1;
+                appending = -1; //needs to be commented out to make the commented code below do anything
             }else{
                 Molecule *molecule = new Molecule(currentDrawnObject->vertices, bondLength);
                 molecules.append(molecule);
@@ -141,15 +140,13 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
 
 QVector<Molecule*> drawspace::makeMoleculesFreshCopy(){
     //Copies everything in molecule into undostack as pointers to new molecules
-    //all pointers are not being copied, needs to be fixed to be accurate
+    //all pointers in arrays in molecule are not being copied, needs to be fixed to be accurate
     QVector<Molecule*> copy = molecules;
     QVector<Molecule*> deepCopy;
     for(int i =0; i < copy.length(); i++){
         Molecule *copiedMolecule= new Molecule(*copy[i]);
         deepCopy.append(copiedMolecule);
      }
-
-    //returns a coppied molecules at a differnt address
     return deepCopy;
 }
 
@@ -197,9 +194,7 @@ void drawspace::drawExisting(){
     }
     for (int m=0; m < freeHandObjects.size(); m++){
         for (int i = 1; i<freeHandObjects[m]->positionInputPoints.size(); i++){
-            //printf("inputPoint: x: %f, y: %f\n", freeHandObjects[m]->positionInputPoints[i-1].x(),freeHandObjects[m]->positionInputPoints[i-1].y());
             mScene.addLine(QLineF(freeHandObjects[m]->positionInputPoints[i-1], freeHandObjects[m]->positionInputPoints[i]), QPen(Qt::gray, 2.0));
-            //addFreehandSegment(*freeHandObjects[m]->positionInputPoints[i]);
         }
     }
 }

@@ -34,8 +34,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     rightLayout->addWidget(clearButton = new QPushButton("Clear"));
     connect(clearButton, &QPushButton::clicked, this, &MainWindow::bClear);
 
+
+
     rightLayout->addWidget(saveButton = new QPushButton("Save"));
 
+    rightLayout->addWidget(aboutButton = new QPushButton("About"));
+    connect(aboutButton, &QPushButton::clicked, this, &MainWindow::bAbout);
 
     connect(saveButton, &QPushButton::clicked, this, &MainWindow::bSave);
     mainLayout->addWidget(view = new drawspace(), 1);
@@ -106,4 +110,20 @@ void MainWindow::bClear(){
     view->freeHandObjects.clear();
     view->bondLength = -1;
     view->mScene.clear();
+}
+
+void MainWindow::bAbout(){
+    QMessageBox msg;
+    msg.setWindowTitle("About");
+    msg.setText(""
+"About the Project \n     We were motivated to pursue this project because we wanted to build something simpler and more convenient than the existing technology. "
+"Programs like ChemDraw allow wider varieties of structures to be drawn, but they rely on a combination of large, comprehensive menu bars "
+"and dragging the molecules onto the screen, which is slow to navigate and less convenient than simply drawing. Our program is less expansive, "
+"but more user friendly. \n     Users interact with our tool by drawing. When a user creates an organic chemistry structure in our program, it will "
+"automatically clean itself up into common structures such as hexagons and line structures. It also supports free drawing (check the “free draw” box)"
+" for when writing needs to be added but not corrected. Users also have the ability to undo their mistakes, clear their drawings, or save the canvas "
+"as a PNG.\n\nList of Contributors:\nAmmar Almahdy, Hannah Brady, Isabelle Cochran, Sam de Wolf, Zack Einhorn, Charlotte Gray, Aska Matsuda, Alec Wilson.\n"
+"\nWe'd like to thank Professor Frank Swenton for teaching this class and assisting us along the way, as well as Professor Jeff Byers for the idea."
+"\n\nMiddlebury College Computer Science Students, 2021");
+    msg.exec();
 }

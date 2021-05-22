@@ -20,6 +20,7 @@ QAtom::QAtom(Atom *_atom, qreal radius):atom(_atom)
 //    box->setBrush(QColor(255, 255, 255));
 //    box->setOpacity(0.0);
 //    addToGroup(box);
+    //could use this to do a double click atom to make a white box over the atom area?
 }
 
 void QAtom::hoverEnterEvent(QGraphicsSceneHoverEvent *) {
