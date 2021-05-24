@@ -49,7 +49,7 @@ QBond::QBond(Bond *_bond):bond(_bond) {
         QGraphicsLineItem* centerline = new QGraphicsLineItem(p1.x(), p1.y(), p2.x(), p2.y());
         QGraphicsLineItem* rightline = new QGraphicsLineItem(cornertwo.x(), cornertwo.y(), cornerfour.x(), cornerfour.y());
         leftline->setPen(QPen(Qt::black, WIDTHMODIFIER*line.length()));
-        centerline->setPen(QPen(Qt::black, WIDTHMODIFIER*line.length())); //should we include lengthmod s.t. 3x bonds have enough space between?
+        centerline->setPen(QPen(Qt::black, WIDTHMODIFIER*line.length())); 
         rightline->setPen(QPen(Qt::black, WIDTHMODIFIER*line.length()));
         if (quantity==1){
             addToGroup(centerline);
