@@ -9,7 +9,7 @@ class QAtom : public QGraphicsItemGroup
 public:
     QAtom(Atom *_atom, qreal radius);
     QGraphicsEllipseItem *coop;
-    QGraphicsRectItem * box;
+    QGraphicsRectItem * box; //to be used to perhaps draw a box over the atom
     Atom *atom;
 
 protected:

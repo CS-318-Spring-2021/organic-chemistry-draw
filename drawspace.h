@@ -16,12 +16,8 @@ class Molecule;
 class drawspace : public QGraphicsView
 {
     Q_OBJECT
-
-
     QPointF lastPos;
     bool mouseIsDown;
-
-
 
 public:
     enum {MousePressed, MouseReleased, MouseMoved};
@@ -35,14 +31,12 @@ public:
     QVector<DrawnObject*> freeHandObjects;
     QVector<QVector<Molecule*>> undoStackMolecule;
     QVector<QVector<DrawnObject*>> undoStackDrawnObject;
+
     drawspace();
-    void maybeAddSegment(const QPointF &pos); 
-    void addFreehandSegment(QPointF pos);
-    void replaceSegment(const QPointF &firstPos, const QPointF &lastPos);
+    void maybeAddSegment(const QPointF &pos);
     void drawExisting();
     QVector<Molecule*> makeMoleculesFreshCopy();
     QVector<DrawnObject*> makeDrawnObjectsFreshCopy();
-
 
 protected:
     virtual void mousePressEvent(QMouseEvent *evt) override;

@@ -8,10 +8,6 @@
 #include "Molecule.h"
 #include "DrawnObject.h"
 
-
-
-
-
 drawspace::drawspace() {
     setScene(&mScene);
     setSceneRect(QRectF(-400.0, -300.0, 800.0, 600.0));
@@ -20,10 +16,10 @@ drawspace::drawspace() {
     setMouseTracking(true);
     currentDrawnObject = new DrawnObject();
     freehandObject = new DrawnObject();
-    QVector<Molecule*> empty;
-    undoStackMolecule.append(empty);
-    QVector<DrawnObject*> emptyDO;
-    undoStackDrawnObject.append(emptyDO);
+    QVector<Molecule*> emptyMolecule;
+    undoStackMolecule.append(emptyMolecule);
+    QVector<DrawnObject*> emptyDrawnObject;
+    undoStackDrawnObject.append(emptyDrawnObject);
 }
 
 void drawspace::mousePressEvent(QMouseEvent *evt) {
@@ -58,21 +54,12 @@ void drawspace::mousePressEvent(QMouseEvent *evt) {
     }
 }
 
-
 void drawspace::maybeAddSegment(const QPointF &pos) {
     if (lastPos!=pos) {
         mScene.addLine(QLineF(lastPos, pos), QPen(Qt::gray, 2.0));
         lastPos = pos;
     }
 }
-
-void drawspace::addFreehandSegment(QPointF pos) {
-    if (lastPos!=pos) {
-        mScene.addLine(QLineF(lastPos, pos), QPen(Qt::gray, 2.0));
-        lastPos = pos;
-    }
-}
-
 
 void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
     mouseIsDown = false;
@@ -98,7 +85,6 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
             undoStackMolecule.append(deepCopy);
             QVector<DrawnObject*> drawnCopy = makeDrawnObjectsFreshCopy();
             undoStackDrawnObject.append(drawnCopy);
-
         }
 //        if(appending>-1){
 //            QPointF lastPoint = molecules[appending]->atomSet.last()->atomPos;
@@ -118,11 +104,10 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
 //                }
 //            }
 //        }
+        //code can be used to check for an atom underneath another atom: see writeup
         currentDrawnObject->clean();
         drawExisting();
-        if(bondLength == -1){
-            bondLength = molecules[0]->bondLength;
-        }
+        if(bondLength == -1) bondLength = molecules[0]->bondLength;
     }else{
         freehandObject->addData(pos);
         DrawnObject *copy = new DrawnObject(*freehandObject);
@@ -133,9 +118,7 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
         undoStackMolecule.append(moleculeCopy);
         drawExisting();
         freehandObject->cleanFreehand();
-
     }
-
 }
 
 QVector<Molecule*> drawspace::makeMoleculesFreshCopy(){
@@ -158,7 +141,6 @@ QVector<DrawnObject*> drawspace::makeDrawnObjectsFreshCopy(){
         DrawnObject *copiedDrawnObject= new DrawnObject(*copy[i]);
         deepCopy.append(copiedDrawnObject);
      }
-
     //returns list of new DrawnObjects
     return deepCopy;
 }
@@ -167,19 +149,11 @@ void drawspace::mouseMoveEvent(QMouseEvent *evt) {
     QGraphicsView::mouseMoveEvent(evt);
     if (mouseIsDown) {
         QPointF pos = mapToScene(evt->pos());
-        if(!recording){
-            currentDrawnObject->addData(pos, evt->timestamp());
-        } else {
-            freehandObject->addData(pos);
-        }
+        if(!recording) currentDrawnObject->addData(pos, evt->timestamp());
+        else freehandObject->addData(pos);
         maybeAddSegment(pos);
     }
 }
-
-void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos) {
-    mScene.addLine(QLineF(firstPos, lastPos), QPen(Qt::black, 2.0));
-}
-
 
 void drawspace::drawExisting(){
     for (int m=0; m < molecules.size(); m++){

@@ -11,9 +11,9 @@ public:
     QVector<QPointF> vertices;
 
     DrawnObject();
+    ~DrawnObject();
     void addData(QPointF position, int time);
     void addData(QPointF position);
-    ~DrawnObject();
     void clean();
     void cleanFreehand();
     void analyzeSpeed();
@@ -21,7 +21,6 @@ public:
     void analyzeColinearity();
     QPointF pointAverage(QVector<QPointF> points);
     int maxLength(QVector<QPointF> points);
-
 };
 
 #endif // DRAWNOBJECT_H

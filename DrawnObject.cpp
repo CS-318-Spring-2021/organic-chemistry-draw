@@ -77,7 +77,6 @@ void DrawnObject::analyzeColinearity(){
     clean();
     vertices = returnVertices;
     returnVertices.clear();
-
 }
 
 void DrawnObject::analyzeDistances(){
@@ -89,43 +88,31 @@ void DrawnObject::analyzeDistances(){
     for (int i=1; i< vertices.size(); i++){
         int l = QLineF(vertices[i], vertices[i-1]).length();
         lengths.append(l);
-        if (l>maxLength){
-            maxLength = l;
-        }
+        if (l>maxLength) maxLength = l;
     }
 
-
-    QVector<QPointF> clump;
-    clump.append(vertices[0]);
+    QVector<QPointF> pointGrouping;
+    pointGrouping.append(vertices[0]);
     for (int i = 1; i<vertices.size(); i++){
-        if (lengths[i] < maxLength/3){
-            clump.append(vertices[i]);
-        }
+        if (lengths[i] < maxLength/3) pointGrouping.append(vertices[i]);
         else {
-            returnVertices.append(pointAverage(clump));
-            clump.clear();
-            clump.append(vertices[i]);
+            returnVertices.append(pointAverage(pointGrouping));
+            pointGrouping.clear();
+            pointGrouping.append(vertices[i]);
         }
     }
-    QPointF p = pointAverage(clump);
-    clump.clear();
+    QPointF p = pointAverage(pointGrouping);
+    pointGrouping.clear();
     int l = QLineF(returnVertices[0], p).length();
-    if (l< maxLength/3){
-        returnVertices.append(returnVertices[0]);
-    }
-    else {
-        returnVertices.append(p);
-    }
-
+    if (l< maxLength/3) returnVertices.append(returnVertices[0]);
+    else returnVertices.append(p);
     clean();
     vertices = returnVertices;
     returnVertices.clear();
 }
 
 QPointF DrawnObject::pointAverage(QVector<QPointF> points){
-    if (points.size()==1){
-        return points[0];
-    }
+    if (points.size()==1) return points[0];
     int x = 0;
     int y = 0;
     for (int i=0; i<points.size(); i++){
@@ -139,12 +126,9 @@ QPointF DrawnObject::pointAverage(QVector<QPointF> points){
 
 int DrawnObject::maxLength(QVector<QPointF> vertices){
     int maxLength = 0;
-
     for (int i=1; i< vertices.size(); i++){
-        int l = QLineF(vertices[i], vertices[i-1]).length();
-        if (l>maxLength){
-            maxLength = l;
-        }
+        int line = QLineF(vertices[i], vertices[i-1]).length();
+        if (line>maxLength) maxLength = line;
     }
     return maxLength;
 }

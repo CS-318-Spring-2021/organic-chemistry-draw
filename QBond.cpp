@@ -8,54 +8,45 @@
 #include <QBrush>
 
 QBond::QBond(Bond *_bond):bond(_bond) {
-    QPointF a = bond->atomFirst->atomPos;
-    QPointF b = bond->atomSecond->atomPos;
-
+    QPointF p1 = bond->atomFirst->atomPos;
+    QPointF p2 = bond->atomSecond->atomPos;
 
     int quantity = bond->quantity;
     int drawStyle = bond->drawStyle;
 
-    QLineF line(a, b);
+    QLineF line(p1, p2);
 
     qgline = new QGraphicsLineItem(line);
 
-    //instead, a polygon?
     hoverCircle = new QGraphicsEllipseItem(line.center().x()-15, line.center().y()-15, 30, 30); //needs to use trig to adjust the TL of the circle
     hoverCircle->setPen(QPen(Qt::NoPen));
     hoverCircle->setBrush(QColor(0, 0, 0, 30));
     hoverCircle->setOpacity(0.0);
 
-
     addToGroup(hoverCircle);
-
-
 
     setAcceptHoverEvents(true);
 
     if (drawStyle==0 || quantity>1){ //anything other than weighted and dashed
         double WIDTHMODIFIER = .02;
         double LENGTHMODIFIER = 0.03;
-        if (quantity==3){
-            LENGTHMODIFIER = 0.04;
-        }
-
-        QLineF supplementary(a, b);
+        if (quantity==3) LENGTHMODIFIER = 0.04;
+        QLineF supplementary(p1, p2);
         supplementary.setLength(LENGTHMODIFIER*line.length());
         supplementary.setAngle(line.angle()+90);
         QPointF cornerone = supplementary.p2();
         supplementary.setAngle(line.angle()-90);
         QPointF cornertwo = supplementary.p2();
 
-        supplementary = QLineF(b, a);
+        supplementary = QLineF(p2, p1);
         supplementary.setLength(LENGTHMODIFIER*line.length());
         supplementary.setAngle(line.angle()+90);
         QPointF cornerthree = supplementary.p2();
         supplementary.setAngle(line.angle()-90);
         QPointF cornerfour = supplementary.p2();
 
-
         QGraphicsLineItem* leftline = new QGraphicsLineItem(cornerone.x(), cornerone.y(), cornerthree.x(), cornerthree.y());
-        QGraphicsLineItem* centerline = new QGraphicsLineItem(a.x(), a.y(), b.x(), b.y());
+        QGraphicsLineItem* centerline = new QGraphicsLineItem(p1.x(), p1.y(), p2.x(), p2.y());
         QGraphicsLineItem* rightline = new QGraphicsLineItem(cornertwo.x(), cornertwo.y(), cornerfour.x(), cornerfour.y());
         leftline->setPen(QPen(Qt::black, WIDTHMODIFIER*line.length()));
         centerline->setPen(QPen(Qt::black, WIDTHMODIFIER*line.length())); //should we include lengthmod s.t. 3x bonds have enough space between?
@@ -66,16 +57,12 @@ QBond::QBond(Bond *_bond):bond(_bond) {
         }
         addToGroup(leftline);
         addToGroup(rightline);
-        if (quantity==3){
-            addToGroup(centerline);
-        }
-
-
+        if (quantity==3) addToGroup(centerline);
     }
     else if (quantity==1){ //weighted and dashed
         //xy coordinates for the two endpoints of the bond
         const double TRIANGLE = 0.05;
-        QLineF line(a, b);
+        QLineF line(p1, p2);
         QPointF perp(line.dy(), -line.dx());
 
         if (drawStyle==1 || drawStyle==2) {
@@ -110,9 +97,7 @@ void QBond::hoverLeaveEvent(QGraphicsSceneHoverEvent *evt) {
 
 void QBond::mousePressEvent(QGraphicsSceneMouseEvent *evt) {
     //if undo is clicked
-        //delete
+        //delete?
     //else
     bond->changeBond();
-    //hoverCircle->setOpacity(0.0);
 }
-

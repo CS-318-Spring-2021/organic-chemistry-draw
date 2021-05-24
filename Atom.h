@@ -11,6 +11,7 @@ class Atom{
 public:
     Atom(QPointF currentPos);
 
+    //unused but could be helpful in future
     enum Element {
         Carbon,
         Hygrogen,
@@ -34,11 +35,7 @@ public:
     int getNumBonds();
     QVector<Bond*> bonds;
     QPointF atomPos;
-    double const atomRadius = 10; //need to decide this later
     Element element;
-
-
-
 };
 
 #endif // ATOM_H
