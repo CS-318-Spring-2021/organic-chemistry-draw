@@ -14,7 +14,6 @@
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
-    QVector<Molecule*> molecules;
     QWidget *w = new QWidget();
     setCentralWidget(w);
 
