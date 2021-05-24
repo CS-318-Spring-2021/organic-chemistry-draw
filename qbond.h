@@ -16,6 +16,5 @@ protected:
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *evt);
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *evt);
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *evt);
-
 };
 #endif // QBOND_H

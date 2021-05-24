@@ -7,7 +7,6 @@
 #include "DrawnObject.h"
 #include "Molecule.h"
 
-
 class PollingGraphicsView;
 class QTableWidget;
 class QPushButton;

@@ -13,6 +13,8 @@ void Atom::addBond(Bond *p_bond){
         bonds[2]->drawStyle = Bond::ThickBond;
         bonds[3]->drawStyle = Bond::DashBond;
     }*/
+    //could be used to set the next 2 bonds off of an atom with 2 bonds already
+    //to be thick and dashed.
 }
 
 void Atom::removeBond(Bond *p_bond){
@@ -24,6 +26,7 @@ void Atom::removeBond(Bond *p_bond){
     }
 }
 
+//could be used to change the element type, but is currently unused
 void Atom::setElement(enum Element changeElement){
     element = changeElement;
 }

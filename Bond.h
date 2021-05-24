@@ -13,13 +13,11 @@ public:
 
     enum {NormalBond, ThickBond, DashBond, DoubleBond, TripleBond, n};
 
-
     Atom *atomFirst;
     Atom *atomSecond;
     int drawStyle;
     int quantity;
     void changeBond();
-
 };
 
 #endif // BOND_H

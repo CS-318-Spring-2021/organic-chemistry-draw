@@ -4,18 +4,14 @@
 #include <QDebug>
 
 Molecule::Molecule(QVector<QPointF> drawnVertices, float bondLength) {
-    if(bondLength == -1){
-        setBondLength(drawnVertices[0], drawnVertices[1]);
-    }else{
-        setBondLength(bondLength);
-    }
+    if(bondLength == -1) setBondLength(drawnVertices[0], drawnVertices[1]);
+    else setBondLength(bondLength);
 
     Atom *p_currentAtom = new Atom(drawnVertices[0]);   //current atom
     atomSet.append(p_currentAtom);                      //add to atomSet
     Atom *p_previousAtom = p_currentAtom;               //previous atom = current
 
     for (int i=1; i< drawnVertices.size(); i++){                            //for the rest of the vertices in drawnVertices--
-
         Atom *p_currentAtom = new Atom(drawnVertices[i]);                   //make a new atom out of the vertex
         Bond *p_currentBond = new Bond(p_currentAtom, p_previousAtom);      //create edge btw old and new
 
@@ -26,19 +22,14 @@ Molecule::Molecule(QVector<QPointF> drawnVertices, float bondLength) {
         bondSet.append(p_currentBond);                                      //add edge to graph
 
         p_previousAtom = p_currentAtom;                                     //reset this value for the next iteration
-
     }
-
 
     if(drawnVertices[0].x() == drawnVertices[drawnVertices.size()-1].x()
              && drawnVertices[0].y() == drawnVertices[drawnVertices.size()-1].y()){
-        type = Cyclic;
         correctStructure(atomSet,nullptr,drawnVertices.size()-1);
     } else{
-        type = Linear;
         atomSet = correctStructure(atomSet, nullptr);
     }
-
 }
 
 //Molecule::Molecule(const Molecule &originalMolecule) {
@@ -145,13 +136,11 @@ void Molecule:: addNewVerts(QVector<QPointF> drawnVertices){ //adds a set of poi
         }
         if(previousLine.angle()<nextLine.angle()){ //if we draw to the right of the vertical or the left
             previousLine.setAngle(previousLine.angle()-theta);
-        }else{
-            previousLine.setAngle(previousLine.angle()+theta);
-        }
+        }else previousLine.setAngle(previousLine.angle()+theta);
         atomsToBeCleaned.clear();
         //remakes atomsToBeCleaned to correct the rest of the third line off the atom
         if(preAppendee->bonds.size()>1){
-            Atom * atom = preAppendee;
+            Atom *atom = preAppendee;
             while(atom->bonds.size()>1){
                 atom = atom->bonds[1]->atomSecond;
                 atomsToBeCleaned.append(atom);
@@ -163,15 +152,13 @@ void Molecule:: addNewVerts(QVector<QPointF> drawnVertices){ //adds a set of poi
         cleanedAtoms = correctStructure(atomsToBeCleaned, p_smallestDistanceAtom);
     }
     for(int i = 0; i<cleanedAtoms.size(); i++){
-        if(!atomSet.contains(cleanedAtoms[i]))atomSet.append(cleanedAtoms[i]);
+        if(!atomSet.contains(cleanedAtoms[i])) atomSet.append(cleanedAtoms[i]);
     }
 }
 
 void Molecule:: addBond(Atom *p_start, Atom *p_finish){
-    //when he draws in the THIRD bond it will be skewed off correctly if he anticipates drawing the fourth
     QLineF line(p_start->atomPos, p_finish->atomPos);
     line.setLength(this->bondLength);
-    //float angle = 0;
     QPointF average(0,0);
     if(p_start->getNumBonds()==2){
         average -= 2*(p_start->atomPos);
@@ -205,7 +192,6 @@ void Molecule:: removeAtom(Atom *p_atom){
             p_atom->bonds[i]->atomSecond->removeBond(p_atom->bonds[i]);
         } else if (p_atom->bonds[i]->atomSecond==p_atom){ //if we're deleting atomSecond
             p_atom->bonds[i]->atomFirst->removeBond(p_atom->bonds[i]);
-
         }
     }
     p_atom->bonds.clear();
