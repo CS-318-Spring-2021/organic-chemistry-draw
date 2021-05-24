@@ -1,9 +1,9 @@
-#include "drawspace.h"
+#include "Drawspace.h"
 #include <QSurface>
 #include <QDebug>
 #include <QtWidgets>
 
-#include "qatom.h"
+#include "QAtom.h"
 #include "qbond.h"
 #include "Molecule.h"
 #include "DrawnObject.h"
@@ -12,7 +12,7 @@
 
 
 
-drawspace::drawspace() {
+Drawspace::Drawspace() {
     setScene(&mScene);
     setSceneRect(QRectF(-400.0, -300.0, 800.0, 600.0));
     setRenderHint(QPainter::Antialiasing);
@@ -26,7 +26,7 @@ drawspace::drawspace() {
     undoStackDrawnObject.append(emptyDO);
 }
 
-void drawspace::mousePressEvent(QMouseEvent *evt) {
+void Drawspace::mousePressEvent(QMouseEvent *evt) {
     QGraphicsView::mousePressEvent(evt);
     mouseIsDown = true;
     QPointF pos = mapToScene(evt->pos());
@@ -59,14 +59,14 @@ void drawspace::mousePressEvent(QMouseEvent *evt) {
 }
 
 
-void drawspace::maybeAddSegment(const QPointF &pos) {
+void Drawspace::maybeAddSegment(const QPointF &pos) {
     if (lastPos!=pos) {
         mScene.addLine(QLineF(lastPos, pos), QPen(Qt::gray, 2.0));
         lastPos = pos;
     }
 }
 
-void drawspace::addFreehandSegment(QPointF pos) {
+void Drawspace::addFreehandSegment(QPointF pos) {
     if (lastPos!=pos) {
         mScene.addLine(QLineF(lastPos, pos), QPen(Qt::gray, 2.0));
         lastPos = pos;
@@ -74,7 +74,7 @@ void drawspace::addFreehandSegment(QPointF pos) {
 }
 
 
-void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
+void Drawspace::mouseReleaseEvent(QMouseEvent *evt) {
     mouseIsDown = false;
     QGraphicsView::mouseReleaseEvent(evt);
     QPointF pos = mapToScene(evt->pos());
@@ -138,7 +138,7 @@ void drawspace::mouseReleaseEvent(QMouseEvent *evt) {
 
 }
 
-QVector<Molecule*> drawspace::makeMoleculesFreshCopy(){
+QVector<Molecule*> Drawspace::makeMoleculesFreshCopy(){
     //Copies everything in molecule into undostack as pointers to new molecules
     //all pointers in arrays in molecule are not being copied, needs to be fixed to be accurate
     QVector<Molecule*> copy = molecules;
@@ -150,7 +150,7 @@ QVector<Molecule*> drawspace::makeMoleculesFreshCopy(){
     return deepCopy;
 }
 
-QVector<DrawnObject*> drawspace::makeDrawnObjectsFreshCopy(){
+QVector<DrawnObject*> Drawspace::makeDrawnObjectsFreshCopy(){
     //Copies everything in freeHandObjects as pointers to new DrawnObjects
     QVector<DrawnObject*> copy = freeHandObjects;
     QVector<DrawnObject*> deepCopy;
@@ -163,7 +163,7 @@ QVector<DrawnObject*> drawspace::makeDrawnObjectsFreshCopy(){
     return deepCopy;
 }
 
-void drawspace::mouseMoveEvent(QMouseEvent *evt) {
+void Drawspace::mouseMoveEvent(QMouseEvent *evt) {
     QGraphicsView::mouseMoveEvent(evt);
     if (mouseIsDown) {
         QPointF pos = mapToScene(evt->pos());
@@ -176,12 +176,12 @@ void drawspace::mouseMoveEvent(QMouseEvent *evt) {
     }
 }
 
-void drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos) {
+void Drawspace::replaceSegment(const QPointF &firstPos, const QPointF &lastPos) {
     mScene.addLine(QLineF(firstPos, lastPos), QPen(Qt::black, 2.0));
 }
 
 
-void drawspace::drawExisting(){
+void Drawspace::drawExisting(){
     for (int m=0; m < molecules.size(); m++){
         for (int i=0; i < (molecules[m]->atomSet.size()); i++){
             mScene.addItem(new QAtom(molecules[m]->atomSet[i], (molecules[m]->bondLength)/10));

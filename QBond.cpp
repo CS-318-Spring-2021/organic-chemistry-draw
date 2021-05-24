@@ -1,6 +1,6 @@
 #include "qbond.h"
 #include "Bond.h"
-#include "mainwindow.h"
+#include "MainWindow.h"
 #include <QGraphicsLineItem>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsPolygonItem>

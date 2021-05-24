@@ -2,7 +2,7 @@
 #define DRAWNOBJECT_H
 #include <QWidget>
 
-#include "drawspace.h"
+#include "Drawspace.h"
 
 class DrawnObject{
 public:

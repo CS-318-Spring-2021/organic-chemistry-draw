@@ -4,7 +4,7 @@
 #include <QtMath>
 #include <cfloat>
 
-#include "drawspace.h"
+#include "Drawspace.h"
 #include "Molecule.h"
 
 DrawnObject::DrawnObject(){

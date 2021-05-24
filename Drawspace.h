@@ -13,7 +13,7 @@ class QBond;
 class DrawnObject;
 class Molecule;
 
-class drawspace : public QGraphicsView
+class Drawspace : public QGraphicsView
 {
     Q_OBJECT
 
@@ -35,7 +35,7 @@ public:
     QVector<DrawnObject*> freeHandObjects;
     QVector<QVector<Molecule*>> undoStackMolecule;
     QVector<QVector<DrawnObject*>> undoStackDrawnObject;
-    drawspace();
+    Drawspace();
     void maybeAddSegment(const QPointF &pos); 
     void addFreehandSegment(QPointF pos);
     void replaceSegment(const QPointF &firstPos, const QPointF &lastPos);

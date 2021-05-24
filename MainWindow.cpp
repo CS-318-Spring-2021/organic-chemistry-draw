@@ -1,12 +1,14 @@
-#include "mainwindow.h"
+#include "MainWindow.h"
 
 #include <QtWidgets>
+#include <QPrinter>
 #include <QDebug>
 #include <stdio.h>
+#include <QPrintDialog>
 
-#include "drawspace.h"
+#include "Drawspace.h"
 #include "Molecule.h"
-#include "qatom.h"
+#include "QAtom.h"
 #include "qbond.h"
 
 
@@ -42,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     connect(aboutButton, &QPushButton::clicked, this, &MainWindow::bAbout);
 
     connect(saveButton, &QPushButton::clicked, this, &MainWindow::bSave);
-    mainLayout->addWidget(view = new drawspace(), 1);
+    mainLayout->addWidget(view = new Drawspace(), 1);
     mainLayout->addLayout(rightLayout);
     bRecording();
 
@@ -56,7 +58,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::bSave() {
     QString date = QDate::currentDate().toString("MM-dd-yyyy");
-    QString fName = QFileDialog::getSaveFileName(this, "Enter save filename", date, tr("Image File (*.png)"));
+    QString fName = QFileDialog::getSaveFileName(this, "Enter save filename", date, tr("Image File (*.pdf)"));
     if (fName.isEmpty()) return;
     QFile fOut(fName);
     if (!fOut.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
@@ -64,8 +66,22 @@ void MainWindow::bSave() {
         return;
     }
 
-    QPixmap pixMap = view->grab();
-    pixMap.save(fName);
+//    QPixmap pixMap = view->grab();
+//    pixMap.save(fName);
+
+    QPrinter printer(QPrinter::HighResolution);
+        printer.setPageSize(QPageSize(QPageSize::A4));
+        printer.setPageOrientation(QPageLayout::Landscape);
+        //QPrintDialog dlg(&printer);
+        printer.setOutputFormat(QPrinter::PdfFormat);
+        printer.setOutputFileName(fName);
+        //QFileDialog dlg(&printer);
+        if(!fName.isEmpty()) {
+            QPainter p(&printer);
+            view->render(&p);
+            p.end();
+        }
+
     return;
 }
 

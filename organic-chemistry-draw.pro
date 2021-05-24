@@ -1,4 +1,5 @@
 QT       += core gui
+QT       += printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -12,22 +13,22 @@ SOURCES += \
     Atom.cpp \
     Bond.cpp \
     DrawnObject.cpp \
+    Drawspace.cpp \
+    Main.cpp \
+    MainWindow.cpp \
     Molecule.cpp \
-    QBond.cpp \
-    drawspace.cpp \
-    main.cpp \
-    mainwindow.cpp \
-    qatom.cpp
+    QAtom.cpp \
+    QBond.cpp
 
 HEADERS += \
     Atom.h \
     Bond.h \
     DrawnObject.h \
+    Drawspace.h \
+    MainWindow.h \
     Molecule.h \
-    QBond.h \
-    drawspace.h \
-    mainwindow.h \
-    qatom.h
+    QAtom.h \
+    QBond.h
 
 FORMS += \
     mainwindow.ui

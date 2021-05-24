@@ -1,4 +1,4 @@
-#include "qatom.h"
+#include "QAtom.h"
 #include "Atom.h"
 #include <QGraphicsEllipseItem>
 #include <QPen>
