@@ -26,8 +26,6 @@ public:
     void removeAtom(Atom *p_atom);
     void removeBond(Bond *p_bond);
     void combine(Molecule *other, Atom *connecting);
-    double upFirstCorrect(double y2, double y3, double theta);
-    double downFirstCorrect(double y2, double y3, double theta);
 };
 
 #endif // MOLECULE_H
