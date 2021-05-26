@@ -87,15 +87,15 @@ QBond::QBond(Bond *_bond):bond(_bond) {
     }
 }
 
-void QBond::hoverEnterEvent(QGraphicsSceneHoverEvent *evt) {
+void QBond::hoverEnterEvent(QGraphicsSceneHoverEvent *) {
     hoverCircle->setOpacity(0.5);
 }
 
-void QBond::hoverLeaveEvent(QGraphicsSceneHoverEvent *evt) {
+void QBond::hoverLeaveEvent(QGraphicsSceneHoverEvent *) {
     hoverCircle->setOpacity(0.0);
 }
 
-void QBond::mousePressEvent(QGraphicsSceneMouseEvent *evt) {
+void QBond::mousePressEvent(QGraphicsSceneMouseEvent *) {
     //if undo is clicked
         //delete?
     //else
