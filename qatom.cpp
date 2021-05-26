@@ -32,9 +32,6 @@ void QAtom::hoverLeaveEvent(QGraphicsSceneHoverEvent *) {
     coop->setOpacity(0.0);
 }
 
-void QAtom::mousePressEvent(QGraphicsSceneMouseEvent *)
-{}
-
-void QAtom::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
+void QAtom::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *){
         //box->setOpacity(1.0);
 }
