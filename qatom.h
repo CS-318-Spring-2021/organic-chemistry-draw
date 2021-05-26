@@ -15,8 +15,7 @@ public:
 protected:
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *evt);
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *evt);
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *evt);
-    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *evt);
 };
 
 #endif // QATOM_H
